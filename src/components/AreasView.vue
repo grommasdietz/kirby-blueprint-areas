@@ -1,5 +1,11 @@
 <template>
-  <k-panel-inside :key="currentAreaId">
+  <k-panel-inside
+    :key="currentAreaId"
+    :data-id="currentAreaId"
+    :data-locked="isLocked"
+    :data-template="currentAreaId"
+    class="k-areas-view"
+  >
     <k-header>
       <template #default>
         {{ area.title || area.id }}
@@ -311,7 +317,7 @@ export default {
   created() {
     this.setupBadgeRefresh();
     this.onSaveShortcut = (event) => {
-      if (!this.hasDiff || this.isProcessing) return;
+      if (!this.hasDiff || this.isProcessing || this.isLocked) return;
       event?.preventDefault?.();
       this.onSubmit();
     };
@@ -416,6 +422,7 @@ export default {
       this.updateMenuBadgeLocal();
     },
     onInput(values) {
+      if (this.isLocked) return;
       const filtered = this.filterAreaValues(values || {});
       try {
         this.$panel.content.updateLazy(filtered);
@@ -426,7 +433,7 @@ export default {
     },
     async onDiscard() {
       const id = this.currentAreaId;
-      if (!id || this.isProcessing) return;
+      if (!id || this.isProcessing || this.isLocked) return;
 
       try {
         await this.$panel.content.discard();
@@ -440,7 +447,7 @@ export default {
     },
     async onSubmit() {
       const id = this.currentAreaId;
-      if (!id || this.isProcessing) return;
+      if (!id || this.isProcessing || this.isLocked) return;
 
       try {
         const filtered = this.filterAreaValues(this.content);

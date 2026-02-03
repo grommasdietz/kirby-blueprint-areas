@@ -7,6 +7,9 @@ namespace Kirby\Plugin\Tests\Support;
 use Kirby\Cms\App;
 use Kirby\Exception\DuplicateException;
 use Kirby\Filesystem\Dir;
+use FilesystemIterator;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 /**
  * Prepares a Kirby instance that uses the playground as its site roots.
@@ -42,6 +45,7 @@ final class TestEnvironment
             }
         }
 
+        static::prepareContent($paths['playground'] . '/content');
         static::prepareCache($paths['cache']);
         static::prepareAccounts($paths['accounts']);
         static::preparePluginSandbox($paths['project'], $paths['plugins']);
@@ -124,6 +128,35 @@ final class TestEnvironment
     {
         Dir::remove($cacheRoot);
         Dir::make($cacheRoot . '/pages', true);
+    }
+
+    /**
+     * Removes generated content version folders (e.g. `_changes`) from the playground.
+     * Those often contain `Lock:` fields which become "fresh" on checkout and will
+     * break tests by triggering content locking.
+     */
+    private static function prepareContent(string $contentRoot): void
+    {
+        if (is_dir($contentRoot) === false) {
+            return;
+        }
+
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($contentRoot, FilesystemIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::CHILD_FIRST
+        );
+
+        foreach ($iterator as $item) {
+            if ($item->isDir() && $item->getFilename() === '_changes') {
+                Dir::remove($item->getPathname());
+                continue;
+            }
+
+            // Legacy lock file
+            if ($item->isFile() && $item->getFilename() === '.lock') {
+                @unlink($item->getPathname());
+            }
+        }
     }
 
     private static function prepareAccounts(string $accountsRoot): void

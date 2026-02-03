@@ -3,6 +3,10 @@
 Thumbs.db
 .idea/
 
+# Kirby playground runtime artifacts
+/playground/content/**/_changes/
+/playground/content/**/.lock
+
 # Env
 .env
 
