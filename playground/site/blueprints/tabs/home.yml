@@ -1,0 +1,33 @@
+label: Content
+icon: home
+columns:
+  - width: 2/3
+    sections:
+      fields:
+        type: fields
+        fields:
+          subtitle:
+            label: Subtitle
+            type: text
+            placeholder: Optional subtitle
+          intro:
+            label: Intro
+            type: textarea
+            size: small
+            buttons: false
+          text:
+            label: Text
+            type: textarea
+            size: large
+  - width: 1/3
+    sections:
+      meta:
+        type: fields
+        fields:
+          tags:
+            label: Tags
+            type: tags
+            options:
+              - A
+              - B
+              - C

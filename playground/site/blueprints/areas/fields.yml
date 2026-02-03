@@ -1,0 +1,437 @@
+title: Fields
+icon: dashboard
+
+tabs:
+  basics:
+    label: Basics
+    icon: text
+    columns:
+      - width: 1/2
+        sections:
+          textfields:
+            type: fields
+            fields:
+              text:
+                label: Text
+                type: text
+                counter: true
+                help: Optional help
+              description:
+                label: Description
+                type: textarea
+                placeholder: Placeholder
+                buttons: false
+                size: small
+              writer:
+                label: Writer
+                type: writer
+              list:
+                label: List
+                type: list
+                marks:
+                  - bold
+                  - italic
+              slug:
+                label: Slug
+                type: slug
+                wizard:
+                  field: text
+                  text: Generate!
+              url:
+                label: URL
+                type: url
+                placeholder: https://example.com
+              email:
+                label: Email
+                type: email
+                placeholder: name@example.com
+              tel:
+                label: Phone
+                type: tel
+                placeholder: +49 123 4567
+              link:
+                label: Link
+                type: link
+                options:
+                  - url
+                  - page
+                  - email
+                  - tel
+      - width: 1/2
+        sections:
+          numbers:
+            type: fields
+            fields:
+              number:
+                label: Number
+                type: number
+                min: 0
+                max: 100
+                step: 0.5
+                after: px
+              range:
+                label: Range
+                type: range
+                min: 0
+                max: 100
+                step: 5
+                tooltip:
+                  before: Min
+                  after: "%"
+              date:
+                label: Date
+                type: date
+                display: DD.MM.YYYY
+                min: 2024-01-01
+              time:
+                label: Time
+                type: time
+                notation: 12
+                step: 15
+              color:
+                label: Color
+                type: color
+                alpha: true
+                options:
+                  - "#ff6b6b"
+                  - "#4dabf7"
+                  - "#40c057"
+
+  choices:
+    label: Choices
+    icon: check
+    columns:
+      - width: 1/2
+        sections:
+          toggles:
+            type: fields
+            fields:
+              toggle:
+                label: Toggle
+                type: toggle
+                help: Simple on/off field.
+                text:
+                  - Off
+                  - On
+              toggles:
+                label: Toggles
+                type: toggles
+                options:
+                  a: Option A
+                  b: Option B
+              checkboxes:
+                label: Checkboxes
+                type: checkboxes
+                columns: 2
+                options:
+                  a: Alpha
+                  b: Beta
+              radio:
+                label: Radio
+                type: radio
+                columns: 2
+                options:
+                  a: Alpha
+                  b: Beta
+      - width: 1/2
+        sections:
+          selects:
+            type: fields
+            fields:
+              select:
+                label: Select
+                type: select
+                placeholder: Pick one
+                options:
+                  one: One
+                  two: Two
+              multiselect:
+                label: Multiselect
+                type: multiselect
+                max: 2
+                options:
+                  one: One
+                  two: Two
+              tags:
+                label: Tags
+                type: tags
+                max: 5
+                options:
+                  alpha: Alpha
+                  beta: Beta
+                  gamma: Gamma
+
+  files:
+    label: Files
+    icon: image
+    columns:
+      - width: 1/2
+        sections:
+          files:
+            type: fields
+            fields:
+              singlefile:
+                label: File
+                type: files
+                multiple: false
+                uploads:
+                  template: default
+                query: site.files
+                layout: list
+              multiplefiles:
+                label: Files
+                type: files
+                multiple: true
+                uploads:
+                  template: default
+                query: site.files
+                layout: list
+      - width: 1/2
+        sections:
+          images:
+            type: fields
+            fields:
+              image:
+                label: Image
+                type: files
+                multiple: false
+                query: site.images
+                layout: cards
+              gallery:
+                label: Gallery
+                type: files
+                multiple: true
+                query: site.images
+                layout: cards
+                min: 0
+
+  relations:
+    label: Relations
+    icon: users
+    columns:
+      - width: 1/2
+        sections:
+          pages:
+            type: fields
+            fields:
+              pages:
+                label: Pages
+                type: pages
+                query: site.children
+                max: 3
+      - width: 1/2
+        sections:
+          users:
+            type: fields
+            fields:
+              users:
+                label: Users
+                type: users
+                max: 2
+
+  layout:
+    label: Layout
+    icon: layout-columns
+    columns:
+      - width: 1/1
+        sections:
+          fieldwidths:
+            type: fields
+            fields:
+              fullwidth:
+                label: Full width
+                type: text
+              halfleft:
+                label: Half left
+                type: text
+                width: 1/2
+              halfright:
+                label: Half right
+                type: text
+                width: 1/2
+              thirdone:
+                label: Third A
+                type: text
+                width: 1/3
+              thirdtwo:
+                label: Third B
+                type: text
+                width: 1/3
+              thirdthree:
+                label: Third C
+                type: text
+                width: 1/3
+      - width: 1/2
+        sections:
+          columnleft:
+            type: fields
+            fields:
+              leftcol:
+                label: Left column
+                type: text
+      - width: 1/2
+        sections:
+          columnright:
+            type: fields
+            fields:
+              rightcol:
+                label: Right column
+                type: text
+      - width: 1/4
+        sections:
+          col1:
+            type: fields
+            fields:
+              col1:
+                label: Col 1
+                type: text
+      - width: 1/4
+        sections:
+          col2:
+            type: fields
+            fields:
+              col2:
+                label: Col 2
+                type: text
+      - width: 1/4
+        sections:
+          col3:
+            type: fields
+            fields:
+              col3:
+                label: Col 3
+                type: text
+      - width: 1/4
+        sections:
+          col4:
+            type: fields
+            fields:
+              col4:
+                label: Col 4
+                type: text
+
+  builder:
+    label: Builder
+    icon: grid
+    columns:
+      - width: 1/1
+        sections:
+          builders:
+            type: fields
+            fields:
+              blocks:
+                label: Blocks
+                type: blocks
+                fieldsets:
+                  text:
+                    label: Text
+                  heading:
+                    label: Heading
+                  image:
+                    label: Image
+                  gallery:
+                    label: Gallery
+                  quote:
+                    label: Quote
+              layout:
+                label: Layout
+                type: layout
+                layouts:
+                  - 1/1
+                  - 1/2, 1/2
+                  - 1/3, 1/3, 1/3
+                fieldsets:
+                  text:
+                    label: Text
+                  image:
+                    label: Image
+                settings:
+                  fields:
+                    background:
+                      label: Background
+                      type: color
+                      alpha: true
+              entries:
+                label: Entries
+                type: entries
+                max: 5
+                field:
+                  type: text
+                  placeholder: Single entry
+
+  sections:
+    label: Sections
+    icon: layers
+    columns:
+      - width: 1/2
+        sections:
+          info:
+            type: info
+            headline: Info
+            text: >
+              This is a demo info section for the playground area.
+          stats:
+            type: stats
+            headline: Stats
+            size: small
+            reports:
+              - label: Pages
+                value: "{{ site.children.count }}"
+                icon: page
+              - label: Files
+                value: "{{ site.files.count }}"
+                icon: image
+      - width: 1/2
+        sections:
+          pages:
+            type: pages
+            headline: Site Pages
+            parent: site
+            layout: list
+            size: tiny
+          files:
+            type: files
+            headline: Site Files
+            parent: site
+            layout: list
+            size: tiny
+
+  advanced:
+    label: Advanced
+    icon: cog
+    columns:
+      - width: 1/1
+        sections:
+          structure:
+            type: fields
+            fields:
+              structure:
+                label: Structure
+                type: structure
+                limit: 5
+                sortable: true
+                empty: Add your first item
+                fields:
+                  title:
+                    label: Title
+                    type: text
+                  value:
+                    label: Value
+                    type: text
+          object:
+            type: fields
+            fields:
+              object:
+                label: Object
+                type: object
+                fields:
+                  heading:
+                    label: Heading
+                    type: text
+                  body:
+                    label: Body
+                    type: textarea
+                  note:
+                    label: Note
+                    type: info
+                    text: This is an info field inside the object.

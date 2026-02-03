@@ -1,0 +1,12 @@
+title: Home
+icon: home
+query: site.find("home")
+
+options:
+  access:
+    editor: false
+    admin: true
+
+tabs:
+  content:
+    extends: tabs/home

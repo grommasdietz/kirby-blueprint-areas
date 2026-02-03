@@ -1,0 +1,8 @@
+title: Playground
+
+options:
+  changeStatus: true
+
+sections:
+  pages:
+    type: pages

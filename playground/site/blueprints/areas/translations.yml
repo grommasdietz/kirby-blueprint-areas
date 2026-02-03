@@ -1,0 +1,14 @@
+title:
+  en: Translations
+  de: Übersetzungen
+icon: translate
+
+fields:
+  note:
+    label:
+      en: Note
+      de: Notiz
+    type: info
+    text:
+      en: Translations for Blueprints
+      de: Übersetzungen für Blueprints

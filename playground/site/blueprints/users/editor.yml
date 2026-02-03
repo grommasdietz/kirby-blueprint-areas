@@ -1,0 +1,7 @@
+title: Editor
+
+permissions:
+  areas:
+    *: false
+    home: true
+    fields: true

@@ -1,0 +1,19 @@
+title: Buttons
+icon: add
+
+buttons:
+  - preview
+  - open
+
+options:
+  access:
+    "*": false
+    admin: true
+
+fields:
+  note:
+    label:
+      en: Note
+      de: Notiz
+    type: info
+    text: Customizable buttons on Kirby header
