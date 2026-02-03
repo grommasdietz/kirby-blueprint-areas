@@ -3,7 +3,6 @@
 use Kirby\Cms\App as Kirby;
 use Kirby\Cms\Permissions;
 use Kirby\Exception\NotFoundException;
-use Kirby\Exception\PermissionException;
 use Kirby\Filesystem\F;
 use GrommasDietz\Areas\BlueprintAreas;
 
@@ -35,143 +34,82 @@ Kirby::plugin('grommasdietz/kirby-blueprint-areas', [
         'routes' => [
             [
                 'pattern' => 'grommasdietz/kirby-blueprint-areas/blueprints',
-                'action'  => function () {
-                    if (kirby()->user() === null) {
-                        throw new PermissionException('Not authenticated');
-                    }
-
-                    return BlueprintAreas::list();
-                }
+                'auth'    => true,
+                'action'  => fn() => BlueprintAreas::list(),
             ],
             [
                 'pattern' => 'grommasdietz/kirby-blueprint-areas/blueprints/(:any)',
-                'action'  => function (string $name) {
-                    if (kirby()->user() === null) {
-                        throw new PermissionException('Not authenticated');
-                    }
-
-                    return BlueprintAreas::view($name);
-                }
+                'auth'    => true,
+                'action'  => fn(string $name) => BlueprintAreas::view($name),
             ],
             [
                 'pattern' => 'grommasdietz/kirby-blueprint-areas/blueprints/(:any)',
                 'method'  => 'POST',
-                'action'  => function (string $name) {
-                    if (kirby()->user() === null) {
-                        throw new PermissionException('Not authenticated');
-                    }
-
-                    return BlueprintAreas::save($name, BlueprintAreas::requestValues());
-                }
+                'auth'    => true,
+                'action'  => fn(string $name) => BlueprintAreas::save($name, BlueprintAreas::requestValues()),
             ],
             [
                 'pattern' => 'grommasdietz/kirby-blueprint-areas/blueprints/(:any)/save',
                 'method'  => 'POST',
-                'action'  => function (string $name) {
-                    if (kirby()->user() === null) {
-                        throw new PermissionException('Not authenticated');
-                    }
-
-                    return BlueprintAreas::draft($name, BlueprintAreas::requestValues());
-                }
+                'auth'    => true,
+                'action'  => fn(string $name) => BlueprintAreas::draft($name, BlueprintAreas::requestValues()),
             ],
             [
                 'pattern' => 'grommasdietz/kirby-blueprint-areas/blueprints/(:any)/publish',
                 'method'  => 'POST',
-                'action'  => function (string $name) {
-                    if (kirby()->user() === null) {
-                        throw new PermissionException('Not authenticated');
-                    }
-
-                    return BlueprintAreas::save($name, BlueprintAreas::requestValues());
-                }
+                'auth'    => true,
+                'action'  => fn(string $name) => BlueprintAreas::save($name, BlueprintAreas::requestValues()),
             ],
             [
                 'pattern' => 'grommasdietz/kirby-blueprint-areas/blueprints/(:any)/discard',
                 'method'  => 'POST',
-                'action'  => function (string $name) {
-                    if (kirby()->user() === null) {
-                        throw new PermissionException('Not authenticated');
-                    }
-
-                    return BlueprintAreas::discard($name);
-                }
+                'auth'    => true,
+                'action'  => fn(string $name) => BlueprintAreas::discard($name),
             ],
             [
                 'pattern' => 'grommasdietz/kirby-blueprint-areas/blueprints/(:any)/changes/save',
                 'method'  => 'POST',
-                'action'  => function (string $name) {
-                    if (kirby()->user() === null) {
-                        throw new PermissionException('Not authenticated');
-                    }
-
-                    return BlueprintAreas::draft($name, BlueprintAreas::requestValues());
-                }
+                'auth'    => true,
+                'action'  => fn(string $name) => BlueprintAreas::draft($name, BlueprintAreas::requestValues()),
             ],
             [
                 'pattern' => 'grommasdietz/kirby-blueprint-areas/blueprints/(:any)/changes/discard',
                 'method'  => 'POST',
-                'action'  => function (string $name) {
-                    if (kirby()->user() === null) {
-                        throw new PermissionException('Not authenticated');
-                    }
-
-                    return BlueprintAreas::discard($name);
-                }
+                'auth'    => true,
+                'action'  => fn(string $name) => BlueprintAreas::discard($name),
             ],
             [
                 'pattern' => 'grommasdietz/kirby-blueprint-areas/blueprints/(:any)/changes/publish',
                 'method'  => 'POST',
-                'action'  => function (string $name) {
-                    if (kirby()->user() === null) {
-                        throw new PermissionException('Not authenticated');
-                    }
-
-                    return BlueprintAreas::save($name, BlueprintAreas::requestValues());
-                }
+                'auth'    => true,
+                'action'  => fn(string $name) => BlueprintAreas::save($name, BlueprintAreas::requestValues()),
             ],
             [
                 'pattern' => 'grommasdietz/kirby-blueprint-areas/changes',
-                'action'  => function () {
-                    if (kirby()->user() === null) {
-                        throw new PermissionException('Not authenticated');
-                    }
-
-                    return BlueprintAreas::changesSummary();
-                }
+                'auth'    => true,
+                'action'  => fn() => BlueprintAreas::changesSummary(),
             ],
             [
                 'pattern' => 'grommasdietz/kirby-blueprint-areas/blueprints/(:any)/sections/(:any)',
                 'method'  => 'GET',
-                'action'  => function (string $name, string $section) {
-                    if (kirby()->user() === null) {
-                        throw new PermissionException('Not authenticated');
-                    }
-
-                    return BlueprintAreas::section($name, $section);
-                }
+                'auth'    => true,
+                'action'  => fn(string $name, string $section) => BlueprintAreas::section($name, $section),
             ],
             [
                 'pattern' => 'grommasdietz/kirby-blueprint-areas/blueprints/(:any)/sections/(:any)/(:all?)',
                 'method'  => 'ALL',
+                'auth'    => true,
                 'action'  => function (string $name, string $section, string|null $path = null) {
-                    if (kirby()->user() === null) {
-                        throw new PermissionException('Not authenticated');
-                    }
-
                     return BlueprintAreas::sectionApi($name, $section, $path, $this);
-                }
+                },
             ],
             [
                 'pattern' => 'grommasdietz/kirby-blueprint-areas/blueprints/(:any)/fields/(:any)/(:all?)',
                 'method'  => 'ALL',
+                'auth'    => true,
                 'action'  => function (string $name, string $field, string|null $path = null) {
-                    if (kirby()->user() === null) {
-                        throw new PermissionException('Not authenticated');
-                    }
-
                     return BlueprintAreas::fieldApi($name, $field, $path, $this);
-                }
+                },
             ],
         ],
     ],

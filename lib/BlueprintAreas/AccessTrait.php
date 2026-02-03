@@ -146,11 +146,11 @@ trait AccessTrait
             return false;
         }
 
-        if ($write === true) {
+        if ($write) {
             return static::canUpdateModel($model);
         }
 
-        return static::canUpdateModel($model);
+        return true;
     }
 
     private static function requireAreaAccess(ModelWithContent $model, array $bp, bool $write): void

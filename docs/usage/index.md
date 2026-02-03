@@ -111,6 +111,45 @@ permissions:
 > [!IMPORTANT]
 > Kirby Blueprint Areas still enforces the underlying model permissions (for example, pages must be updatable for writes).
 
+## Buttons
+
+Customize the view header buttons via the `buttons` property:
+
+```yml
+# site/blueprints/areas/settings.yml
+title: Settings
+icon: cog
+
+buttons:
+  - preview
+  - open
+
+tabs:
+  # ...
+```
+
+### Available buttons
+
+| Name        | Description                              |
+| ----------- | ---------------------------------------- |
+| `languages` | Language switcher (multi-language sites) |
+| `open`      | Open model URL in new tab                |
+| `preview`   | Preview draft changes                    |
+| `settings`  | Model settings dialog                    |
+| `status`    | Page status (pages only)                 |
+| `versions`  | Version history                          |
+
+> [!NOTE]
+> When no `buttons` are defined, only the language switcher appears on multi-language sites.
+
+### Disabling buttons
+
+Set `buttons` to `false` to hide all buttons:
+
+```yml
+buttons: false
+```
+
 ## Options
 
 Configure via `site/config/config.php`:
