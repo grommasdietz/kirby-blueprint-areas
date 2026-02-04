@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v1.0.1...v1.0.2) (2026-02-04)
+
+
+### Bug Fixes
+
+* **access:** allow read-only access without write permission ([ec934bb](https://github.com/grommasdietz/kirby-blueprint-areas/commit/ec934bbf88eb800e617f78917de3407f27110638))
+
 ## [1.0.1](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v1.0.0...v1.0.1) (2026-02-03)
 
 
