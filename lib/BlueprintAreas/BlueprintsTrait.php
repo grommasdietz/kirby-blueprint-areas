@@ -101,7 +101,7 @@ trait BlueprintsTrait
             ];
         }
 
-        usort($items, static fn($a, $b) => strcmp($a['title'], $b['title']));
+        usort($items, static fn ($a, $b) => strcmp($a['title'], $b['title']));
 
         return $items;
     }
