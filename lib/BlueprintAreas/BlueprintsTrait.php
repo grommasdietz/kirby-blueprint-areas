@@ -52,7 +52,7 @@ trait BlueprintsTrait
                 continue;
             }
 
-            if (static::canAccessArea($model, $bp, false) === false) {
+            if (!static::canAccessArea($model, $bp, false)) {
                 continue;
             }
 
@@ -65,7 +65,7 @@ trait BlueprintsTrait
     public static function listAll(): array
     {
         $root = static::blueprintsRoot();
-        if ($root === null || is_dir($root) === false) {
+        if ($root === null || !is_dir($root)) {
             return [];
         }
 
@@ -80,7 +80,7 @@ trait BlueprintsTrait
             }
 
             $name = pathinfo($file, PATHINFO_FILENAME);
-            if (static::isReservedAreaId(static::menuId($name)) === true) {
+            if (static::isReservedAreaId(static::menuId($name))) {
                 continue;
             }
             $bp   = static::readBlueprint($path);
@@ -101,7 +101,7 @@ trait BlueprintsTrait
             ];
         }
 
-        usort($items, static fn ($a, $b) => strcmp($a['title'], $b['title']));
+        usort($items, static fn($a, $b) => strcmp($a['title'], $b['title']));
 
         return $items;
     }
@@ -131,7 +131,7 @@ trait BlueprintsTrait
 
     public static function title(string $name): string
     {
-        if (isset(static::$titleCache[$name]) === true) {
+        if (isset(static::$titleCache[$name])) {
             return static::$titleCache[$name];
         }
 
@@ -157,7 +157,7 @@ trait BlueprintsTrait
     {
         $opts = static::options();
         $root = $opts['blueprints.root'] ?? null;
-        if (is_string($root) === true && $root !== '') {
+        if (is_string($root) && $root !== '') {
             return $root;
         }
 
@@ -173,7 +173,7 @@ trait BlueprintsTrait
 
         foreach (['yml', 'yaml'] as $ext) {
             $file = $root . '/' . $name . '.' . $ext;
-            if (is_file($file) === true) {
+            if (is_file($file)) {
                 return $file;
             }
         }
@@ -189,7 +189,7 @@ trait BlueprintsTrait
 
     private static function blueprintForArea(string $name, array $props, ModelWithContent $model): Blueprint
     {
-        $props = is_array($props) === true ? $props : [];
+        $props = is_array($props) ? $props : [];
         $props['name'] ??= $name;
         $props['model'] = $model;
 
@@ -204,7 +204,7 @@ trait BlueprintsTrait
         }
 
         $query = $bp['query'] ?? null;
-        if (is_string($query) === true && $query !== '') {
+        if (is_string($query) && $query !== '') {
             $resolved = $model->query($query, ModelWithContent::class);
             if ($resolved instanceof ModelWithContent) {
                 return $resolved;

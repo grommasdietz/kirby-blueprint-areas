@@ -45,9 +45,9 @@ trait ViewTrait
         $currentValues = $baselineValues;
         $hasChanges = false;
         $changesContent = static::changesContent($model);
-        if (is_array($changesContent) === true) {
+        if (is_array($changesContent)) {
             $changesStored = static::valuesFromContent($changesContent, $fieldNames);
-            if (empty($changesStored) === false) {
+            if (!empty($changesStored)) {
                 $hasChanges = static::storedValuesDiffer($latestStored, $changesStored);
                 $form->fill(array_replace($latestStored, $changesStored));
                 $currentValues = $form->toFormValues();
@@ -140,11 +140,11 @@ trait ViewTrait
 
         foreach (array_keys($values) as $fieldName) {
             $fieldName = Str::lower((string)$fieldName);
-            if (isset($fields[$fieldName]) === false) {
+            if (!isset($fields[$fieldName])) {
                 continue;
             }
 
-            if (array_key_exists($fieldName, $stored) === false) {
+            if (!array_key_exists($fieldName, $stored)) {
                 continue;
             }
 
@@ -159,11 +159,11 @@ trait ViewTrait
             }
         }
 
-        if (empty($unchanged) === false) {
+        if (!empty($unchanged)) {
             static::clearChangesForFields($model, $name, $unchanged);
         }
 
-        if (empty($changed) === false) {
+        if (!empty($changed)) {
             $prefixed = static::storedValues($changed);
             static::updateChanges($model, $prefixed);
         }
@@ -270,22 +270,22 @@ trait ViewTrait
     private static function viewMeta(ModelWithContent $model): array
     {
         $modified = null;
-        if (method_exists($model, 'modified') === true) {
+        if (method_exists($model, 'modified')) {
             $modified = $model->{'modified'}();
         }
         $lastSavedAt = null;
-        if (is_int($modified) === true) {
+        if (is_int($modified)) {
             $lastSavedAt = date(DATE_ATOM, $modified);
-        } elseif (is_string($modified) === true && $modified !== '') {
+        } elseif (is_string($modified) && $modified !== '') {
             $lastSavedAt = $modified;
         }
 
         $lastSavedBy = null;
-        if (method_exists($model, 'modifiedBy') === true) {
+        if (method_exists($model, 'modifiedBy')) {
             $by = $model->{'modifiedBy'}();
-            if (is_object($by) === true) {
+            if (is_object($by)) {
                 $lastSavedBy = static::stringFromUser($by);
-            } elseif (is_string($by) === true && $by !== '') {
+            } elseif (is_string($by) && $by !== '') {
                 $lastSavedBy = $by;
             }
         }
@@ -311,12 +311,12 @@ trait ViewTrait
             return [];
         }
 
-        if (is_string($buttons) === true) {
+        if (is_string($buttons)) {
             $resolved = static::resolveButton($buttons, null, $model, $viewId);
             return $resolved === null ? [] : [$resolved];
         }
 
-        if (is_array($buttons) === true) {
+        if (is_array($buttons)) {
             if ($buttons === []) {
                 return [];
             }
@@ -348,7 +348,7 @@ trait ViewTrait
 
     private static function languageButton(ModelWithContent $model): array|null
     {
-        if (class_exists(LanguagesDropdown::class) === false) {
+        if (!class_exists(LanguagesDropdown::class)) {
             return null;
         }
 
@@ -370,7 +370,7 @@ trait ViewTrait
             $button = $name;
         }
 
-        if (is_string($button) === true) {
+        if (is_string($button)) {
             if ($builtin = static::builtinButton($button, $model)) {
                 return $builtin;
             }
@@ -384,7 +384,7 @@ trait ViewTrait
             )?->render();
         }
 
-        if (is_array($button) === true) {
+        if (is_array($button)) {
             return ViewButton::factory($button, $name, $viewId, $model)?->render();
         }
 
@@ -435,12 +435,12 @@ trait ViewTrait
             return null;
         }
 
-        if (method_exists($modelWithPreview, 'panel') === false) {
+        if (!method_exists($modelWithPreview, 'panel')) {
             return null;
         }
 
         $panel = $model->panel();
-        if (is_object($panel) === false || method_exists($panel, 'url') === false) {
+        if (!is_object($panel) || !method_exists($panel, 'url')) {
             return null;
         }
 
@@ -453,7 +453,7 @@ trait ViewTrait
 
     private static function settingsButton(ModelWithContent $model): array|null
     {
-        if (method_exists($model, 'panel') === false) {
+        if (!method_exists($model, 'panel')) {
             return null;
         }
 
@@ -508,7 +508,7 @@ trait ViewTrait
 
     private static function stringFromUser(object $user): ?string
     {
-        if (method_exists($user, 'name') === true) {
+        if (method_exists($user, 'name')) {
             $name = $user->name();
             $nameString = static::stringFromValue($name);
             if ($nameString !== null && $nameString !== '') {
@@ -516,7 +516,7 @@ trait ViewTrait
             }
         }
 
-        if (method_exists($user, 'email') === true) {
+        if (method_exists($user, 'email')) {
             $email = $user->email();
             $emailString = static::stringFromValue($email);
             if ($emailString !== null && $emailString !== '') {
@@ -529,17 +529,17 @@ trait ViewTrait
 
     private static function stringFromValue(mixed $value): ?string
     {
-        if (is_string($value) === true) {
+        if (is_string($value)) {
             return $value;
         }
 
-        if (is_object($value) === true) {
-            if (method_exists($value, 'value') === true) {
+        if (is_object($value)) {
+            if (method_exists($value, 'value')) {
                 $value = $value->value();
                 return is_string($value) ? $value : null;
             }
 
-            if (method_exists($value, 'toString') === true) {
+            if (method_exists($value, 'toString')) {
                 $value = $value->toString();
                 return is_string($value) ? $value : null;
             }

@@ -22,11 +22,11 @@ trait AccessTrait
         $options = $bp['options'] ?? null;
         $access = null;
 
-        if (is_array($options) === true && array_key_exists('access', $options) === true) {
+        if (is_array($options) && array_key_exists('access', $options)) {
             $access = $options['access'];
         }
 
-        if ($access === null && array_key_exists('access', $bp) === true) {
+        if ($access === null && array_key_exists('access', $bp)) {
             $access = $bp['access'];
         }
 
@@ -41,11 +41,11 @@ trait AccessTrait
         }
 
         $role = $user->role()?->id();
-        if (is_string($role) === true && array_key_exists($role, $rules) === true) {
+        if (is_string($role) && array_key_exists($role, $rules)) {
             return (bool)$rules[$role];
         }
 
-        if (array_key_exists('*', $rules) === true) {
+        if (array_key_exists('*', $rules)) {
             return (bool)$rules['*'];
         }
 
@@ -55,40 +55,40 @@ trait AccessTrait
     private static function roleAreaPermission(User $user, string $areaId): ?bool
     {
         $roleId = $user->role()?->id();
-        if (is_string($roleId) === false || $roleId === '') {
+        if (!is_string($roleId) || $roleId === '') {
             return null;
         }
 
         $root = App::instance()->root('blueprints');
-        if (is_string($root) === false || $root === '') {
+        if (!is_string($root) || $root === '') {
             return null;
         }
 
         $file = $root . '/users/' . $roleId . '.yml';
-        if (is_file($file) === false) {
+        if (!is_file($file)) {
             return null;
         }
 
         $data = static::readBlueprint($file);
-        if (is_array($data) === false) {
+        if (!is_array($data)) {
             return null;
         }
 
         $permissions = $data['permissions'] ?? null;
-        if (is_array($permissions) === false) {
+        if (!is_array($permissions)) {
             return null;
         }
 
         $areas = $permissions['areas'] ?? null;
-        if (is_array($areas) === false) {
+        if (!is_array($areas)) {
             return null;
         }
 
-        if (array_key_exists($areaId, $areas) === true) {
+        if (array_key_exists($areaId, $areas)) {
             return (bool)$areas[$areaId];
         }
 
-        if (array_key_exists('*', $areas) === true) {
+        if (array_key_exists('*', $areas)) {
             return (bool)$areas['*'];
         }
 
@@ -115,7 +115,7 @@ trait AccessTrait
 
     private static function canUpdateModel(ModelWithContent $model): bool
     {
-        if (method_exists($model, 'permissions') === false) {
+        if (!method_exists($model, 'permissions')) {
             return false;
         }
 
@@ -130,7 +130,7 @@ trait AccessTrait
         }
 
         $areaId = $bp['name'] ?? null;
-        if (is_string($areaId) === true && $areaId !== '') {
+        if (is_string($areaId) && $areaId !== '') {
             $roleOverride = static::roleAreaPermission($user, $areaId);
             if ($roleOverride === false) {
                 return false;
@@ -142,7 +142,7 @@ trait AccessTrait
             return false;
         }
 
-        if (static::canAccessModel($model, $user) === false) {
+        if (!static::canAccessModel($model, $user)) {
             return false;
         }
 
@@ -155,7 +155,7 @@ trait AccessTrait
 
     private static function requireAreaAccess(ModelWithContent $model, array $bp, bool $write): void
     {
-        if (static::canAccessArea($model, $bp, $write) === false) {
+        if (!static::canAccessArea($model, $bp, $write)) {
             throw new PermissionException('Not allowed');
         }
     }

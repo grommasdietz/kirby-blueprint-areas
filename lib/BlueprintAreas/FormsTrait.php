@@ -37,11 +37,11 @@ trait FormsTrait
         $latestStored = static::valuesFromContent(static::latestContent($model), $fieldNames);
         $values = $latestStored;
 
-        if ($withChanges === true) {
+        if ($withChanges) {
             $changesContent = static::changesContent($model);
-            if (is_array($changesContent) === true) {
+            if (is_array($changesContent)) {
                 $changesStored = static::valuesFromContent($changesContent, $fieldNames);
-                if (empty($changesStored) === false) {
+                if (!empty($changesStored)) {
                     $values = array_replace($latestStored, $changesStored);
                 }
             }
@@ -54,7 +54,7 @@ trait FormsTrait
     {
         $fields = [];
         $tabs = $layout['tabs'] ?? [];
-        if (is_array($tabs) === false) {
+        if (!is_array($tabs)) {
             return [];
         }
 
@@ -65,11 +65,11 @@ trait FormsTrait
                         continue;
                     }
                     $sectionFields = $section['rawFields'] ?? $section['fields'] ?? [];
-                    if (is_array($sectionFields) === false) {
+                    if (!is_array($sectionFields)) {
                         $sectionFields = [];
                     }
                     foreach ($sectionFields as $fieldName => $field) {
-                        if (is_array($field) === true) {
+                        if (is_array($field)) {
                             $normalizedName = Str::lower((string)$fieldName);
                             $field['name'] = $normalizedName;
                             $fields[$normalizedName] = $field;
@@ -87,12 +87,12 @@ trait FormsTrait
         $syncMap = [];
 
         foreach ($fields as $fieldName => $fieldProps) {
-            if (is_array($fieldProps) === false) {
+            if (!is_array($fieldProps)) {
                 continue;
             }
 
             $sync = $fieldProps['sync'] ?? null;
-            if (is_string($sync) === true && $sync !== '') {
+            if (is_string($sync) && $sync !== '') {
                 $syncMap[$fieldName] = Str::lower($sync);
             }
         }
@@ -102,7 +102,7 @@ trait FormsTrait
 
     private static function filterValuesForLayout(array $layout, array $values): array
     {
-        if (empty($values) === true) {
+        if (empty($values)) {
             return [];
         }
 
@@ -116,7 +116,7 @@ trait FormsTrait
 
         foreach ($values as $key => $value) {
             $normalized = Str::lower((string)$key);
-            if (isset($allowed[$normalized]) === true) {
+            if (isset($allowed[$normalized])) {
                 $filtered[$normalized] = $value;
             }
         }
@@ -129,7 +129,7 @@ trait FormsTrait
         $values = [];
         foreach ($fieldNames as $fieldName) {
             $key = (string)$fieldName;
-            if (array_key_exists($key, $content) === true) {
+            if (array_key_exists($key, $content)) {
                 $values[$fieldName] = $content[$key];
             }
         }
@@ -140,7 +140,7 @@ trait FormsTrait
     private static function storedValuesDiffer(array $latest, array $changes): bool
     {
         foreach ($changes as $key => $value) {
-            if (array_key_exists($key, $latest) === false || $latest[$key] != $value) {
+            if (!array_key_exists($key, $latest) || $latest[$key] != $value) {
                 return true;
             }
         }
