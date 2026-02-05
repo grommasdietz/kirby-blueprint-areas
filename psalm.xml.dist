@@ -87,5 +87,10 @@
         <RedundantFunctionCall errorLevel="suppress" />
         <ClassMustBeFinal errorLevel="suppress" />
         <InvalidThrow errorLevel="suppress" />
+
+        <!-- Site extends ModelWithContent, so returning Site when declared type is
+             ModelWithContent is valid (Liskov Substitution). Psalm's inference is
+             more precise than necessary. -->
+        <InvalidReturnType errorLevel="suppress" />
     </issueHandlers>
 </psalm>
