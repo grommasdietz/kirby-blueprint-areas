@@ -95,8 +95,13 @@ $user = $kirby->user($email);
 
 if ($delete) {
     if ($user !== null) {
-        $user->delete();
-        fwrite(STDOUT, "Deleted user {$email}\n");
+        try {
+            $user->delete();
+            fwrite(STDOUT, "Deleted user {$email}\n");
+        } catch (\Kirby\Exception\LogicException $e) {
+            // Can't delete last admin - that's fine for CI teardown
+            fwrite(STDOUT, "Skipped deleting {$email}: {$e->getMessage()}\n");
+        }
     } else {
         fwrite(STDOUT, "User {$email} not found; nothing to delete\n");
     }
@@ -105,9 +110,11 @@ if ($delete) {
 }
 
 if ($user !== null) {
-    // Delete existing user to ensure password matches what tests expect
-    $user->delete();
-    fwrite(STDOUT, "Deleted existing user {$email} to recreate with correct credentials\n");
+    // Update existing user's password to ensure it matches what tests expect
+    // (can't delete+recreate because Kirby prevents deleting the last admin)
+    $user->changePassword($password);
+    fwrite(STDOUT, "Updated password for existing user {$email}\n");
+    exit(0);
 }
 
 $kirby->users()->create([
