@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 import { URLS } from "./utils/constants";
 
 const PANEL_EMAIL =
-  process.env.KIRBY_USER_EMAIL ?? "playwright@kirby-blueprint-areas.test";
+  process.env.KIRBY_USER_EMAIL ?? "admin@kirby-blueprint-areas.test";
 const PANEL_PASSWORD = process.env.KIRBY_USER_PASSWORD ?? "playwright";
 
 test.describe("Panel authentication", () => {

@@ -14,5 +14,6 @@ export const DEFAULT_TIMEOUTS = {
 export const URLS = {
   HOME: "/",
   ABOUT: "/about",
+  PANEL: "/panel",
   PANEL_LOGIN: "/panel/login",
 } as const;
