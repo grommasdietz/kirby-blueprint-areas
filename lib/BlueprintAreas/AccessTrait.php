@@ -13,8 +13,7 @@ trait AccessTrait
 {
     private static function currentUser(): ?User
     {
-        $user = App::instance()->user();
-        return $user instanceof User ? $user : null;
+        return App::instance()->user();
     }
 
     private static function accessRules(array $bp): ?array
@@ -115,10 +114,6 @@ trait AccessTrait
 
     private static function canUpdateModel(ModelWithContent $model): bool
     {
-        if (!method_exists($model, 'permissions')) {
-            return false;
-        }
-
         return $model->permissions()->update();
     }
 

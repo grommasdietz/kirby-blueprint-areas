@@ -271,7 +271,8 @@ trait ViewTrait
     {
         $modified = null;
         if (method_exists($model, 'modified')) {
-            $modified = $model->{'modified'}();
+            /** @var object{modified: callable(): int|string|null} $model */
+            $modified = $model->modified();
         }
         $lastSavedAt = null;
         if (is_int($modified)) {
@@ -282,7 +283,8 @@ trait ViewTrait
 
         $lastSavedBy = null;
         if (method_exists($model, 'modifiedBy')) {
-            $by = $model->{'modifiedBy'}();
+            /** @var object{modifiedBy: callable(): mixed} $model */
+            $by = $model->modifiedBy();
             if (is_object($by)) {
                 $lastSavedBy = static::stringFromUser($by);
             } elseif (is_string($by) && $by !== '') {
@@ -435,15 +437,7 @@ trait ViewTrait
             return null;
         }
 
-        if (!method_exists($modelWithPreview, 'panel')) {
-            return null;
-        }
-
         $panel = $model->panel();
-        if (!is_object($panel) || !method_exists($panel, 'url')) {
-            return null;
-        }
-
         $link = $panel->url(true) . '/preview/changes';
         return static::ensureComponent(
             (new PreviewButton($link))->render(),
@@ -453,10 +447,6 @@ trait ViewTrait
 
     private static function settingsButton(ModelWithContent $model): array|null
     {
-        if (!method_exists($model, 'panel')) {
-            return null;
-        }
-
         return static::ensureComponent(
             (new SettingsButton($model))->render(),
             'k-settings-view-button'
@@ -508,6 +498,7 @@ trait ViewTrait
 
     private static function stringFromUser(object $user): ?string
     {
+        // User::name() returns a Field object in Kirby 5
         if (method_exists($user, 'name')) {
             $name = $user->name();
             $nameString = static::stringFromValue($name);
@@ -533,16 +524,10 @@ trait ViewTrait
             return $value;
         }
 
-        if (is_object($value)) {
-            if (method_exists($value, 'value')) {
-                $value = $value->value();
-                return is_string($value) ? $value : null;
-            }
-
-            if (method_exists($value, 'toString')) {
-                $value = $value->toString();
-                return is_string($value) ? $value : null;
-            }
+        // Handle Kirby Field objects which have a value() method
+        if (is_object($value) && method_exists($value, 'value')) {
+            $value = $value->value();
+            return is_string($value) ? $value : null;
         }
 
         return null;

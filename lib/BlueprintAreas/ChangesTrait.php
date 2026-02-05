@@ -79,18 +79,9 @@ trait ChangesTrait
 
     public static function changesLock(ModelWithContent $model): array|null
     {
-        $changes = static::changesVersion($model);
-        if ($changes === null || !method_exists($changes, 'lock')) {
-            return null;
-        }
-
+        $changes = $model->version('changes');
         $language = static::languageCode() ?? 'default';
-        $lock = $changes->lock($language);
-        if ($lock === null || !method_exists($lock, 'toArray')) {
-            return null;
-        }
-
-        return $lock->toArray();
+        return $changes->lock($language)->toArray();
     }
 
     public static function changesLockForArea(string $name): array|null
@@ -110,26 +101,14 @@ trait ChangesTrait
     private static function latestContent(ModelWithContent $model): array
     {
         $language = static::languageCode();
-
-        if (method_exists($model, 'version')) {
-            $latest = $model->version('latest');
-            if ($latest !== null && method_exists($latest, 'read')) {
-                $content = $language ? $latest->read($language) : $latest->read();
-                return is_array($content) ? $content : [];
-            }
-        }
-
-        $content = $language ? $model->content($language)->toArray() : $model->content()->toArray();
+        $latest = $model->version('latest');
+        $content = $language ? $latest->read($language) : $latest->read();
         return is_array($content) ? $content : [];
     }
 
     private static function changesContent(ModelWithContent $model): ?array
     {
-        $changes = static::changesVersion($model);
-        if ($changes === null || !method_exists($changes, 'exists')) {
-            return null;
-        }
-
+        $changes = $model->version('changes');
         $language = static::languageCode();
         $hasChanges = $language ? $changes->exists($language) : $changes->exists();
         if (!$hasChanges) {
@@ -140,32 +119,16 @@ trait ChangesTrait
         return is_array($content) ? $content : [];
     }
 
-    private static function changesVersion(ModelWithContent $model): mixed
-    {
-        if (!method_exists($model, 'version')) {
-            return null;
-        }
-
-        return $model->version('changes');
-    }
-
     private static function updateChanges(ModelWithContent $model, array $updates): void
     {
         if (empty($updates)) {
             return;
         }
 
-        $changes = static::changesVersion($model);
-        if ($changes === null || !method_exists($changes, 'exists')) {
-            return;
-        }
-
+        $changes = $model->version('changes');
         $language = static::languageCode();
         $hasChanges = $language ? $changes->exists($language) : $changes->exists();
         $content = $hasChanges ? static::readVersionContent($changes, $language) : [];
-        if (!is_array($content)) {
-            $content = [];
-        }
 
         foreach ($updates as $key => $value) {
             $content[$key] = $value;
@@ -179,11 +142,7 @@ trait ChangesTrait
         string $name,
         array $fieldNames
     ): void {
-        $changes = static::changesVersion($model);
-        if ($changes === null || !method_exists($changes, 'exists')) {
-            return;
-        }
-
+        $changes = $model->version('changes');
         $language = static::languageCode();
         $hasChanges = $language ? $changes->exists($language) : $changes->exists();
         if (!$hasChanges) {
@@ -191,9 +150,6 @@ trait ChangesTrait
         }
 
         $content = static::readVersionContent($changes, $language);
-        if (!is_array($content)) {
-            return;
-        }
 
         foreach ($fieldNames as $fieldName) {
             $key = (string)$fieldName;
@@ -222,31 +178,18 @@ trait ChangesTrait
         static::writeChangesContent($changes, $language, $content, true);
     }
 
-    private static function readVersionContent(object|null $version, ?string $language): array
+    private static function readVersionContent(object $version, ?string $language): array
     {
-        if ($version === null || !method_exists($version, 'read')) {
-            return [];
-        }
-
         $content = $language ? $version->read($language) : $version->read();
         return is_array($content) ? $content : [];
     }
 
     private static function writeChangesContent(
-        object|null $changes,
+        object $changes,
         ?string $language,
         array $content,
         bool $hasChanges
     ): void {
-        if (
-            $changes === null ||
-            !method_exists($changes, 'replace') ||
-            !method_exists($changes, 'create') ||
-            !method_exists($changes, 'delete')
-        ) {
-            return;
-        }
-
         if (empty($content)) {
             if ($hasChanges) {
                 $language ? $changes->delete($language) : $changes->delete();
@@ -264,14 +207,7 @@ trait ChangesTrait
 
     private static function changesMeta(ModelWithContent $model): array
     {
-        $changes = static::changesVersion($model);
-        if ($changes === null || !method_exists($changes, 'exists')) {
-            return [
-                'changesModified' => null,
-                'changesBy' => null,
-            ];
-        }
-
+        $changes = $model->version('changes');
         $language = static::languageCode();
         $hasChanges = $language ? $changes->exists($language) : $changes->exists();
         if (!$hasChanges) {
@@ -281,13 +217,10 @@ trait ChangesTrait
             ];
         }
 
-        $lock = method_exists($changes, 'lock') ? $changes->lock($language ?? 'default') : null;
-        $modified = null;
-        if ($lock !== null && method_exists($lock, 'modified')) {
-            $modified = $lock->modified('c', 'date');
-        }
+        $lock = $changes->lock($language ?? 'default');
+        $modified = $lock->modified('c', 'date');
 
-        if ($modified === null && method_exists($changes, 'modified')) {
+        if ($modified === null) {
             $timestamp = $changes->modified($language ?? 'default');
             if (is_int($timestamp)) {
                 $modified = date(DATE_ATOM, $timestamp);
@@ -295,11 +228,9 @@ trait ChangesTrait
         }
 
         $by = null;
-        if ($lock !== null && method_exists($lock, 'user')) {
-            $user = $lock->user();
-            if (is_object($user)) {
-                $by = static::stringFromUser($user);
-            }
+        $user = $lock->user();
+        if ($user !== null) {
+            $by = static::stringFromUser($user);
         }
 
         return [

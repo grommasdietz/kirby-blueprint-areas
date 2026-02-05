@@ -196,12 +196,12 @@ trait BlueprintsTrait
         return new Blueprint($props);
     }
 
+    /**
+     * @psalm-suppress InvalidReturnType Site is a subclass of ModelWithContent
+     */
     private static function modelForArea(string $name, array $bp): ModelWithContent
     {
         $model = static::site();
-        if ($model instanceof ModelWithContent === false) {
-            throw new NotFoundException('Site model did not resolve');
-        }
 
         $query = $bp['query'] ?? null;
         if (is_string($query) && $query !== '') {
