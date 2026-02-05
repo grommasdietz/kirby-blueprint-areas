@@ -20,7 +20,7 @@ composer require grommasdietz/kirby-blueprint-areas
 
 ## Quickstart
 
-Create blueprints in `site/blueprints/areas`. At a minimum, define `title`, `icon`, and your desired content:
+Create blueprints in `site/blueprints/areas`. Define `title`, `icon`, and your desired content:
 
 ```yml
 # site/blueprints/areas/namespace.yml
@@ -41,7 +41,7 @@ tabs:
                 type: headline
 ```
 
-Each blueprint will render as an own area. Each area saves content to site model by default. Optionally change resolved model (like a page) with [query](docs/usage/index.md#query) or restrict users [access](docs/usage/index.md#access-control).
+Each blueprint will render as an own area. Each area saves content to site model by default. Optionally change resolved model (like a page) with [query](docs/usage/index.md#query) or restrict users [access](docs/usage/index.md#access-control).
 
 ### Options
 
