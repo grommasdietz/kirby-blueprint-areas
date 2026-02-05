@@ -105,8 +105,9 @@ if ($delete) {
 }
 
 if ($user !== null) {
-    fwrite(STDOUT, "User {$email} already exists\n");
-    exit(0);
+    // Delete existing user to ensure password matches what tests expect
+    $user->delete();
+    fwrite(STDOUT, "Deleted existing user {$email} to recreate with correct credentials\n");
 }
 
 $kirby->users()->create([
