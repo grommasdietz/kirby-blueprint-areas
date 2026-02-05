@@ -1,3 +1,12 @@
+## [1.0.3](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v1.0.2...v1.0.3) (2026-02-05)
+
+
+### Bug Fixes
+
+* **blueprints:** modelForArea return type -> use ModelWithContent and remove docblock ([adddd67](https://github.com/grommasdietz/kirby-blueprint-areas/commit/adddd67d630efe720def8ffb6aa301319d7ddda2))
+* **psalm:** suppress InvalidReturnType in psalm.xml.dist ([269d7ab](https://github.com/grommasdietz/kirby-blueprint-areas/commit/269d7ab8e087698798cad0cbaa4d9ba95ccc382d))
+* **test:** handle last-admin deletion and update passwords instead of recreate ([a24ffda](https://github.com/grommasdietz/kirby-blueprint-areas/commit/a24ffdae66636359547537d7f6e7d0957aca4811))
+
 ## [1.0.2](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v1.0.1...v1.0.2) (2026-02-04)
 
 
