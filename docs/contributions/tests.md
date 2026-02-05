@@ -93,9 +93,11 @@ Playwright starts a PHP server on `127.0.0.1:8787` by default. Override with e
 
 ### Panel login for browser tests
 
-Playwright creates a temporary Panel user before the suite and removes it afterwards. Default credentials:
+Playwright creates temporary Panel users before the suite and removes them afterwards.
 
-- Email: `playwright@kirby-blueprint-areas.test`
+**Admin user** (default):
+
+- Email: `admin@kirby-blueprint-areas.test`
 - Password: `playwright`
 
 Override with environment variables:
@@ -103,9 +105,15 @@ Override with environment variables:
 - `KIRBY_USER_EMAIL`
 - `KIRBY_USER_PASSWORD`
 
+**Editor user** (for role-based access tests):
+
+- Email: `editor@kirby-blueprint-areas.test`
+- Password: `playwright`
+
 Notes:
 
 - Test user files are written to `playground/site/accounts`
+- Editor permissions are defined in `playground/site/blueprints/users/editor.yml`
 - Playwright uses the built‑in PHP server defined in `playwright.config.ts`
 - Playwright does not load `.env` files automatically
 
