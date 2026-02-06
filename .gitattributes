@@ -15,7 +15,6 @@ playground/ export-ignore
 .gitmessage export-ignore
 .husky/ export-ignore
 .markdownlint.json export-ignore
-.npmrc export-ignore
 .php-cs-fixer.cache export-ignore
 .php-cs-fixer.dist.php export-ignore
 .phpunit.cache/ export-ignore
