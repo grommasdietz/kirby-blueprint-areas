@@ -30,7 +30,7 @@
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^12.0.5",
     "@semantic-release/release-notes-generator": "^14.1.0",
-    "@types/node": "^25.2.0",
+    "@types/node": "^25.2.3",
     "@typescript-eslint/eslint-plugin": "^8.54.0",
     "@typescript-eslint/parser": "^8.55.0",
     "autoprefixer": "^10.4.24",
