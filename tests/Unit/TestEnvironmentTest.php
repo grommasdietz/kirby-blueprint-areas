@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Kirby\Plugin\Tests\Unit;
+namespace GrommasDietz\Areas\Tests\Unit;
 
 use Kirby\Cms\App;
-use Kirby\Plugin\Tests\Support\TestEnvironment;
-use Kirby\Plugin\Tests\TestCase;
+use GrommasDietz\Areas\Tests\Support\TestEnvironment;
+use GrommasDietz\Areas\Tests\TestCase;
 use PHPUnit\Framework\Attributes\PreserveGlobalState;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 

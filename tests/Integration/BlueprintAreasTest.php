@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Kirby\Plugin\Tests\Integration;
+namespace GrommasDietz\Areas\Tests\Integration;
 
 use GrommasDietz\Areas\BlueprintAreas;
 use Kirby\Exception\NotFoundException;
 use Kirby\Exception\PermissionException;
-use Kirby\Plugin\Tests\TestCase;
+use GrommasDietz\Areas\Tests\TestCase;
 
 final class BlueprintAreasTest extends TestCase
 {

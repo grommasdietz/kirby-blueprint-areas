@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Kirby\Plugin\Tests;
+namespace GrommasDietz\Areas\Tests;
 
 use Kirby\Cms\App;
-use Kirby\Plugin\Tests\Support\TestEnvironment;
+use GrommasDietz\Areas\Tests\Support\TestEnvironment;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 
 /**
@@ -29,15 +29,13 @@ abstract class TestCase extends BaseTestCase
 
     protected function tearDown(): void
     {
-        if (isset($this->kirby) && method_exists($this->kirby, 'impersonate')) {
+        if (isset($this->kirby)) {
             $this->kirby->impersonate(null);
         }
 
         TestEnvironment::restoreHandlers();
 
-        if (method_exists(App::class, 'destroy')) {
-            App::destroy();
-        }
+        App::destroy();
 
         parent::tearDown();
     }

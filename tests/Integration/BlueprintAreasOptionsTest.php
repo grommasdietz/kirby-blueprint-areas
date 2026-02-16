@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Kirby\Plugin\Tests\Integration;
+namespace GrommasDietz\Areas\Tests\Integration;
 
 use GrommasDietz\Areas\BlueprintAreas;
-use Kirby\Plugin\Tests\TestCase;
+use GrommasDietz\Areas\Tests\TestCase;
 
 final class BlueprintAreasOptionsTest extends TestCase
 {
