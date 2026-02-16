@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Kirby\Plugin\Tests\Support;
+namespace GrommasDietz\Areas\Tests\Support;
 
 use Kirby\Cms\App;
 use Kirby\Exception\DuplicateException;
@@ -40,9 +40,7 @@ final class TestEnvironment
 
         if (is_file($envFile) && class_exists($dotenvClass)) {
             $dotenv = \call_user_func([$dotenvClass, 'createMutable'], $paths['playground'], '.env');
-            if (is_object($dotenv)) {
-                \call_user_func([$dotenv, 'safeLoad']);
-            }
+            \call_user_func([$dotenv, 'safeLoad']);
         }
 
         static::prepareContent($paths['playground'] . '/content');
@@ -213,9 +211,7 @@ final class TestEnvironment
             return;
         }
 
-        if (method_exists($app, 'impersonate')) {
-            $app->impersonate('kirby');
-        }
+        $app->impersonate('kirby');
 
         $app->users()->create([
             'email' => 'admin@kirby-blueprint-areas.test',
@@ -225,9 +221,7 @@ final class TestEnvironment
             'language' => 'en',
         ]);
 
-        if (method_exists($app, 'impersonate')) {
-            $app->impersonate(null);
-        }
+        $app->impersonate(null);
     }
 
     public static function restoreHandlers(): void
@@ -259,8 +253,6 @@ final class TestEnvironment
 
     private static function destroyApp(): void
     {
-        if (method_exists(App::class, 'destroy')) {
-            App::destroy();
-        }
+        App::destroy();
     }
 }

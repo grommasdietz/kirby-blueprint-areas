@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Kirby\Plugin\Tests\Integration;
+namespace GrommasDietz\Areas\Tests\Integration;
 
-use Kirby\Plugin\Tests\TestCase;
+use GrommasDietz\Areas\Tests\TestCase;
 
 final class PlaygroundTest extends TestCase
 {
