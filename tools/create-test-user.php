@@ -39,7 +39,7 @@ if (!class_exists('Kirby\\Filesystem\\Dir')) {
 
 require __DIR__ . '/../tests/Support/TestEnvironment.php';
 
-use Kirby\Plugin\Tests\Support\TestEnvironment;
+use GrommasDietz\Areas\Tests\Support\TestEnvironment;
 
 $options = getopt(
     '',
