@@ -30,14 +30,6 @@
         </ignoreFiles>
     </projectFiles>
 
-    <globals>
-        <!-- Kirby template globals -->
-        <var name="kirby" type="\Kirby\Cms\App" />
-        <var name="site" type="\Kirby\Cms\Site" />
-        <var name="page" type="\Kirby\Cms\Page" />
-        <var name="pages" type="\Kirby\Cms\Pages" />
-    </globals>
-
     <issueHandlers>
         <!-- Don't warn about "$this in a non-class context" in config overrides -->
         <InvalidScope>

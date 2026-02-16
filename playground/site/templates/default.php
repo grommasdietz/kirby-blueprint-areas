@@ -1,3 +1,9 @@
+<?php
+
+/** @var Kirby\Cms\Page $page */
+/** @var Kirby\Cms\Site $site */
+?>
+
 <!doctype html>
 <html lang="en">
 
