@@ -1,3 +1,18 @@
+# [2.0.0](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v1.0.3...v2.0.0) (2026-02-16)
+
+
+* refactor!: rename test support namespaces ([34c0b20](https://github.com/grommasdietz/kirby-blueprint-areas/commit/34c0b2026f8ee199cd914eaf4e4487fa427dcabc))
+
+
+### Bug Fixes
+
+* **test:** use renamed test environment namespace ([847f1b8](https://github.com/grommasdietz/kirby-blueprint-areas/commit/847f1b8adea40b300892f40d4208bbc415c2b55b))
+
+
+### BREAKING CHANGES
+
+* test support classes moved from Kirby\Plugin\Tests\* to GrommasDietz\Areas\Tests\*.
+
 ## [1.0.3](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v1.0.2...v1.0.3) (2026-02-05)
 
 
