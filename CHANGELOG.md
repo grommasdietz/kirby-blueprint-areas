@@ -1,3 +1,10 @@
+## [1.0.4](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v1.0.3...v1.0.4) (2026-02-25)
+
+
+### Bug Fixes
+
+* **test:** use renamed test environment namespace ([eb32b0e](https://github.com/grommasdietz/kirby-blueprint-areas/commit/eb32b0e0881c58f38e932b2c5e91677a76a67880))
+
 ## [1.0.3](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v1.0.2...v1.0.3) (2026-02-05)
 
 
