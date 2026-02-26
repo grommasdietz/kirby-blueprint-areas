@@ -10,7 +10,7 @@ importers:
     devDependencies:
       '@commitlint/cli':
         specifier: ^20.4.2
-        version: 20.4.2(@types/node@25.3.0)(typescript@5.9.3)
+        version: 20.4.2(@types/node@25.3.1)(typescript@5.9.3)
       '@commitlint/config-conventional':
         specifier: ^20.4.2
         version: 20.4.2
@@ -39,8 +39,8 @@ importers:
         specifier: ^14.1.0
         version: 14.1.0(semantic-release@25.0.3(typescript@5.9.3))
       '@types/node':
-        specifier: ^25.3.0
-        version: 25.3.0
+        specifier: ^25.3.1
+        version: 25.3.1
       '@typescript-eslint/eslint-plugin':
         specifier: ^8.56.1
         version: 8.56.1(@typescript-eslint/parser@8.56.1(eslint@10.0.2(jiti@2.6.1))(typescript@5.9.3))(eslint@10.0.2(jiti@2.6.1))(typescript@5.9.3)
@@ -48,8 +48,8 @@ importers:
         specifier: ^8.56.1
         version: 8.56.1(eslint@10.0.2(jiti@2.6.1))(typescript@5.9.3)
       autoprefixer:
-        specifier: ^10.4.24
-        version: 10.4.24(postcss@8.5.6)
+        specifier: ^10.4.27
+        version: 10.4.27(postcss@8.5.6)
       eslint:
         specifier: ^10.0.2
         version: 10.0.2(jiti@2.6.1)
@@ -61,7 +61,7 @@ importers:
         version: 9.1.7
       kirbyup:
         specifier: ^3.4.1
-        version: 3.4.1(@types/node@25.3.0)(jiti@2.6.1)(rollup@4.59.0)
+        version: 3.4.1(@types/node@25.3.1)(jiti@2.6.1)(rollup@4.59.0)
       license-checker:
         specifier: ^25.0.1
         version: 25.0.1
@@ -885,8 +885,8 @@ packages:
   '@types/ms@2.1.0':
     resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
 
-  '@types/node@25.3.0':
-    resolution: {integrity: sha512-4K3bqJpXpqfg2XKGK9bpDTc6xO/xoUP/RBWS7AtRMug6zZFaRekiLzjVtAoZMquxoAbzBvy5nxQ7veS5eYzf8A==}
+  '@types/node@25.3.1':
+    resolution: {integrity: sha512-hj9YIJimBCipHVfHKRMnvmHg+wfhKc0o4mTtXh9pKBjC8TLJzz0nzGmLi5UJsYAUgSvXFHgb0V2oY10DUFtImw==}
 
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
@@ -1091,8 +1091,8 @@ packages:
   asap@2.0.6:
     resolution: {integrity: sha512-BSHWgDSAiKs50o2Re8ppvp3seVHXSRM44cdSsT9FfNEUUZLOGWVCsiWaRPWM1Znn+mqZ1OfVZ3z3DWEzSp7hRA==}
 
-  autoprefixer@10.4.24:
-    resolution: {integrity: sha512-uHZg7N9ULTVbutaIsDRoUkoS8/h3bdsmVJYZ5l3wv8Cp/6UIIoRDm90hZ+BwxUj/hGBEzLxdHNSKuFpn8WOyZw==}
+  autoprefixer@10.4.27:
+    resolution: {integrity: sha512-NP9APE+tO+LuJGn7/9+cohklunJsXWiaWEfV3si4Gi/XHDwVNgkwr1J3RQYFIvPy76GmJ9/bW8vyoU1LcxwKHA==}
     engines: {node: ^10 || ^12 || >=14}
     hasBin: true
     peerDependencies:
@@ -2220,8 +2220,8 @@ packages:
     resolution: {integrity: sha512-9qny7Z9DsQU8Ou39ERsPU4OZQlSTP47ShQzuKZ6PRXpYLtIFgl/DEBYEXKlvcEa+9tHVcK8CF81Y2V72qaZhWA==}
     engines: {node: '>=18'}
 
-  npm@11.10.1:
-    resolution: {integrity: sha512-woavuY2OgDFQ1K/tB9QHsUuW989nKfvsKTN/h5qGyS+3+BhvXN/DA2TNzx569JaFfTqrET5bEQNHwVhFk+U1gg==}
+  npm@11.11.0:
+    resolution: {integrity: sha512-82gRxKrh/eY5UnNorkTFcdBQAGpgjWehkfGVqAGlJjejEtJZGGJUqjo3mbBTNbc5BTnPKGVtGPBZGhElujX5cw==}
     engines: {node: ^20.17.0 || >=22.9.0}
     hasBin: true
     bundledDependencies:
@@ -3245,11 +3245,11 @@ snapshots:
   '@colors/colors@1.5.0':
     optional: true
 
-  '@commitlint/cli@20.4.2(@types/node@25.3.0)(typescript@5.9.3)':
+  '@commitlint/cli@20.4.2(@types/node@25.3.1)(typescript@5.9.3)':
     dependencies:
       '@commitlint/format': 20.4.0
       '@commitlint/lint': 20.4.2
-      '@commitlint/load': 20.4.0(@types/node@25.3.0)(typescript@5.9.3)
+      '@commitlint/load': 20.4.0(@types/node@25.3.1)(typescript@5.9.3)
       '@commitlint/read': 20.4.0
       '@commitlint/types': 20.4.0
       tinyexec: 1.0.2
@@ -3296,14 +3296,14 @@ snapshots:
       '@commitlint/rules': 20.4.2
       '@commitlint/types': 20.4.0
 
-  '@commitlint/load@20.4.0(@types/node@25.3.0)(typescript@5.9.3)':
+  '@commitlint/load@20.4.0(@types/node@25.3.1)(typescript@5.9.3)':
     dependencies:
       '@commitlint/config-validator': 20.4.0
       '@commitlint/execute-rule': 20.0.0
       '@commitlint/resolve-extends': 20.4.0
       '@commitlint/types': 20.4.0
       cosmiconfig: 9.0.0(typescript@5.9.3)
-      cosmiconfig-typescript-loader: 6.2.0(@types/node@25.3.0)(cosmiconfig@9.0.0(typescript@5.9.3))(typescript@5.9.3)
+      cosmiconfig-typescript-loader: 6.2.0(@types/node@25.3.1)(cosmiconfig@9.0.0(typescript@5.9.3))(typescript@5.9.3)
       is-plain-obj: 4.1.0
       lodash.mergewith: 4.6.2
       picocolors: 1.1.1
@@ -3802,7 +3802,7 @@ snapshots:
       lodash-es: 4.17.23
       nerf-dart: 1.0.0
       normalize-url: 8.1.1
-      npm: 11.10.1
+      npm: 11.11.0
       rc: 1.2.8
       read-pkg: 10.1.0
       registry-auth-token: 5.1.1
@@ -3844,7 +3844,7 @@ snapshots:
 
   '@types/ms@2.1.0': {}
 
-  '@types/node@25.3.0':
+  '@types/node@25.3.1':
     dependencies:
       undici-types: 7.18.2
 
@@ -3943,22 +3943,22 @@ snapshots:
       '@typescript-eslint/types': 8.56.1
       eslint-visitor-keys: 5.0.1
 
-  '@vitejs/plugin-vue2-jsx@1.1.0(rollup@4.59.0)(vite@6.4.1(@types/node@25.3.0)(jiti@2.6.1)(sass@1.97.3))(vue@2.7.16)':
+  '@vitejs/plugin-vue2-jsx@1.1.0(rollup@4.59.0)(vite@6.4.1(@types/node@25.3.1)(jiti@2.6.1)(sass@1.97.3))(vue@2.7.16)':
     dependencies:
       '@babel/core': 7.29.0
       '@babel/plugin-syntax-import-meta': 7.10.4(@babel/core@7.29.0)
       '@babel/plugin-transform-typescript': 7.28.6(@babel/core@7.29.0)
       '@rollup/pluginutils': 5.3.0(rollup@4.59.0)
       '@vue/babel-preset-jsx': 1.4.0(@babel/core@7.29.0)(vue@2.7.16)
-      vite: 6.4.1(@types/node@25.3.0)(jiti@2.6.1)(sass@1.97.3)
+      vite: 6.4.1(@types/node@25.3.1)(jiti@2.6.1)(sass@1.97.3)
       vue: 2.7.16
     transitivePeerDependencies:
       - rollup
       - supports-color
 
-  '@vitejs/plugin-vue2@2.2.0(vite@6.4.1(@types/node@25.3.0)(jiti@2.6.1)(sass@1.97.3))(vue@2.7.16)':
+  '@vitejs/plugin-vue2@2.2.0(vite@6.4.1(@types/node@25.3.1)(jiti@2.6.1)(sass@1.97.3))(vue@2.7.16)':
     dependencies:
-      vite: 6.4.1(@types/node@25.3.0)(jiti@2.6.1)(sass@1.97.3)
+      vite: 6.4.1(@types/node@25.3.1)(jiti@2.6.1)(sass@1.97.3)
       vue: 2.7.16
 
   '@vue/babel-helper-vue-jsx-merge-props@1.4.0': {}
@@ -4104,7 +4104,7 @@ snapshots:
 
   asap@2.0.6: {}
 
-  autoprefixer@10.4.24(postcss@8.5.6):
+  autoprefixer@10.4.27(postcss@8.5.6):
     dependencies:
       browserslist: 4.28.1
       caniuse-lite: 1.0.30001774
@@ -4296,9 +4296,9 @@ snapshots:
 
   core-util-is@1.0.3: {}
 
-  cosmiconfig-typescript-loader@6.2.0(@types/node@25.3.0)(cosmiconfig@9.0.0(typescript@5.9.3))(typescript@5.9.3):
+  cosmiconfig-typescript-loader@6.2.0(@types/node@25.3.1)(cosmiconfig@9.0.0(typescript@5.9.3))(typescript@5.9.3):
     dependencies:
-      '@types/node': 25.3.0
+      '@types/node': 25.3.1
       cosmiconfig: 9.0.0(typescript@5.9.3)
       jiti: 2.6.1
       typescript: 5.9.3
@@ -4893,10 +4893,10 @@ snapshots:
     dependencies:
       json-buffer: 3.0.1
 
-  kirbyup@3.4.1(@types/node@25.3.0)(jiti@2.6.1)(rollup@4.59.0):
+  kirbyup@3.4.1(@types/node@25.3.1)(jiti@2.6.1)(rollup@4.59.0):
     dependencies:
-      '@vitejs/plugin-vue2': 2.2.0(vite@6.4.1(@types/node@25.3.0)(jiti@2.6.1)(sass@1.97.3))(vue@2.7.16)
-      '@vitejs/plugin-vue2-jsx': 1.1.0(rollup@4.59.0)(vite@6.4.1(@types/node@25.3.0)(jiti@2.6.1)(sass@1.97.3))(vue@2.7.16)
+      '@vitejs/plugin-vue2': 2.2.0(vite@6.4.1(@types/node@25.3.1)(jiti@2.6.1)(sass@1.97.3))(vue@2.7.16)
+      '@vitejs/plugin-vue2-jsx': 1.1.0(rollup@4.59.0)(vite@6.4.1(@types/node@25.3.1)(jiti@2.6.1)(sass@1.97.3))(vue@2.7.16)
       '@vue/compiler-sfc': 2.7.16
       c12: 3.2.0
       cac: 6.7.14
@@ -4910,7 +4910,7 @@ snapshots:
       postcss-load-config: 6.0.1(jiti@2.6.1)(postcss@8.5.6)
       rollup-plugin-external-globals: 0.13.0(rollup@4.59.0)
       sass: 1.97.3
-      vite: 6.4.1(@types/node@25.3.0)(jiti@2.6.1)(sass@1.97.3)
+      vite: 6.4.1(@types/node@25.3.1)(jiti@2.6.1)(sass@1.97.3)
       vite-plugin-full-reload: 1.2.0
       vue: 2.7.16
     transitivePeerDependencies:
@@ -5349,7 +5349,7 @@ snapshots:
       path-key: 4.0.0
       unicorn-magic: 0.3.0
 
-  npm@11.10.1: {}
+  npm@11.11.0: {}
 
   nypm@0.6.5:
     dependencies:
@@ -5994,7 +5994,7 @@ snapshots:
       picocolors: 1.1.1
       picomatch: 2.3.1
 
-  vite@6.4.1(@types/node@25.3.0)(jiti@2.6.1)(sass@1.97.3):
+  vite@6.4.1(@types/node@25.3.1)(jiti@2.6.1)(sass@1.97.3):
     dependencies:
       esbuild: 0.25.12
       fdir: 6.5.0(picomatch@4.0.3)
@@ -6003,7 +6003,7 @@ snapshots:
       rollup: 4.59.0
       tinyglobby: 0.2.15
     optionalDependencies:
-      '@types/node': 25.3.0
+      '@types/node': 25.3.1
       fsevents: 2.3.3
       jiti: 2.6.1
       sass: 1.97.3
