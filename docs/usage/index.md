@@ -156,7 +156,7 @@ Configure via `site/config/config.php`:
 
 ```php
 return [
-  'grommasdietz.kirby-blueprint-areas' => [
+  'grommasdietz.blueprint-areas' => [
     'panel' => [
       // Show/hide all auto-registered menu entries
       'enabled'    => true,

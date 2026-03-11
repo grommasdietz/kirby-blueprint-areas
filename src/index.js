@@ -7,7 +7,8 @@ import GDFieldsSection from "./components/sections/GDFieldsSection.js";
 import GDPagesSection from "./components/sections/GDPagesSection.js";
 import { refreshBadges, setupMenuBadges } from "./utils/badges.js";
 
-const AREAS_API_PREFIX = "grommasdietz/kirby-blueprint-areas/blueprints/";
+const PLUGIN_NAME = "grommasdietz/blueprint-areas";
+const AREAS_API_PREFIX = `${PLUGIN_NAME}/blueprints/`;
 
 function isAreasApi(api) {
   return typeof api === "string" && api.startsWith(AREAS_API_PREFIX);
@@ -29,7 +30,7 @@ function areasApiEndpoint(api, method) {
 (function () {
   if (typeof window === "undefined" || !window.panel) return;
 
-  window.panel.plugin("grommasdietz/kirby-blueprint-areas", {
+  window.panel.plugin(PLUGIN_NAME, {
     components: {
       "k-areas-view": AreasView,
       "k-gd-fields-section": GDFieldsSection,

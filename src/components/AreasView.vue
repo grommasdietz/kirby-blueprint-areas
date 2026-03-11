@@ -285,7 +285,7 @@ export default {
     },
     sectionsParent() {
       if (!this.currentAreaId) return null;
-      return `grommasdietz/kirby-blueprint-areas/blueprints/${this.currentAreaId}`;
+      return `grommasdietz/blueprint-areas/blueprints/${this.currentAreaId}`;
     },
     menuId() {
       return (

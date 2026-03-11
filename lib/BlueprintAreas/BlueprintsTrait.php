@@ -17,16 +17,18 @@ trait BlueprintsTrait
     private static array $titleCache = [];
     private static ?array $reservedAreaIds = null;
     private const MENU_PREFIX = '';
+    private const PLUGIN_NAME = 'grommasdietz/blueprint-areas';
 
     public static function options(): array
     {
         $kirby = App::instance();
-        $defaults = $kirby->plugin('grommasdietz/kirby-blueprint-areas')?->options() ?? [];
-        $user = $kirby->option('grommasdietz.kirby-blueprint-areas', []);
+        $defaults = $kirby->plugin(self::PLUGIN_NAME)?->options() ?? [];
+        $user = $kirby->option('grommasdietz.blueprint-areas', []);
 
-        // Kirby merges plugin defaults automatically for $kirby->option(),
-        // but we want a single place to normalize.
-        return array_replace_recursive($defaults, $user);
+        return array_replace_recursive(
+            $defaults,
+            is_array($user) === true ? $user : [],
+        );
     }
 
     public static function list(): array
@@ -344,7 +346,7 @@ trait BlueprintsTrait
 
     private static function viewId(string $name): string
     {
-        return 'grommasdietz/kirby-blueprint-areas.' . $name;
+        return self::PLUGIN_NAME . '.' . $name;
     }
 
     private static function languageCode(): ?string

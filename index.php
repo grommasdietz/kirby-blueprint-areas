@@ -1,6 +1,6 @@
 <?php
 
-use Kirby\Cms\App as Kirby;
+use Kirby\Cms\App;
 use Kirby\Cms\Permissions;
 use Kirby\Exception\NotFoundException;
 use Kirby\Filesystem\F;
@@ -15,7 +15,7 @@ if (class_exists(Permissions::class)) {
     Permissions::$extendedActions['areas'] ??= [];
 }
 
-Kirby::plugin('grommasdietz/kirby-blueprint-areas', [
+App::plugin('grommasdietz/blueprint-areas', [
     'options' => [
         'panel' => [
             // Set to false to hide all auto-registered menu entries.
@@ -33,70 +33,70 @@ Kirby::plugin('grommasdietz/kirby-blueprint-areas', [
     'api' => [
         'routes' => [
             [
-                'pattern' => 'grommasdietz/kirby-blueprint-areas/blueprints',
+                'pattern' => 'grommasdietz/blueprint-areas/blueprints',
                 'auth'    => true,
                 'action'  => fn () => BlueprintAreas::list(),
             ],
             [
-                'pattern' => 'grommasdietz/kirby-blueprint-areas/blueprints/(:any)',
+                'pattern' => 'grommasdietz/blueprint-areas/blueprints/(:any)',
                 'auth'    => true,
                 'action'  => fn (string $name) => BlueprintAreas::view($name),
             ],
             [
-                'pattern' => 'grommasdietz/kirby-blueprint-areas/blueprints/(:any)',
+                'pattern' => 'grommasdietz/blueprint-areas/blueprints/(:any)',
                 'method'  => 'POST',
                 'auth'    => true,
                 'action'  => fn (string $name) => BlueprintAreas::save($name, BlueprintAreas::requestValues()),
             ],
             [
-                'pattern' => 'grommasdietz/kirby-blueprint-areas/blueprints/(:any)/save',
+                'pattern' => 'grommasdietz/blueprint-areas/blueprints/(:any)/save',
                 'method'  => 'POST',
                 'auth'    => true,
                 'action'  => fn (string $name) => BlueprintAreas::draft($name, BlueprintAreas::requestValues()),
             ],
             [
-                'pattern' => 'grommasdietz/kirby-blueprint-areas/blueprints/(:any)/publish',
+                'pattern' => 'grommasdietz/blueprint-areas/blueprints/(:any)/publish',
                 'method'  => 'POST',
                 'auth'    => true,
                 'action'  => fn (string $name) => BlueprintAreas::save($name, BlueprintAreas::requestValues()),
             ],
             [
-                'pattern' => 'grommasdietz/kirby-blueprint-areas/blueprints/(:any)/discard',
+                'pattern' => 'grommasdietz/blueprint-areas/blueprints/(:any)/discard',
                 'method'  => 'POST',
                 'auth'    => true,
                 'action'  => fn (string $name) => BlueprintAreas::discard($name),
             ],
             [
-                'pattern' => 'grommasdietz/kirby-blueprint-areas/blueprints/(:any)/changes/save',
+                'pattern' => 'grommasdietz/blueprint-areas/blueprints/(:any)/changes/save',
                 'method'  => 'POST',
                 'auth'    => true,
                 'action'  => fn (string $name) => BlueprintAreas::draft($name, BlueprintAreas::requestValues()),
             ],
             [
-                'pattern' => 'grommasdietz/kirby-blueprint-areas/blueprints/(:any)/changes/discard',
+                'pattern' => 'grommasdietz/blueprint-areas/blueprints/(:any)/changes/discard',
                 'method'  => 'POST',
                 'auth'    => true,
                 'action'  => fn (string $name) => BlueprintAreas::discard($name),
             ],
             [
-                'pattern' => 'grommasdietz/kirby-blueprint-areas/blueprints/(:any)/changes/publish',
+                'pattern' => 'grommasdietz/blueprint-areas/blueprints/(:any)/changes/publish',
                 'method'  => 'POST',
                 'auth'    => true,
                 'action'  => fn (string $name) => BlueprintAreas::save($name, BlueprintAreas::requestValues()),
             ],
             [
-                'pattern' => 'grommasdietz/kirby-blueprint-areas/changes',
+                'pattern' => 'grommasdietz/blueprint-areas/changes',
                 'auth'    => true,
                 'action'  => fn () => BlueprintAreas::changesSummary(),
             ],
             [
-                'pattern' => 'grommasdietz/kirby-blueprint-areas/blueprints/(:any)/sections/(:any)',
+                'pattern' => 'grommasdietz/blueprint-areas/blueprints/(:any)/sections/(:any)',
                 'method'  => 'GET',
                 'auth'    => true,
                 'action'  => fn (string $name, string $section) => BlueprintAreas::section($name, $section),
             ],
             [
-                'pattern' => 'grommasdietz/kirby-blueprint-areas/blueprints/(:any)/sections/(:any)/(:all?)',
+                'pattern' => 'grommasdietz/blueprint-areas/blueprints/(:any)/sections/(:any)/(:all?)',
                 'method'  => 'ALL',
                 'auth'    => true,
                 'action'  => function (string $name, string $section, string|null $path = null) {
@@ -104,7 +104,7 @@ Kirby::plugin('grommasdietz/kirby-blueprint-areas', [
                 },
             ],
             [
-                'pattern' => 'grommasdietz/kirby-blueprint-areas/blueprints/(:any)/fields/(:any)/(:all?)',
+                'pattern' => 'grommasdietz/blueprint-areas/blueprints/(:any)/fields/(:any)/(:all?)',
                 'method'  => 'ALL',
                 'auth'    => true,
                 'action'  => function (string $name, string $field, string|null $path = null) {
@@ -154,7 +154,7 @@ Kirby::plugin('grommasdietz/kirby-blueprint-areas', [
                                     'component' => 'k-areas-view',
                                     'props' => [
                                         'area' => $view,
-                                        'api' => 'grommasdietz/kirby-blueprint-areas/blueprints/' . $slug,
+                                        'api' => 'grommasdietz/blueprint-areas/blueprints/' . $slug,
                                         'lock' => BlueprintAreas::changesLockForArea($slug),
                                         'versions' => [
                                             'latest' => $view['baseline'] ?? [],

@@ -13,7 +13,7 @@ final class BlueprintAreasOptionsTest extends TestCase
     {
         $kirby = $this->bootKirby([
           'options' => [
-            'grommasdietz.kirby-blueprint-areas' => [
+            'grommasdietz.blueprint-areas' => [
               'panel' => [
                 'badgeCount' => true,
               ],
@@ -32,7 +32,7 @@ final class BlueprintAreasOptionsTest extends TestCase
         // With badgeCount enabled
         $kirby = $this->bootKirby([
           'options' => [
-            'grommasdietz.kirby-blueprint-areas' => [
+            'grommasdietz.blueprint-areas' => [
               'panel' => [
                 'badgeCount' => true,
               ],
@@ -79,7 +79,7 @@ YAML);
         try {
             $kirby = $this->bootKirby([
               'options' => [
-                'grommasdietz.kirby-blueprint-areas' => [
+                'grommasdietz.blueprint-areas' => [
                   'blueprints.root' => $root,
                 ],
               ],

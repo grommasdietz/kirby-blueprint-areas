@@ -415,11 +415,11 @@
     },
     {
       "name": "grommasdietz/kirby-blueprint-areas",
-      "version": "1.0.0",
+      "version": "1.0.4",
       "dist": {
         "type": "path",
         "url": "..",
-        "reference": "b0151bde6afe49c32bb03318d302d5b0cb9ad9bc"
+        "reference": "de65f01767b8c441f390fd03fcf06e1ddc93d487"
       },
       "require": {
         "getkirby/composer-installer": "^1.2",
@@ -446,7 +446,6 @@
           "/.gitmessage",
           "/.husky",
           "/.markdownlint.json",
-          "/.npmrc",
           "/.php-cs-fixer.cache",
           "/.php-cs-fixer.dist.php",
           "/.phpunit.cache",

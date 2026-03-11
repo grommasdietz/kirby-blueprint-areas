@@ -1,12 +1,12 @@
 # AGENTS.md
 
-Agent guide for the Kirby Blueprint Areas plugin (grommasdietz/kirby-blueprint-areas). Use this as the quick, canonical workflow overview; detailed rules live in the referenced docs.
+Agent guide for the Kirby Blueprint Areas plugin (grommasdietz/blueprint-areas). Use this as the quick, canonical workflow overview; detailed rules live in the referenced docs.
 
 ---
 
 ## Project overview
 
-- Plugin entry: `index.php` registers `Kirby::plugin('grommasdietz/kirby-blueprint-areas', ...)`.
+- Plugin entry: `index.php` registers `App::plugin('grommasdietz/blueprint-areas', ...)`.
 - PHP code lives under `lib` (namespace `GrommasDietz\\Areas\\`).
 - Panel source lives under `src` (including `src/components/**`) and is built with `kirbyup` into `index.js`/`index.css`.
 - Playground: `playground` is the self-contained Kirby site for integration and browser tests.

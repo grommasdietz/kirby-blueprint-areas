@@ -101,9 +101,7 @@ export function setupMenuBadges(panel) {
 export async function refreshBadges(panel) {
   setupMenuBadges(panel);
   try {
-    const data = await panel.api.get(
-      "grommasdietz/kirby-blueprint-areas/changes",
-    );
+    const data = await panel.api.get("grommasdietz/blueprint-areas/changes");
     const menu = panel?.menu;
     if (menu) {
       menu.__gdAreasBadgeCache = data;

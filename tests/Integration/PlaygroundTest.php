@@ -17,7 +17,7 @@ final class PlaygroundTest extends TestCase
 
     public function testPluginRegistersWithKirby(): void
     {
-        $this->assertNotNull($this->kirby->plugin('grommasdietz/kirby-blueprint-areas'));
+        $this->assertNotNull($this->kirby->plugin('grommasdietz/blueprint-areas'));
     }
 
     public function testHomePageCanBeLoaded(): void
