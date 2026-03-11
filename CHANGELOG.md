@@ -1,3 +1,10 @@
+## [1.0.5](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v1.0.4...v1.0.5) (2026-03-11)
+
+
+### Bug Fixes
+
+* **core:** align plugin handle with Kirby Directory slug ([7da51d3](https://github.com/grommasdietz/kirby-blueprint-areas/commit/7da51d32ca69b9fbfa44af750996f5264c853032))
+
 ## [1.0.4](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v1.0.3...v1.0.4) (2026-02-25)
 
 
