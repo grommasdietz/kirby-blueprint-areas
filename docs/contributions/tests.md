@@ -86,10 +86,11 @@ pnpm test:browser
 
 ### Configuration
 
-Playwright starts a PHP server on `127.0.0.1:8787` by default. Override with environment variables:
+Playwright starts a PHP server on a stable repo-specific localhost port by default. Override with environment variables:
 
 - `PLAYWRIGHT_BASE_URL` (full URL, e.g. `http://localhost:3000`)
 - `PLAYWRIGHT_WEB_PORT` (port only)
+- `PLAYWRIGHT_REUSE_SERVER=1` (reuse an already running server on the same URL)
 
 ### Panel login for browser tests
 

@@ -1,14 +1,22 @@
 import { defineConfig, devices } from "@playwright/test";
 
+function defaultWebPort() {
+  const repoName = process.cwd().split(/[/\\]/).pop() ?? "kirby-blueprint-areas";
+  let hash = 0;
+
+  for (const character of repoName) {
+    hash = (hash * 33 + character.charCodeAt(0)) % 1000;
+  }
+
+  return 8700 + hash;
+}
+
 const WEB_HOST = process.env.PLAYWRIGHT_WEB_HOST ?? "127.0.0.1";
-const WEB_PORT = Number(process.env.PLAYWRIGHT_WEB_PORT ?? "8787");
+const WEB_PORT = Number(process.env.PLAYWRIGHT_WEB_PORT ?? String(defaultWebPort()));
 const BASE_URL =
   process.env.PLAYWRIGHT_BASE_URL ?? `http://${WEB_HOST}:${WEB_PORT}`;
 
-const reuseExistingServer =
-  process.env.PLAYWRIGHT_REUSE_SERVER !== undefined
-    ? process.env.PLAYWRIGHT_REUSE_SERVER !== "0"
-    : !process.env.CI;
+const reuseExistingServer = process.env.PLAYWRIGHT_REUSE_SERVER === "1";
 
 export default defineConfig({
   testDir: "tests/browser",
