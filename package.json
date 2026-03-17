@@ -20,7 +20,7 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "@commitlint/cli": "^20.4.4",
+    "@commitlint/cli": "^20.5.0",
     "@commitlint/config-conventional": "^20.4.4",
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.58.2",
