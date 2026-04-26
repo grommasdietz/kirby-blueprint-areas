@@ -69,7 +69,8 @@
       "@test"
     ],
     "package:clean": "composer archive --dir=dist --format=zip",
-    "notices:generate": "php tools/generate-third-party-notices.php"
+    "notices:generate": "php tools/generate-third-party-notices.php",
+    "post-update-cmd": "@notices:generate"
   },
   "archive": {
     "exclude": [

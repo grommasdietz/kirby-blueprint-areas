@@ -6,4 +6,4 @@ Kirby Area uses following third-party dependencies:
 
 ## PHP dependencies (Composer)
 
-- getkirby/composer-installer (1.2.1) — MIT — https://getkirby.com
+- getkirby/composer-installer — MIT — https://getkirby.com
