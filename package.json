@@ -30,17 +30,17 @@
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^12.0.6",
     "@semantic-release/release-notes-generator": "^14.1.0",
-    "@types/node": "^25.5.2",
-    "@typescript-eslint/eslint-plugin": "^8.58.0",
-    "@typescript-eslint/parser": "^8.58.0",
-    "autoprefixer": "^10.4.27",
-    "eslint": "^10.1.0",
-    "globals": "^17.4.0",
+    "@types/node": "^25.6.0",
+    "@typescript-eslint/eslint-plugin": "^8.59.0",
+    "@typescript-eslint/parser": "^8.59.0",
+    "autoprefixer": "^10.5.0",
+    "eslint": "^10.2.1",
+    "globals": "^17.5.0",
     "husky": "^9.1.7",
     "kirbyup": "^3.4.1",
     "license-checker": "^25.0.1",
     "markdownlint-cli": "^0.48.0",
     "semantic-release": "^25.0.3",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.3"
   }
 }
