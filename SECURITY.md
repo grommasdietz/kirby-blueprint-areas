@@ -1,6 +1,6 @@
 # Security Policy
 
-We take the security of the Kirby Blueprint Areas seriously.
+We take the security of Kirby Blueprint Areas seriously.
 
 ## Supported Versions
 
