@@ -1,3 +1,10 @@
+## [1.0.6](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v1.0.5...v1.0.6) (2026-05-12)
+
+
+### Bug Fixes
+
+* **deps:** update config.platform to 8.3.16 and regenerate composer.lock ([58ec9d7](https://github.com/grommasdietz/kirby-blueprint-areas/commit/58ec9d7f891eb59ce30c5f40cd42b44382c48dc1))
+
 ## [1.0.5](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v1.0.4...v1.0.5) (2026-03-11)
 
 
