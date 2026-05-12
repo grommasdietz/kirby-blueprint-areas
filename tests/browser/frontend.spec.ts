@@ -8,8 +8,8 @@ test.describe("Frontend layout", () => {
 
     await page.goto(URLS.HOME);
 
-    await expect(app.siteTitle).toHaveText("Playground");
-    await expect(page).toHaveTitle("Playground");
+    await expect(app.siteTitle).toHaveText("Kirby Playground");
+    await expect(page).toHaveTitle("Kirby Playground");
   });
 
   test("page text blocks render Kirbytext markup", async ({ page }) => {

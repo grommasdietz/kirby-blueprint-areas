@@ -1,4 +1,4 @@
-Title: Playground
+Title: Kirby Playground
 
 ----
 

@@ -10,7 +10,7 @@ Intro:
 
 ----
 
-Text: Dieses Playground Beispiel dient hauptsächlich Tests.
+Text: Dieses Kirby Blueprint Areas Playground zeigt eigene Panel-Bereiche mit Tabs, rollenbasiertem Zugriff und Feldbereichen.
 
 ----
 
