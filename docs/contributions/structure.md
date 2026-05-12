@@ -25,7 +25,7 @@ The following live in the repository but are excluded from release archives:
 - `docs`, `CONTRIBUTING.md`, `STYLE_GUIDE.md`, `SECURITY.md` — Documentation and policies
 - Tooling config (ESLint, PostCSS, Psalm, PHPUnit, Playwright)
 
-Packaging rules live in `.gitattributes` and `composer.json` (`archive`).
+Packaging rules for release archives live in `.gitattributes`.
 
 ---
 
