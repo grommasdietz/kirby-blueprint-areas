@@ -1,3 +1,10 @@
+## [1.0.7](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v1.0.6...v1.0.7) (2026-05-12)
+
+
+### Bug Fixes
+
+* **playground:** align site title and home page content ([46a5607](https://github.com/grommasdietz/kirby-blueprint-areas/commit/46a560700d9caa864fd909df7072352d4a2f5b5e))
+
 ## [1.0.6](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v1.0.5...v1.0.6) (2026-05-12)
 
 
