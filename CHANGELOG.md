@@ -1,3 +1,10 @@
+## [1.0.8](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v1.0.7...v1.0.8) (2026-05-12)
+
+
+### Bug Fixes
+
+* **ci:** track plugins dir for psalm path resolution ([050dc86](https://github.com/grommasdietz/kirby-blueprint-areas/commit/050dc86085f6efde07c38874aed41e16a0d95e03))
+
 ## [1.0.7](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v1.0.6...v1.0.7) (2026-05-12)
 
 
