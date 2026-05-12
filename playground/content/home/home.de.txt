@@ -6,7 +6,7 @@ Subtitle: Subtitel
 
 ----
 
-Intro: 
+Intro:
 
 ----
 
@@ -14,4 +14,4 @@ Text: Dieses Kirby Blueprint Areas Playground zeigt eigene Panel-Bereiche mit Ta
 
 ----
 
-Tags: 
+Tags:

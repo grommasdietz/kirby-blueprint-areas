@@ -6,7 +6,7 @@ Subtitle: Subtitle
 
 ----
 
-Intro: 
+Intro:
 
 ----
 
@@ -14,7 +14,7 @@ Text: This Kirby Blueprint Areas Playground demonstrates custom Panel areas with
 
 ----
 
-Tags: 
+Tags:
 
 ----
 
