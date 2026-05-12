@@ -48,6 +48,7 @@ STYLE_GUIDE.md export-ignore
 # Source + tests (runtime artifacts are index.php, compiled index.{js,css}, and PHP in lib/)
 dist/ export-ignore
 docs/ export-ignore
+licenses/ export-ignore
 src/ export-ignore
 tests/ export-ignore
 tools/ export-ignore

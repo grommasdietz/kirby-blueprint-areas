@@ -1,13 +1,14 @@
 <?xml version="1.0"?>
 <!--
-    Psalm configuration for the Kirby plugin boilerplate.
+    Psalm configuration for the Kirby Blueprint Areas plugin.
 
     Important: Psalm errors if directories in issueHandlers don't exist.
     This boilerplate uses only global suppressions for common Kirby patterns,
     with directory-specific rules only for folders that always exist (config, templates).
 
     When you add plugin folders (snippets, models, blueprints, assets, routes, etc.),
-    add directory-specific suppressions as needed. See docs/structure.md for guidance.
+    add directory-specific suppressions as needed. See docs/contributions/structure.md
+    for guidance.
 -->
 <psalm
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
