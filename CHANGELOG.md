@@ -1,3 +1,10 @@
+## [1.0.9](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v1.0.8...v1.0.9) (2026-06-19)
+
+
+### Bug Fixes
+
+* avoid warming translations during area registration ([6f613c1](https://github.com/grommasdietz/kirby-blueprint-areas/commit/6f613c1e3b86cc390fd39a31953da4888c9237c2)), closes [#61](https://github.com/grommasdietz/kirby-blueprint-areas/issues/61)
+
 ## [1.0.8](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v1.0.7...v1.0.8) (2026-05-12)
 
 
