@@ -108,6 +108,64 @@ trait BlueprintsTrait
         return $items;
     }
 
+    public static function listForRegistration(): array
+    {
+        $root = static::blueprintsRoot();
+        if ($root === null || !is_dir($root)) {
+            return [];
+        }
+
+        $files = Dir::files($root);
+        $items = [];
+
+        foreach ($files as $file) {
+            $path = $root . '/' . $file;
+            $ext = pathinfo($file, PATHINFO_EXTENSION);
+            if (!in_array($ext, ['yml', 'yaml'], true)) {
+                continue;
+            }
+
+            $name = pathinfo($file, PATHINFO_FILENAME);
+            if (static::isReservedAreaId(static::menuId($name))) {
+                continue;
+            }
+
+            $bp = static::readBlueprint($path);
+            $items[] = [
+                'id'    => $name,
+                'title' => static::titleFromRawBlueprint($name, $bp),
+                'icon'  => static::resolveIcon($name, $bp),
+            ];
+        }
+
+        usort($items, static fn ($a, $b) => strcmp($a['title'], $b['title']));
+
+        return $items;
+    }
+
+    private static function titleFromRawBlueprint(string $name, array $bp): string
+    {
+        $title = $bp['title'] ?? null;
+
+        if (is_string($title) && $title !== '') {
+            return $title;
+        }
+
+        if (is_array($title)) {
+            $language = static::languageCode();
+            if (is_string($language) && isset($title[$language]) && is_string($title[$language])) {
+                return $title[$language];
+            }
+
+            $first = reset($title);
+            if (is_string($first) && $first !== '') {
+                return $first;
+            }
+        }
+
+        return Str::ucfirst(str_replace(['-', '_'], ' ', $name));
+    }
+
     public static function canAccess(string $name, bool $write = false): bool
     {
         if (static::currentUser() === null) {

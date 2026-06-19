@@ -123,7 +123,7 @@ App::plugin('grommasdietz/blueprint-areas', [
         $menuEnabled = ($panel['enabled'] ?? true) === true;
 
         $areas = [];
-        foreach (BlueprintAreas::listAll() as $item) {
+        foreach (BlueprintAreas::listForRegistration() as $item) {
             $slug = $item['id'];
             $icon = $item['icon'] ?? 'cog';
             $areaId = BlueprintAreas::menuId($slug);

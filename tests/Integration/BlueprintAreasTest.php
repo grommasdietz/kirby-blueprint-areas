@@ -7,6 +7,7 @@ namespace GrommasDietz\Areas\Tests\Integration;
 use GrommasDietz\Areas\BlueprintAreas;
 use Kirby\Exception\NotFoundException;
 use Kirby\Exception\PermissionException;
+use Kirby\Toolkit\I18n;
 use GrommasDietz\Areas\Tests\TestCase;
 
 final class BlueprintAreasTest extends TestCase
@@ -26,6 +27,15 @@ final class BlueprintAreasTest extends TestCase
         sort($ids);
 
         $this->assertSame(['buttons', 'empty', 'fields', 'home', 'translations'], $ids);
+    }
+
+    public function testRegistrationListDoesNotWarmTranslationCache(): void
+    {
+        I18n::$translations = [];
+
+        BlueprintAreas::listForRegistration();
+
+        $this->assertSame([], I18n::translations());
     }
 
     public function testListRespectsAccessRules(): void
