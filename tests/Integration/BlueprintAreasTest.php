@@ -38,6 +38,23 @@ final class BlueprintAreasTest extends TestCase
         $this->assertSame([], I18n::translations());
     }
 
+    public function testRegistrationListPreservesOtherPluginTranslations(): void
+    {
+        $this->kirby->extend([
+            'translations' => [
+                'en' => [
+                    'test.plugin.translation' => 'Other plugin translation',
+                ],
+            ],
+        ]);
+
+        I18n::$translations = [];
+
+        BlueprintAreas::listForRegistration();
+
+        $this->assertSame('Other plugin translation', I18n::translate('test.plugin.translation'));
+    }
+
     public function testListRespectsAccessRules(): void
     {
         $list = BlueprintAreas::list();
