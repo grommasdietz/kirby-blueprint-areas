@@ -53,6 +53,26 @@ trait AccessTrait
 
     private static function roleAreaPermission(User $user, string $areaId): ?bool
     {
+        $permissions = $user->role()?->permissions();
+        if ($permissions === null) {
+            return null;
+        }
+
+        $menuId = static::menuId($areaId);
+
+        if ($permissions->for('access', $menuId, true) === false) {
+            return false;
+        }
+
+        if ($permissions->for('areas', $menuId, true) === false) {
+            return false;
+        }
+
+        return static::legacyRoleAreaPermission($user, $menuId);
+    }
+
+    private static function legacyRoleAreaPermission(User $user, string $areaId): ?bool
+    {
         $roleId = $user->role()?->id();
         if (!is_string($roleId) || $roleId === '') {
             return null;
@@ -73,12 +93,7 @@ trait AccessTrait
             return null;
         }
 
-        $permissions = $data['permissions'] ?? null;
-        if (!is_array($permissions)) {
-            return null;
-        }
-
-        $areas = $permissions['areas'] ?? null;
+        $areas = $data['permissions']['areas'] ?? null;
         if (!is_array($areas)) {
             return null;
         }

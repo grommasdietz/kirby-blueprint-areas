@@ -11,10 +11,6 @@ F::loadClasses([
     'GrommasDietz\\Areas\\BlueprintAreas' => 'lib/BlueprintAreas.php',
 ], __DIR__);
 
-if (class_exists(Permissions::class)) {
-    Permissions::$extendedActions['areas'] ??= [];
-}
-
 App::plugin('grommasdietz/blueprint-areas', [
     'options' => [
         'panel' => [
@@ -121,9 +117,22 @@ App::plugin('grommasdietz/blueprint-areas', [
         $panel = $opts['panel'] ?? [];
 
         $menuEnabled = ($panel['enabled'] ?? true) === true;
+        $registered = BlueprintAreas::listForRegistration();
+
+        if (class_exists(Permissions::class)) {
+            $legacyPermissions = [];
+            foreach ($registered as $item) {
+                $legacyPermissions[BlueprintAreas::menuId($item['id'])] = true;
+            }
+
+            Permissions::$extendedActions['areas'] = [
+                ...(Permissions::$extendedActions['areas'] ?? []),
+                ...$legacyPermissions,
+            ];
+        }
 
         $areas = [];
-        foreach (BlueprintAreas::listForRegistration() as $item) {
+        foreach ($registered as $item) {
             $slug = $item['id'];
             $icon = $item['icon'] ?? 'cog';
             $areaId = BlueprintAreas::menuId($slug);

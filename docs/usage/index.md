@@ -97,16 +97,28 @@ options:
 > [!NOTE]
 > `access` targets role ids (e.g. `admin`, `editor`) and can only further restrict access.
 
-Or restrict via user role blueprints:
+Or restrict a registered Panel area via Kirby's native `access` permissions in user role blueprints:
 
 ```yml
 permissions:
-  areas:
+  access:
     home: false
 ```
 
 > [!NOTE]
-> Role permissions always win over area access rules.
+> Each area blueprint is registered as a Panel area, so Kirby automatically accepts `permissions.access.<area-id>` for it. No additional permission registration is required.
+
+Existing sites can still use the legacy `areas` permission bucket:
+
+```yml
+permissions:
+  areas:
+    "*": false
+    home: true
+```
+
+> [!NOTE]
+> The `areas` bucket is registered by this plugin for discovered area blueprints for backward compatibility. Prefer `access` for new projects because it is Kirby's native Panel area permission.
 
 > [!IMPORTANT]
 > Kirby Blueprint Areas still enforces the underlying model permissions (for example, pages must be updatable for writes).

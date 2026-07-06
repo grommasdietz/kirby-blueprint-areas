@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace GrommasDietz\Areas\Tests\Integration;
 
 use GrommasDietz\Areas\BlueprintAreas;
+use Kirby\Cms\Permissions;
 use Kirby\Exception\NotFoundException;
 use Kirby\Exception\PermissionException;
 use Kirby\Toolkit\I18n;
@@ -102,6 +103,53 @@ final class BlueprintAreasTest extends TestCase
             $this->kirby->impersonate('kirby');
             $editor->delete();
         }
+    }
+
+    public function testNativeAreaAccessPermissionBlocksArea(): void
+    {
+        $rolePath = $this->kirby->root('blueprints') . '/users/nativeaccess.yml';
+
+        file_put_contents($rolePath, <<<'YAML'
+title: Native Access
+
+permissions:
+  access:
+    fields: false
+YAML);
+
+        $user = $this->kirby->users()->create([
+            'email' => 'native-access-' . uniqid() . '@kirby-blueprint-areas.test',
+            'name' => 'Native Access User',
+            'role' => 'nativeaccess',
+            'password' => 'test-password',
+        ]);
+
+        try {
+            $this->kirby->impersonate($user->id());
+
+            $list = BlueprintAreas::list();
+            $ids = array_map(static fn (array $i): string => (string)$i['id'], $list);
+
+            $this->assertNotContains('fields', $ids);
+
+            $this->expectException(PermissionException::class);
+            BlueprintAreas::view('fields');
+        } finally {
+            $this->kirby->impersonate('kirby');
+            $user->delete();
+            @unlink($rolePath);
+        }
+    }
+
+    public function testLegacyAreaPermissionsAreRegisteredForDiscoveredBlueprints(): void
+    {
+        $this->assertSame(true, Permissions::$extendedActions['areas']['home'] ?? null);
+        $this->assertSame(true, Permissions::$extendedActions['areas']['fields'] ?? null);
+
+        $role = $this->kirby->roles()->find('editor');
+        $this->assertNotNull($role);
+        $this->assertSame(true, $role->permissions()->for('areas', 'fields', false));
+        $this->assertSame(false, $role->permissions()->for('areas', 'empty', true));
     }
 
     public function testAreaAccessCannotOverrideRoleDenial(): void
