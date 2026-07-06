@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v1.0.9...v1.1.0) (2026-07-06)
+
+
+### Features
+
+* **permissions:** support Kirby native area access permissions ([e074243](https://github.com/grommasdietz/kirby-blueprint-areas/commit/e074243ee5c1761f267e14d7c4fe9655f45da24f))
+
 ## [1.0.9](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v1.0.8...v1.0.9) (2026-06-19)
 
 
