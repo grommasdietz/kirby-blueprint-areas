@@ -385,16 +385,16 @@
     },
     {
       "name": "getkirby/cms",
-      "version": "5.5.0",
+      "version": "5.5.2",
       "source": {
         "type": "git",
         "url": "https://github.com/getkirby/kirby.git",
-        "reference": "79b15cfe22ba60707388c2b4eb8d508dfdba360e"
+        "reference": "81689c7f1471beb1fa9fb9c686f6f071f8671c3c"
       },
       "dist": {
         "type": "zip",
-        "url": "https://api.github.com/repos/getkirby/kirby/zipball/79b15cfe22ba60707388c2b4eb8d508dfdba360e",
-        "reference": "79b15cfe22ba60707388c2b4eb8d508dfdba360e",
+        "url": "https://api.github.com/repos/getkirby/kirby/zipball/81689c7f1471beb1fa9fb9c686f6f071f8671c3c",
+        "reference": "81689c7f1471beb1fa9fb9c686f6f071f8671c3c",
         "shasum": ""
       },
       "require": {
@@ -483,7 +483,7 @@
           "type": "custom"
         }
       ],
-      "time": "2026-07-02T11:01:55+00:00"
+      "time": "2026-07-15T07:57:44+00:00"
     },
     {
       "name": "getkirby/composer-installer",
@@ -534,11 +534,11 @@
     },
     {
       "name": "grommasdietz/kirby-blueprint-areas",
-      "version": "1.0.9",
+      "version": "1.1.0",
       "dist": {
         "type": "path",
         "url": "..",
-        "reference": "73681d3be0d32f8e85d3bbf5b35b245a68429718"
+        "reference": "3f0770074f73547142ee7fb4715b41570f2ec556"
       },
       "require": {
         "getkirby/composer-installer": "^1.2",
