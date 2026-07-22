@@ -99,10 +99,62 @@ jobs:
           php-version: "8.3"
           extensions: curl, dom, gd, json, mbstring, simplexml
           coverage: none
-          tools: composer:2.10.2
+          tools: composer:2.10.2, phpunit:12.5.30
 
-      - name: Select Kirby version
+      - name: Create isolated compatibility manifest
+        env:
+          KIRBY_VERSION: ${{ matrix.kirby-version }}
+        run: |
+          php <<'PHP'
+          <?php
+
+          declare(strict_types=1);
+
+          $version = getenv('KIRBY_VERSION');
+
+          if (is_string($version) === false || $version === '') {
+              throw new RuntimeException('Missing Kirby version');
+          }
+
+          $manifest = [
+              'name' => 'grommasdietz/kirby-blueprint-areas-compat',
+              'description' => 'Temporary Kirby compatibility test project',
+              'type' => 'project',
+              'require' => [
+                  'php' => '^8.2',
+                  'getkirby/cms' => $version,
+              ],
+              'autoload' => [
+                  'psr-4' => [
+                      'GrommasDietz\\Areas\\' => 'lib/',
+                  ],
+              ],
+              'config' => [
+                  'allow-plugins' => [
+                      'getkirby/composer-installer' => true,
+                  ],
+                  'platform' => [
+                      'php' => '8.3.16',
+                  ],
+                  'sort-packages' => true,
+              ],
+          ];
+
+          file_put_contents(
+              'composer.compat.json',
+              json_encode(
+                  $manifest,
+                  JSON_PRETTY_PRINT |
+                  JSON_UNESCAPED_SLASHES |
+                  JSON_THROW_ON_ERROR
+              ) . PHP_EOL
+          );
+          PHP
+
+      - name: Install target Kirby version
         shell: bash
+        env:
+          COMPOSER: composer.compat.json
         run: |
           extra_args=()
 
@@ -110,8 +162,7 @@ jobs:
             extra_args+=(--no-blocking)
           fi
 
-          composer update getkirby/cms \
-            --with "getkirby/cms:${{ matrix.kirby-version }}" \
+          composer update \
             --with-all-dependencies \
             --prefer-dist \
             --no-progress \
@@ -120,9 +171,17 @@ jobs:
             "${extra_args[@]}"
 
           composer show getkirby/cms
+          composer show symfony/polyfill-mbstring
 
       - name: Run authorization and API suites
-        run: composer test:unit && composer test:integration
+        run: |
+          phpunit \
+            --configuration phpunit.xml.dist \
+            --testsuite Unit
+
+          phpunit \
+            --configuration phpunit.xml.dist \
+            --testsuite Integration
 
   node:
     name: Node quality, assets and docs
