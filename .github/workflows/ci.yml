@@ -76,24 +76,44 @@ jobs:
         include:
           - kirby-version: "5.2.*"
             label: minimum-supported
+            allow-blocked: true
           - kirby-version: "5.4.*"
             label: site-access-boundary
+            allow-blocked: true
           - kirby-version: "5.5.2"
             label: locked
+            allow-blocked: false
           - kirby-version: "^5.2"
             label: latest-compatible
+            allow-blocked: false
+
     steps:
       - uses: actions/checkout@v6
+
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.3"
           extensions: curl, dom, gd, json, mbstring, simplexml
           coverage: none
           tools: composer:v2
+
       - name: Select Kirby version
+        env:
+          COMPOSER_NO_BLOCKING: >-
+            ${{ matrix.allow-blocked && '1' || '0' }}
         run: |
-          composer require --dev getkirby/cms:"${{ matrix.kirby-version }}" --no-update --no-interaction
-          composer update getkirby/cms --with-all-dependencies --prefer-dist --no-progress --no-interaction
+          composer require \
+            --dev \
+            getkirby/cms:"${{ matrix.kirby-version }}" \
+            --no-update \
+            --no-interaction
+          composer update \
+            getkirby/cms \
+            --with-all-dependencies \
+            --prefer-dist \
+            --no-progress \
+            --no-interaction \
+            --no-scripts
       - name: Run authorization and API suites
         run: composer test:unit && composer test:integration
 
