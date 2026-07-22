@@ -70,19 +70,23 @@ jobs:
   kirby:
     name: Kirby ${{ matrix.kirby-version }} authorization matrix
     runs-on: ubuntu-latest
+
     strategy:
       fail-fast: false
       matrix:
         include:
-          - kirby-version: "5.2.*"
+          - kirby-version: "5.2.3"
             label: minimum-supported
             allow-blocked: true
+
           - kirby-version: "5.4.*"
             label: site-access-boundary
             allow-blocked: true
+
           - kirby-version: "5.5.2"
             label: locked
             allow-blocked: false
+
           - kirby-version: "^5.2"
             label: latest-compatible
             allow-blocked: false
@@ -95,25 +99,28 @@ jobs:
           php-version: "8.3"
           extensions: curl, dom, gd, json, mbstring, simplexml
           coverage: none
-          tools: composer:v2
+          tools: composer:2.10.2
 
       - name: Select Kirby version
-        env:
-          COMPOSER_NO_BLOCKING: >-
-            ${{ matrix.allow-blocked && '1' || '0' }}
+        shell: bash
         run: |
-          composer require \
-            --dev \
-            getkirby/cms:"${{ matrix.kirby-version }}" \
-            --no-update \
-            --no-interaction
-          composer update \
-            getkirby/cms \
+          extra_args=()
+
+          if [[ "${{ matrix.allow-blocked }}" == "true" ]]; then
+            extra_args+=(--no-blocking)
+          fi
+
+          composer update getkirby/cms \
+            --with "getkirby/cms:${{ matrix.kirby-version }}" \
             --with-all-dependencies \
             --prefer-dist \
             --no-progress \
             --no-interaction \
-            --no-scripts
+            --no-scripts \
+            "${extra_args[@]}"
+
+          composer show getkirby/cms
+
       - name: Run authorization and API suites
         run: composer test:unit && composer test:integration
 
