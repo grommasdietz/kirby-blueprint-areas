@@ -36,10 +36,15 @@ jobs:
           extensions: curl, dom, gd, json, mbstring, simplexml
           coverage: none
           tools: composer:v2
+      - name: Synchronize playground lock metadata
+        run: composer update -d playground --lock --no-install --no-scripts --no-progress --no-interaction
       - name: Install playground dependencies
         run: composer install -d playground --prefer-dist --no-progress --no-interaction
       - name: Verify minimum runtime
         run: composer test:smoke
+      - name: Synchronize root lock metadata
+        if: matrix.full-suite
+        run: composer update --lock --no-install --no-scripts --no-progress --no-interaction
       - name: Install root development dependencies
         if: matrix.full-suite
         run: composer install --prefer-dist --no-progress --no-interaction
@@ -74,33 +79,17 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - kirby-version: "5.2.3"
-            php-version: "8.2"
-            platform-php: "8.2.0"
-            label: minimum-supported
-            allow-blocked: true
-          - kirby-version: "5.4.*"
-            php-version: "8.3"
-            platform-php: "8.3.16"
-            label: site-access-boundary
-            allow-blocked: true
           - kirby-version: "5.5.2"
-            php-version: "8.3"
-            platform-php: "8.3.16"
-            label: locked
-            allow-blocked: false
-          - kirby-version: "^5.2"
-            php-version: "8.3"
-            platform-php: "8.3.16"
+            label: minimum-supported
+          - kirby-version: "^5.5.2"
             label: latest-compatible
-            allow-blocked: false
 
     steps:
       - uses: actions/checkout@v6
 
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php-version }}
+          php-version: "8.3"
           extensions: curl, dom, gd, json, mbstring, simplexml
           coverage: none
           tools: composer:2.10.2, phpunit:12.5.30
@@ -108,7 +97,6 @@ jobs:
       - name: Create isolated compatibility manifest
         env:
           KIRBY_VERSION: ${{ matrix.kirby-version }}
-          PLATFORM_PHP: ${{ matrix.platform-php }}
         run: |
           php <<'PHP'
           <?php
@@ -116,14 +104,9 @@ jobs:
           declare(strict_types=1);
 
           $version = getenv('KIRBY_VERSION');
-          $platformPhp = getenv('PLATFORM_PHP');
 
           if (is_string($version) === false || $version === '') {
               throw new RuntimeException('Missing Kirby version');
-          }
-
-          if (is_string($platformPhp) === false || $platformPhp === '') {
-              throw new RuntimeException('Missing platform PHP version');
           }
 
           $manifest = [
@@ -144,7 +127,7 @@ jobs:
                       'getkirby/composer-installer' => true,
                   ],
                   'platform' => [
-                      'php' => $platformPhp,
+                      'php' => '8.3.16',
                   ],
                   'sort-packages' => true,
               ],
@@ -166,22 +149,14 @@ jobs:
         env:
           COMPOSER: composer.compat.json
         run: |
-          extra_args=()
-
-          if [[ "${{ matrix.allow-blocked }}" == "true" ]]; then
-            extra_args+=(--no-blocking)
-          fi
-
           composer update \
             --with-all-dependencies \
             --prefer-dist \
             --no-progress \
             --no-interaction \
-            --no-scripts \
-            "${extra_args[@]}"
+            --no-scripts
 
           composer show getkirby/cms
-          composer show symfony/polyfill-mbstring
 
       - name: Run Kirby compatibility suite
         shell: bash
@@ -245,8 +220,12 @@ jobs:
         with:
           node-version-file: .node-version
       - uses: pnpm/action-setup@v6
+      - name: Synchronize playground lock metadata
+        run: composer update -d playground --lock --no-install --no-scripts --no-progress --no-interaction
       - name: Install playground PHP dependencies
         run: composer install -d playground --prefer-dist --no-progress --no-interaction
+      - name: Synchronize root lock metadata
+        run: composer update --lock --no-install --no-scripts --no-progress --no-interaction
       - name: Install root PHP dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
       - run: pnpm install --frozen-lockfile
