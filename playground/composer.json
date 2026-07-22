@@ -9,7 +9,7 @@
   "require": {
     "php": "^8.2",
     "grommasdietz/kirby-blueprint-areas": "*@dev",
-    "getkirby/cms": "^5.2"
+    "getkirby/cms": "^5.5.2"
   },
   "config": {
     "platform": {
