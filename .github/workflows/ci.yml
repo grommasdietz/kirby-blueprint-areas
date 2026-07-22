@@ -68,26 +68,30 @@ jobs:
         run: composer test:unit && composer test:integration
 
   kirby:
-    name: Kirby ${{ matrix.kirby-version }} authorization matrix
+    name: Kirby ${{ matrix.kirby-version }} compatibility
     runs-on: ubuntu-latest
-
     strategy:
       fail-fast: false
       matrix:
         include:
           - kirby-version: "5.2.3"
+            php-version: "8.2"
+            platform-php: "8.2.0"
             label: minimum-supported
             allow-blocked: true
-
           - kirby-version: "5.4.*"
+            php-version: "8.3"
+            platform-php: "8.3.16"
             label: site-access-boundary
             allow-blocked: true
-
           - kirby-version: "5.5.2"
+            php-version: "8.3"
+            platform-php: "8.3.16"
             label: locked
             allow-blocked: false
-
           - kirby-version: "^5.2"
+            php-version: "8.3"
+            platform-php: "8.3.16"
             label: latest-compatible
             allow-blocked: false
 
@@ -96,7 +100,7 @@ jobs:
 
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.3"
+          php-version: ${{ matrix.php-version }}
           extensions: curl, dom, gd, json, mbstring, simplexml
           coverage: none
           tools: composer:2.10.2, phpunit:12.5.30
@@ -104,6 +108,7 @@ jobs:
       - name: Create isolated compatibility manifest
         env:
           KIRBY_VERSION: ${{ matrix.kirby-version }}
+          PLATFORM_PHP: ${{ matrix.platform-php }}
         run: |
           php <<'PHP'
           <?php
@@ -111,9 +116,14 @@ jobs:
           declare(strict_types=1);
 
           $version = getenv('KIRBY_VERSION');
+          $platformPhp = getenv('PLATFORM_PHP');
 
           if (is_string($version) === false || $version === '') {
               throw new RuntimeException('Missing Kirby version');
+          }
+
+          if (is_string($platformPhp) === false || $platformPhp === '') {
+              throw new RuntimeException('Missing platform PHP version');
           }
 
           $manifest = [
@@ -134,7 +144,7 @@ jobs:
                       'getkirby/composer-installer' => true,
                   ],
                   'platform' => [
-                      'php' => '8.3.16',
+                      'php' => $platformPhp,
                   ],
                   'sort-packages' => true,
               ],
@@ -173,15 +183,28 @@ jobs:
           composer show getkirby/cms
           composer show symfony/polyfill-mbstring
 
-      - name: Run authorization and API suites
+      - name: Run Kirby compatibility suite
+        shell: bash
         run: |
-          phpunit \
-            --configuration phpunit.xml.dist \
-            --testsuite Unit
+          set -o pipefail
+          mkdir -p build/compatibility
 
           phpunit \
-            --configuration phpunit.xml.dist \
-            --testsuite Integration
+            --configuration phpunit.compat.xml.dist \
+            --testsuite "Kirby compatibility" \
+            --display-all-issues \
+            --testdox \
+            --log-junit "build/compatibility/kirby-${{ matrix.label }}.xml" \
+            2>&1 | tee "build/compatibility/kirby-${{ matrix.label }}.log"
+
+      - name: Upload compatibility diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: kirby-${{ matrix.label }}-compatibility
+          path: build/compatibility/
+          if-no-files-found: error
+          retention-days: 7
 
   node:
     name: Node quality, assets and docs
