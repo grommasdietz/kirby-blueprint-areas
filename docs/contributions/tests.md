@@ -64,15 +64,15 @@ cases without changing the production plugin lifecycle.
 
 ### Kirby compatibility matrix
 
-CI runs the PHPUnit suites against these Kirby constraints on PHP 8.3:
+CI runs the focused compatibility contract against these Kirby constraints:
 
-- `5.2.*`, the minimum supported release line;
-- `5.4.*`, where native Site access behavior changed;
+- `5.5.2`, the minimum supported release;
 - the repository's locked Kirby version;
-- the latest version allowed by `^5.2`.
+- the latest version allowed by `^5.5.2`.
 
-Keep version-specific branches covered by this matrix. Do not rely only on the
-locked playground dependency when introducing compatibility code.
+Kirby versions before 5.5.2 are unsupported. The complete PHPUnit suite still
+runs against the repository lock; the compatibility matrix targets the stable
+authorization, API, changes and proxy contracts across the supported range.
 
 ## Panel and browser checks
 
