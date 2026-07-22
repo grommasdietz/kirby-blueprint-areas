@@ -40,9 +40,12 @@ function areasApiEndpoint(api, method) {
       const panel = app?.$panel;
       if (!panel) return;
 
-      // Kirby Panel internal: redirect content requests for area APIs away
-      // from core /changes/* routes (see Kirby panel/content.js).
-      if (!panel.__gdAreasContentPatched && panel.content?.request) {
+      // Kirby Panel compatibility adapter: redirect only this plugin's content
+      // requests away from core /changes/* routes (see Kirby panel/content.js).
+      if (
+        !panel.__gdAreasContentPatched &&
+        typeof panel.content?.request === "function"
+      ) {
         panel.__gdAreasContentPatched = true;
         const originalRequest = panel.content.request.bind(panel.content);
 
@@ -67,7 +70,7 @@ function areasApiEndpoint(api, method) {
 
             return panel.api.post(
               areasApiEndpoint(api, method),
-              values,
+              { values },
               options,
             );
           }

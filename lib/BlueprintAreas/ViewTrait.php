@@ -21,17 +21,12 @@ trait ViewTrait
 {
     public static function view(string $name): array
     {
-        $file = static::blueprintFile($name);
-        if ($file === null) {
-            throw new NotFoundException('Blueprint not found');
-        }
-
-        $bp = static::readBlueprint($file);
-        $bp['name'] = $name;
-        $model = static::modelForArea($name, $bp);
-        static::requireAreaAccess($model, $bp, false);
-        $blueprint = static::blueprintForArea($name, $bp, $model);
-        $layout = static::layoutForBlueprint($blueprint);
+        $context = static::resolveAreaContext($name, self::AREA_OPERATION_READ);
+        $file = $context['file'];
+        $bp = $context['props'];
+        $model = $context['model'];
+        $blueprint = $context['blueprint'];
+        $layout = $context['layout'];
 
         $fields = static::collectFields($layout);
         $fieldNames = array_keys($fields);
@@ -57,78 +52,79 @@ trait ViewTrait
         $modelPath = static::modelApiPath($model);
 
         return [
-            'id'        => $name,
-            'title'     => $blueprint->title(),
-            'icon'      => static::resolveIcon($name, $bp, $blueprint),
-            'layout'    => $layout,
+            'id' => $name,
+            'title' => $blueprint->title(),
+            'icon' => static::resolveIcon($name, $bp, $blueprint),
+            'layout' => $layout,
             'fieldProps' => $fieldProps,
             'fieldSync' => $fieldSync,
-            'values'    => $currentValues,
-            'baseline'  => $baselineValues,
-            'buttons'   => static::viewButtons($blueprint, $model, static::viewId($name)),
-            'meta'      => array_merge(static::viewMeta($model), static::changesMeta($model), [
+            'values' => $currentValues,
+            'baseline' => $baselineValues,
+            'buttons' => static::viewButtons($blueprint, $model, static::viewId($name)),
+            'meta' => array_merge(static::viewMeta($model), static::changesMeta($model), [
                 'menuId' => static::menuId($name),
                 'blueprintPath' => static::blueprintDisplayPath($file),
                 'isEmpty' => static::blueprintIsEmpty($layout),
                 'hasChanges' => $hasChanges,
                 'modelPath' => $modelPath,
                 'menuBadgeCount' => static::menuBadgeCount(),
+                'canUpdate' => static::canUpdateModel($model),
             ]),
         ];
     }
 
     public static function save(string $name, array $values): array
     {
-        $file = static::blueprintFile($name);
-        if ($file === null) {
-            throw new NotFoundException('Blueprint not found');
+        $context = static::resolveAreaContext($name, self::AREA_OPERATION_UPDATE);
+        $model = $context['model'];
+        $layout = $context['layout'];
+        $values = static::filterValuesForLayout($layout, $values);
+
+        if ($values === []) {
+            return static::view($name);
         }
 
-        $bp = static::readBlueprint($file);
-        $bp['name'] = $name;
-        $model = static::modelForArea($name, $bp);
-        static::requireAreaAccess($model, $bp, true);
-        $blueprint = static::blueprintForArea($name, $bp, $model);
-        $layout = static::layoutForBlueprint($blueprint);
-        $values = static::filterValuesForLayout($layout, $values);
-        $form = static::formForBlueprint($layout, [], $model);
+        $fields = static::collectFields($layout);
+        $latestStored = static::valuesFromContent(
+            static::latestContent($model),
+            array_keys($fields)
+        );
 
-        // Apply submitted values (skips disabled fields)
-        $form = $form->submit($values);
+        // Normalize and validate against the area's current model values, but
+        // persist only keys that were actually submitted for this area request.
+        $form = static::formForBlueprint($layout, $latestStored, $model);
+        $form->submit($values, false);
         $form->validate();
 
         $stored = $form->toStoredValues();
-        $prefixed = static::storedValues($stored);
+        $updates = static::submittedStoredValues($stored, array_keys($values));
 
-        $language = static::languageCode();
-        $model = $model->update($prefixed, $language);
-        static::clearChangesForFields($model, $name, array_keys(static::collectFields($layout)));
+        if ($updates !== []) {
+            $model = $model->update(
+                static::storedValues($updates),
+                static::languageCode()
+            );
+        }
 
-        // Return updated view payload
+        // A partial API publish must not discard unrelated pending fields from
+        // the same area. The Panel submits the complete area and therefore still
+        // clears the complete area scope during its regular publish flow.
+        static::clearChangesForFields($model, $name, array_keys($values));
+
         return static::view($name);
     }
 
     public static function draft(string $name, array $values): array
     {
-        $file = static::blueprintFile($name);
-        if ($file === null) {
-            throw new NotFoundException('Blueprint not found');
-        }
-
-        $bp = static::readBlueprint($file);
-        $bp['name'] = $name;
-        $model = static::modelForArea($name, $bp);
-        static::requireAreaAccess($model, $bp, true);
-        $blueprint = static::blueprintForArea($name, $bp, $model);
-        $layout = static::layoutForBlueprint($blueprint);
+        $context = static::resolveAreaContext($name, self::AREA_OPERATION_UPDATE);
+        $model = $context['model'];
+        $layout = $context['layout'];
         $values = static::filterValuesForLayout($layout, $values);
         $fields = static::collectFields($layout);
         $fieldNames = array_keys($fields);
         $latestStored = static::valuesFromContent(static::latestContent($model), $fieldNames);
 
         // Build a baseline form so we can compare against normalized stored values.
-        // This avoids "technical" changes like writing empty values for fields
-        // that were previously missing from the content.
         $baselineForm = static::formForBlueprint($layout, $latestStored, $model);
         $baselineStored = $baselineForm->toStoredValues();
 
@@ -140,18 +136,13 @@ trait ViewTrait
 
         foreach (array_keys($values) as $fieldName) {
             $fieldName = Str::lower((string)$fieldName);
-            if (!isset($fields[$fieldName])) {
-                continue;
-            }
-
-            if (!array_key_exists($fieldName, $stored)) {
+            if (!isset($fields[$fieldName]) || !array_key_exists($fieldName, $stored)) {
                 continue;
             }
 
             $baselineValue = $baselineStored[$fieldName] ?? null;
             $currentValue = $stored[$fieldName];
 
-            // Compare strictly to avoid PHP's loose comparisons (e.g. null == 0).
             if (json_encode($baselineValue) === json_encode($currentValue)) {
                 $unchanged[] = $fieldName;
             } else {
@@ -164,28 +155,17 @@ trait ViewTrait
         }
 
         if (!empty($changed)) {
-            $prefixed = static::storedValues($changed);
-            static::updateChanges($model, $prefixed);
+            static::updateChanges($model, static::storedValues($changed));
         }
 
-        return [
-            'success' => true,
-        ];
+        return ['success' => true];
     }
 
     public static function discard(string $name): array
     {
-        $file = static::blueprintFile($name);
-        if ($file === null) {
-            throw new NotFoundException('Blueprint not found');
-        }
-
-        $bp = static::readBlueprint($file);
-        $bp['name'] = $name;
-        $model = static::modelForArea($name, $bp);
-        static::requireAreaAccess($model, $bp, true);
-        $blueprint = static::blueprintForArea($name, $bp, $model);
-        $layout = static::layoutForBlueprint($blueprint);
+        $context = static::resolveAreaContext($name, self::AREA_OPERATION_UPDATE);
+        $model = $context['model'];
+        $layout = $context['layout'];
         $fieldNames = array_keys(static::collectFields($layout));
         static::clearChangesForFields($model, $name, $fieldNames);
 
@@ -198,39 +178,108 @@ trait ViewTrait
         ?string $path,
         KirbyApi $api
     ): mixed {
-        $form = static::formForArea($name, true);
-        $field = $form->field(Str::lower($fieldName));
+        $context = static::resolveAreaContext($name, self::AREA_OPERATION_READ);
+        $form = static::formForAreaContext($context, true);
 
-        $fieldApi = $api->clone([
-            'data'   => [...$api->data(), 'field' => $field],
-            'routes' => $field->api(),
-        ]);
+        try {
+            $field = $form->field(Str::lower($fieldName));
+        } catch (NotFoundException $exception) {
+            throw new NotFoundException(
+                message: 'Field not found',
+                previous: $exception
+            );
+        }
 
-        return $fieldApi->call(
+        return static::callProxyApi(
+            $context,
+            $field->api(),
             $path,
-            $api->requestMethod() ?? 'GET',
-            $api->requestData()
+            $api,
+            'field',
+            $field
         );
     }
 
     public static function section(string $name, string $sectionName): array
     {
-        $file = static::blueprintFile($name);
-        if ($file === null) {
-            throw new NotFoundException('Blueprint not found');
-        }
-
-        $bp = static::readBlueprint($file);
-        $bp['name'] = $name;
-        $model = static::modelForArea($name, $bp);
-        static::requireAreaAccess($model, $bp, false);
-        $blueprint = static::blueprintForArea($name, $bp, $model);
-        $section = $blueprint->section($sectionName);
+        $context = static::resolveAreaContext($name, self::AREA_OPERATION_READ);
+        $section = $context['blueprint']->section($sectionName);
         if ($section === null) {
             throw new NotFoundException('Section not found');
         }
 
-        return $section->toResponse();
+        $response = $section->toResponse();
+
+        if (static::canUpdateModel($context['model']) === false) {
+            return static::readonlySectionResponse($response);
+        }
+
+        return $response;
+    }
+
+    /**
+     * Removes mutation controls from a section response for read-only areas.
+     * The API proxy still enforces update permission independently.
+     */
+    private static function readonlySectionResponse(array $response): array
+    {
+        if (is_array($response['fields'] ?? null)) {
+            foreach ($response['fields'] as &$field) {
+                if (is_array($field)) {
+                    $field['disabled'] = true;
+                }
+            }
+            unset($field);
+        }
+
+        if (is_array($response['options'] ?? null)) {
+            foreach ([
+                'add',
+                'batch',
+                'create',
+                'delete',
+                'drag',
+                'duplicate',
+                'move',
+                'replace',
+                'sortable',
+                'upload',
+            ] as $option) {
+                if (array_key_exists($option, $response['options'])) {
+                    $response['options'][$option] = false;
+                }
+            }
+        }
+
+        if (is_array($response['data'] ?? null)) {
+            foreach ($response['data'] as &$item) {
+                if (!is_array($item) || !is_array($item['permissions'] ?? null)) {
+                    continue;
+                }
+
+                foreach ([
+                    'changeName',
+                    'changeStatus',
+                    'changeTemplate',
+                    'changeTitle',
+                    'create',
+                    'delete',
+                    'duplicate',
+                    'move',
+                    'replace',
+                    'sort',
+                    'update',
+                    'upload',
+                ] as $permission) {
+                    if (array_key_exists($permission, $item['permissions'])) {
+                        $item['permissions'][$permission] = false;
+                    }
+                }
+            }
+            unset($item);
+        }
+
+        return $response;
     }
 
     public static function sectionApi(
@@ -239,31 +288,19 @@ trait ViewTrait
         ?string $path,
         KirbyApi $api
     ): mixed {
-        $file = static::blueprintFile($name);
-        if ($file === null) {
-            throw new NotFoundException('Blueprint not found');
-        }
-
-        $bp = static::readBlueprint($file);
-        $bp['name'] = $name;
-        $model = static::modelForArea($name, $bp);
-        static::requireAreaAccess($model, $bp, true);
-        $blueprint = static::blueprintForArea($name, $bp, $model);
-        $section = $blueprint->section($sectionName);
+        $context = static::resolveAreaContext($name, self::AREA_OPERATION_READ);
+        $section = $context['blueprint']->section($sectionName);
         if ($section === null) {
             throw new NotFoundException('Section not found');
         }
 
-        $routes = $section->api() ?? [];
-        $sectionApi = $api->clone([
-            'data'   => [...$api->data(), 'section' => $section],
-            'routes' => $routes,
-        ]);
-
-        return $sectionApi->call(
+        return static::callProxyApi(
+            $context,
+            $section->api() ?? [],
             $path,
-            $api->requestMethod() ?? 'GET',
-            $api->requestData()
+            $api,
+            'section',
+            $section
         );
     }
 
@@ -311,11 +348,6 @@ trait ViewTrait
 
         if ($buttons === false) {
             return [];
-        }
-
-        if (is_string($buttons)) {
-            $resolved = static::resolveButton($buttons, null, $model, $viewId);
-            return $resolved === null ? [] : [$resolved];
         }
 
         if (is_array($buttons)) {

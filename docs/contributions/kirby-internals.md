@@ -8,7 +8,9 @@ part of the public API, so check them when updating Kirby.
 ## Panel internals
 
 - `panel.content` manager: `updateLazy`, `discard`, `publish`, `env`, and
-  `request` are used/overridden to drive drafts and saving.
+  `request` are used to drive drafts and saving. A scoped compatibility adapter
+  intercepts only API paths beginning with this plugin's blueprint prefix and
+  forwards every other request to Kirby's original implementation.
   - Core reference: `panel/src/panel/content.js`
 - `panel.view.props.versions` and `panel.view.props.lock` are read to compute
   diffs and lock state in `AreasView`.
@@ -25,7 +27,16 @@ part of the public API, so check them when updating Kirby.
 Kirby core registers `(:all)/changes/*` API routes before plugin routes, which
 causes `Find::parent()` to reject plugin-specific paths. We therefore route area
 saves to custom endpoints (`.../save`, `.../publish`, `.../discard`) instead of
-relying on `.../changes/*`.
+relying on `.../changes/*`. Do not register compatibility aliases below that
+reserved suffix: Kirby's core wildcard routes will always capture them first. The
+adapter sends the canonical `{ values: {...} }` payload while the PHP layer keeps
+a configurable legacy payload fallback.
+
+Field and section APIs are exposed through Kirby's own nested API router. The
+plugin preflights the exact path and method first, applies read/update model
+authorization, and then dispatches the matched route. Mutating methods require
+update permission unless the route explicitly declares
+`blueprintAreasAccess: read`.
 
 - Core reference: `config/api/routes/changes.php`
 - Model resolution: `src/Cms/Find.php`
@@ -45,6 +56,10 @@ When updating Kirby, verify:
 - `panel/src/components/Views/ModelView.vue` still reads `props.versions` and
   `props.lock` the same way.
 - `config/api/routes/changes.php` route order and patterns are unchanged.
+- `src/Api/Api.php` and `src/Http/Router.php` still preserve nested route
+  attributes and method matching used by proxy authorization.
+- `src/Cms/ModelPermissions.php` still exposes `access`, `read` and `update`
+  through `can()` with the current blueprint/role precedence.
 - `src/Content/Lock.php` and `src/Content/Version.php` lock semantics are
   compatible with our `changes`-based drafts.
 

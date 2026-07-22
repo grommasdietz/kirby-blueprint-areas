@@ -2,6 +2,7 @@ export default {
   extends: "k-fields-section",
   props: {
     gdModelPath: String,
+    gdReadOnly: Boolean,
   },
   methods: {
     async fetch() {
@@ -12,6 +13,8 @@ export default {
         const model = this.gdModelPath ?? this.parent;
 
         for (const name in this.fields) {
+          this.fields[name].disabled =
+            this.gdReadOnly === true || this.fields[name].disabled === true;
           this.fields[name].section = this.name;
           this.fields[name].endpoints = {
             field: this.parent + "/fields/" + name,

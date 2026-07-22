@@ -6,51 +6,55 @@ Text: English
 
 ----
 
-Description:
+Translatedcontent: This value is stored in English.
 
 ----
 
-Writer:
+Description: 
 
 ----
 
-List:
+Writer: 
 
 ----
 
-Slug:
+List: 
 
 ----
 
-Url:
+Slug: 
 
 ----
 
-Email:
+Url: 
 
 ----
 
-Tel:
+Email: 
 
 ----
 
-Link:
+Tel: 
 
 ----
 
-Number:
+Link: 
 
 ----
 
-Range:
+Number: 
 
 ----
 
-Date:
+Range: 
 
 ----
 
-Time:
+Date: 
+
+----
+
+Time: 
 
 ----
 
@@ -58,116 +62,116 @@ Toggle: false
 
 ----
 
-Toggles:
+Toggles: 
 
 ----
 
-Checkboxes:
+Checkboxes: 
 
 ----
 
-Radio:
+Radio: 
 
 ----
 
-Select:
+Select: 
 
 ----
 
-Multiselect:
+Multiselect: 
 
 ----
 
-Tags:
+Tags: 
 
 ----
 
-Singlefile:
+Singlefile: 
 
 ----
 
-Multiplefiles:
+Multiplefiles: 
 
 ----
 
-Image:
+Image: 
 
 ----
 
-Gallery:
+Gallery: 
 
 ----
 
-Pages:
+Pages: 
 
 ----
 
-Users:
+Users: 
 
 ----
 
-Fullwidth:
+Fullwidth: 
 
 ----
 
-Halfleft:
+Halfleft: 
 
 ----
 
-Halfright:
+Halfright: 
 
 ----
 
-Thirdone:
+Thirdone: 
 
 ----
 
-Thirdtwo:
+Thirdtwo: 
 
 ----
 
-Thirdthree:
+Thirdthree: 
 
 ----
 
-Leftcol:
+Leftcol: 
 
 ----
 
-Rightcol:
+Rightcol: 
 
 ----
 
-Col1:
+Col1: 
 
 ----
 
-Col2:
+Col2: 
 
 ----
 
-Col3:
+Col3: 
 
 ----
 
-Col4:
+Col4: 
 
 ----
 
-Blocks:
+Blocks: 
 
 ----
 
-Layout:
+Layout: 
 
 ----
 
-Entries:
+Entries: 
 
 ----
 
-Structure:
+Structure: 
 
 ----
 
-Object:
+Object: 

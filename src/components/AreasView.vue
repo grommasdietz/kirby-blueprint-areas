@@ -3,6 +3,7 @@
     :key="currentAreaId"
     :data-id="currentAreaId"
     :data-locked="isLocked"
+    :data-readonly="!canUpdate"
     :data-template="currentAreaId"
     class="k-areas-view"
   >
@@ -13,6 +14,7 @@
       <template #buttons>
         <k-view-buttons v-if="viewButtons.length" :buttons="viewButtons" />
         <k-form-controls
+          v-if="canUpdate"
           :has-diff="hasDiff"
           :is-locked="isLocked"
           :is-processing="isProcessing"
@@ -88,15 +90,16 @@ function normalizeTabForBadges(tab) {
   return cloned;
 }
 
-function applyModelPath(layout, modelPath) {
+function applyModelPath(layout, modelPath, canUpdate = true) {
   const cloned = JSON.parse(JSON.stringify(layout || { tabs: [] }));
-  if (!modelPath) return cloned;
+  if (!modelPath && canUpdate !== false) return cloned;
 
   const applySections = (sections) => {
     const list = normalizeList(sections);
     for (const section of list) {
       if (section && typeof section === "object") {
         section.gdModelPath = modelPath;
+        section.gdReadOnly = canUpdate === false;
         if (section.type === "fields") {
           section.type = "gd-fields";
         } else if (section.type === "pages") {
@@ -165,7 +168,11 @@ export default {
       currentAreaId: this.area?.id || null,
       currentMenuId: this.area?.meta?.menuId || null,
       tab: resolvedTab,
-      layout: applyModelPath(layout, this.area?.meta?.modelPath || null),
+      layout: applyModelPath(
+        layout,
+        this.area?.meta?.modelPath || null,
+        this.area?.meta?.canUpdate !== false,
+      ),
       buttons: this.area?.buttons || [],
     };
   },
@@ -261,6 +268,9 @@ export default {
     isProcessing() {
       return this.localProcessing;
     },
+    canUpdate() {
+      return this.area?.meta?.canUpdate !== false;
+    },
     isLocked() {
       return this.contentLock?.isLocked === true;
     },
@@ -317,7 +327,14 @@ export default {
   created() {
     this.setupBadgeRefresh();
     this.onSaveShortcut = (event) => {
-      if (!this.hasDiff || this.isProcessing || this.isLocked) return;
+      if (
+        !this.canUpdate ||
+        !this.hasDiff ||
+        this.isProcessing ||
+        this.isLocked
+      ) {
+        return;
+      }
       event?.preventDefault?.();
       this.onSubmit();
     };
@@ -416,13 +433,17 @@ export default {
 
       this.currentAreaId = data.id || this.currentAreaId;
       this.currentMenuId = data.meta?.menuId || this.currentMenuId;
-      this.layout = applyModelPath(layout, modelPath);
+      this.layout = applyModelPath(
+        layout,
+        modelPath,
+        data?.meta?.canUpdate !== false,
+      );
       this.buttons = buttons;
       this.tab = nextTab;
       this.updateMenuBadgeLocal();
     },
     onInput(values) {
-      if (this.isLocked) return;
+      if (!this.canUpdate || this.isLocked) return;
       const filtered = this.filterAreaValues(values || {});
       try {
         this.$panel.content.updateLazy(filtered);
@@ -433,7 +454,7 @@ export default {
     },
     async onDiscard() {
       const id = this.currentAreaId;
-      if (!id || this.isProcessing || this.isLocked) return;
+      if (!this.canUpdate || !id || this.isProcessing || this.isLocked) return;
 
       try {
         await this.$panel.content.discard();
@@ -447,7 +468,7 @@ export default {
     },
     async onSubmit() {
       const id = this.currentAreaId;
-      if (!id || this.isProcessing || this.isLocked) return;
+      if (!this.canUpdate || !id || this.isProcessing || this.isLocked) return;
 
       try {
         const filtered = this.filterAreaValues(this.content);

@@ -2,6 +2,6 @@ title: Editor
 
 permissions:
   areas:
-    *: false
+    "*": false
     home: true
     fields: true

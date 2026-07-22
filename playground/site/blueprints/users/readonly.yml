@@ -1,0 +1,17 @@
+title: Read only
+
+permissions:
+  access:
+    panel: true
+    site: true
+    fields: true
+  areas:
+    "*": false
+    fields: true
+  site:
+    access: true
+    update: false
+  pages:
+    access: true
+    read: true
+    update: false

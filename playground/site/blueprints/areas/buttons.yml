@@ -16,4 +16,4 @@ fields:
       en: Note
       de: Notiz
     type: info
-    text: Customizable buttons on Kirby header
+    text: Demonstrates custom Panel header buttons and admin-only area access.

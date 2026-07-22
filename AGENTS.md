@@ -19,17 +19,18 @@ Agent guide for the Kirby Blueprint Areas plugin (grommasdietz/blueprint-areas)
 - Install JS deps and Playwright: `pnpm run setup`
 - Rebuild Panel assets after UI changes: `pnpm build` (commit `index.js` and `index.css`).
 - Lint Panel code: `pnpm lint`
-- Playwright browser tests (Panel behavior changes): `pnpm test:browser`
+- Playwright browser tests (Panel behavior changes): `pnpm run test:browser`
 - PHP tests: `composer test`
 - PHP static analysis (when touching PHP logic): `composer psalm`
 - Full PHP sweep: `composer run verify`
-- Full JS sweep: `pnpm run verify`
+- Full Node, Panel, docs and browser sweep: `pnpm run verify`
+- Complete repository acceptance gate: `pnpm run verify:all`
 
 ---
 
 ## Shipping rules
 
-- Keep it ready-to-install. ZIP/submodule/Composer installs must work without running `composer` or `npm`.
+- Keep it ready-to-install. Composer and GitHub tag-archive installs must work without running `composer` or `npm`.
 - Keep committed build outputs (`index.js`, `index.css`); do not edit compiled assets by hand.
 - Don't commit local artifacts. No `.DS_Store`, no local symlinks, no runtime data from `playground/site/*`, no caches.
 

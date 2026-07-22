@@ -33,4 +33,36 @@ final class TestEnvironmentTest extends TestCase
 
         $this->assertTrue($kirby->option('debug'));
     }
+
+    public function testUsesAnIsolatedBlueprintRoot(): void
+    {
+        $kirby = TestEnvironment::boot();
+        $blueprints = $kirby->root('blueprints');
+
+        $this->assertStringEndsWith('/tests/.blueprints', $blueprints);
+        $this->assertFileExists($blueprints . '/areas/fields.yml');
+        $this->assertNotSame(
+            realpath(__DIR__ . '/../../playground/site/blueprints'),
+            realpath($blueprints)
+        );
+    }
+
+    public function testLoadsFixturePluginExtensions(): void
+    {
+        $kirby = TestEnvironment::boot([
+            'testPluginsAfter' => ['proxy-fixtures'],
+        ]);
+
+        $this->assertArrayHasKey('proxytest', $kirby->extensions('fields'));
+        $this->assertArrayHasKey('proxytest', $kirby->extensions('sections'));
+    }
+
+    public function testRejectsUnsafeFixturePluginNames(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        TestEnvironment::boot([
+            'testPluginsAfter' => ['../outside'],
+        ]);
+    }
+
 }

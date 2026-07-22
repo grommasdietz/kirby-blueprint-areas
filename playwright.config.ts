@@ -17,19 +17,39 @@ const BASE_URL =
   process.env.PLAYWRIGHT_BASE_URL ?? `http://${WEB_HOST}:${WEB_PORT}`;
 
 const reuseExistingServer = process.env.PLAYWRIGHT_REUSE_SERVER === "1";
+const READY_URL =
+  process.env.PLAYWRIGHT_READY_URL ?? `${BASE_URL}/panel/login`;
+const SERVER_OUTPUT: "pipe" | "ignore" =
+  process.env.PLAYWRIGHT_SERVER_LOGS === "1" ? "pipe" : "ignore";
 
 export default defineConfig({
   testDir: "tests/browser",
+  // The custom API-slug scenario needs its own server environment and is run
+  // separately via `pnpm test:browser:api-slug`. Exclude it from the ordinary
+  // suite instead of reporting it as an intentional skip.
+  testIgnore:
+    process.env.KIRBY_API_SLUG === "control"
+      ? []
+      : ["**/api-slug.spec.ts"],
   globalSetup: "./tests/browser/global-setup.mjs",
   globalTeardown: "./tests/browser/global-teardown.mjs",
   timeout: 60_000,
   retries: process.env.CI ? 2 : 0,
-  reporter: [["list"]],
+  // The suite shares one seeded Kirby playground and PHP development server.
+  // Keep it serial and stop after the first failure for focused diagnostics.
+  workers: 1,
+  maxFailures: 1,
+  reporter: [
+    ["dot"],
+    ["html", { open: "never", outputFolder: "playwright-report" }],
+  ],
   webServer: {
     command: `php -S ${WEB_HOST}:${WEB_PORT} -t playground playground/kirby/router.php`,
-    url: BASE_URL,
+    url: READY_URL,
     timeout: 120_000,
     reuseExistingServer,
+    stdout: SERVER_OUTPUT,
+    stderr: SERVER_OUTPUT,
   },
   use: {
     baseURL: BASE_URL,

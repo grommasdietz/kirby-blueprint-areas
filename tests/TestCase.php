@@ -4,20 +4,18 @@ declare(strict_types=1);
 
 namespace GrommasDietz\Areas\Tests;
 
-use Kirby\Cms\App;
 use GrommasDietz\Areas\Tests\Support\TestEnvironment;
+use Kirby\Cms\App;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 
 /**
- * Base test case that exposes a helper to boot the Kirby playground.
+ * Base test case that exposes a helper to boot the Kirby playground.
  */
 abstract class TestCase extends BaseTestCase
 {
     protected App $kirby;
 
     /**
-     * Boots Kirby for the test suite. Pass overrides to tweak configuration.
-     *
      * @param array<string,mixed> $overrides
      */
     protected function bootKirby(array $overrides = []): App
@@ -32,8 +30,6 @@ abstract class TestCase extends BaseTestCase
         if (isset($this->kirby)) {
             $this->kirby->impersonate(null);
         }
-
-        TestEnvironment::restoreHandlers();
 
         App::destroy();
 

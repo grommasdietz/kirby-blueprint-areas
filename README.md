@@ -6,7 +6,7 @@ Add custom Panel areas via blueprints on Kirby CMS.
 
 ## Requirements
 
-- Kirby 5+
+- Kirby 5.2+
 - PHP 8.2+
 
 ## Installation
@@ -16,7 +16,7 @@ composer require grommasdietz/kirby-blueprint-areas
 ```
 
 > [!TIP]
-> If you don’t use Composer, you can download this repository and copy it to `site/plugins/kirby-blueprint-areas`.
+> For a manual install, download the **Source code (zip)** archive of an immutable GitHub release tag and copy it to `site/plugins/kirby-blueprint-areas`.
 
 ## Quickstart
 
@@ -38,7 +38,7 @@ tabs:
             fields:
               headline:
                 label: Headline
-                type: headline
+                type: text
 ```
 
 Each blueprint will render as an own area. Each area saves content to site model by default. Optionally change resolved model (like a page) with [query](docs/usage/index.md#query) or restrict users [access](docs/usage/index.md#access-control).
@@ -56,10 +56,18 @@ return [
 
       // Show a numeric badge instead of a dot on menu items
       'badgeCount' => false,
+
+      // Optional collision-safe Panel ID prefix; empty keeps existing URLs
+      'areaPrefix' => '',
     ],
 
-    // override the blueprint directory
+    // Override the blueprint directory
     'blueprints.root' => kirby()->root('blueprints') . '/areas',
+
+    'api' => [
+      // Keep accepting legacy direct-value API payloads
+      'legacyPayload' => true,
+    ],
   ]
 ];
 ```

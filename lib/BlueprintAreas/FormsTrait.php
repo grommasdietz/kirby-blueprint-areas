@@ -3,7 +3,6 @@
 namespace GrommasDietz\Areas\BlueprintAreas;
 
 use Kirby\Cms\ModelWithContent;
-use Kirby\Exception\NotFoundException;
 use Kirby\Form\Form;
 use Kirby\Toolkit\Str;
 
@@ -18,19 +17,13 @@ trait FormsTrait
         return $form;
     }
 
-    private static function formForArea(string $name, bool $withChanges = true): Form
+    /**
+     * @param array<string, mixed> $context
+     */
+    private static function formForAreaContext(array $context, bool $withChanges = true): Form
     {
-        $file = static::blueprintFile($name);
-        if ($file === null) {
-            throw new NotFoundException('Blueprint not found');
-        }
-
-        $bp = static::readBlueprint($file);
-        $bp['name'] = $name;
-        $model = static::modelForArea($name, $bp);
-        static::requireAreaAccess($model, $bp, true);
-        $blueprint = static::blueprintForArea($name, $bp, $model);
-        $layout = static::layoutForBlueprint($blueprint);
+        $model = $context['model'];
+        $layout = $context['layout'];
         $fields = static::collectFields($layout);
         $fieldNames = array_keys($fields);
 
@@ -111,7 +104,15 @@ trait FormsTrait
             return [];
         }
 
-        $allowed = array_flip(array_keys($fields));
+        $allowed = [];
+        foreach ($fields as $fieldName => $fieldProps) {
+            if (($fieldProps['disabled'] ?? false) === true) {
+                continue;
+            }
+
+            $allowed[$fieldName] = true;
+        }
+
         $filtered = [];
 
         foreach ($values as $key => $value) {
@@ -146,6 +147,20 @@ trait FormsTrait
         }
 
         return false;
+    }
+
+    /**
+     * @param array<string, mixed> $stored
+     * @param list<string> $submittedFields
+     * @return array<string, mixed>
+     */
+    private static function submittedStoredValues(
+        array $stored,
+        array $submittedFields
+    ): array {
+        $submitted = array_fill_keys($submittedFields, true);
+
+        return array_intersect_key($stored, $submitted);
     }
 
     private static function storedValues(array $stored): array

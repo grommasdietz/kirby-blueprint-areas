@@ -12,15 +12,14 @@ trait ChangesTrait
 
         foreach (static::list() as $item) {
             $name = $item['id'];
-            $file = static::blueprintFile($name);
-            if ($file === null) {
+            try {
+                $context = static::resolveAreaContext($name, self::AREA_OPERATION_READ);
+            } catch (\Throwable) {
                 continue;
             }
 
-            $bp = static::readBlueprint($file);
-            $model = static::modelForArea($name, $bp);
-            $blueprint = static::blueprintForArea($name, $bp, $model);
-            $layout = static::layoutForBlueprint($blueprint);
+            $model = $context['model'];
+            $layout = $context['layout'];
             $fields = static::collectFields($layout);
             $fieldNames = array_keys($fields);
 
@@ -86,16 +85,9 @@ trait ChangesTrait
 
     public static function changesLockForArea(string $name): array|null
     {
-        $file = static::blueprintFile($name);
-        if ($file === null) {
-            return null;
-        }
+        $context = static::resolveAreaContext($name, self::AREA_OPERATION_READ);
 
-        $bp = static::readBlueprint($file);
-        $bp['name'] = $name;
-        $model = static::modelForArea($name, $bp);
-        static::requireAreaAccess($model, $bp, false);
-        return static::changesLock($model);
+        return static::changesLock($context['model']);
     }
 
     private static function latestContent(ModelWithContent $model): array

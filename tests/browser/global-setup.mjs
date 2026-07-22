@@ -1,43 +1,69 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
+import { copyFileSync, mkdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  restorePlaygroundContent,
+  snapshotPlaygroundContent,
+} from "./playground-state.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const DEFAULT_EMAIL = "admin@kirby-blueprint-areas.test";
-const DEFAULT_PASSWORD = "playwright";
-const EDITOR_EMAIL = "editor@kirby-blueprint-areas.test";
-const EDITOR_PASSWORD = "playwright";
-
-function resolveRoot() {
-  return path.resolve(__dirname, "..", "..");
-}
-
-function ensureEnv(env) {
-  if (!env.KIRBY_USER_EMAIL) {
-    env.KIRBY_USER_EMAIL = DEFAULT_EMAIL;
-  }
-  if (!env.KIRBY_USER_PASSWORD) {
-    env.KIRBY_USER_PASSWORD = DEFAULT_PASSWORD;
-  }
-}
-
 export default async function globalSetup() {
-  const root = resolveRoot();
-  const env = { ...process.env };
-  ensureEnv(env);
+  const root = path.resolve(__dirname, "..", "..");
 
-  const createUserScript = path.join(root, "tools", "create-test-user.php");
+  // A previous interrupted or pre-v4.9 run may have left Kirby-serialized
+  // empty fields with trailing spaces in the tracked site fixtures. Restore
+  // the committed canonical fixtures before taking this run's snapshot so the
+  // test lifecycle is self-healing and the final Git whitespace check is stable.
+  restorePlaygroundContent(root);
 
-  // Create admin test user
-  execSync(
-    `php ${createUserScript} --email="${env.KIRBY_USER_EMAIL}" --password="${env.KIRBY_USER_PASSWORD}" --role=admin`,
-    { cwd: root, stdio: "inherit", env },
-  );
+  const fixtureRoot = path.join(__dirname, "fixtures");
+  const contentRoot = path.join(root, "playground", "content");
+  mkdirSync(contentRoot, { recursive: true });
 
-  // Create editor test user for role-based access tests
-  execSync(
-    `php ${createUserScript} --email="${EDITOR_EMAIL}" --password="${EDITOR_PASSWORD}" --role=editor`,
-    { cwd: root, stdio: "inherit", env },
-  );
+  for (const language of ["de", "en"]) {
+    copyFileSync(
+      path.join(fixtureRoot, `site.${language}.txt`),
+      path.join(contentRoot, `site.${language}.txt`),
+    );
+  }
+
+  snapshotPlaygroundContent(root);
+
+  try {
+    execFileSync("php", [path.join(root, "tools", "reset-playground.php")], {
+      cwd: root,
+      stdio: "inherit",
+      env: { ...process.env },
+    });
+
+    for (const [email, role, password] of [
+      [
+        process.env.KIRBY_USER_EMAIL ?? "admin@kirby-blueprint-areas.test",
+        "admin",
+        process.env.KIRBY_USER_PASSWORD ?? "playwright",
+      ],
+      ["editor@kirby-blueprint-areas.test", "editor", "playwright"],
+      ["readonly@kirby-blueprint-areas.test", "readonly", "playwright"],
+    ]) {
+      execFileSync(
+        "php",
+        [
+          path.join(root, "tools", "create-test-user.php"),
+          `--email=${email}`,
+          `--password=${password}`,
+          `--role=${role}`,
+        ],
+        {
+          cwd: root,
+          stdio: "inherit",
+          env: { ...process.env },
+        },
+      );
+    }
+  } catch (error) {
+    restorePlaygroundContent(root);
+    throw error;
+  }
 }

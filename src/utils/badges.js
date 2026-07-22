@@ -55,7 +55,7 @@ export function applyMenuBadges(menu, data, options = {}) {
 
 export function setupMenuBadges(panel) {
   const menu = panel?.menu;
-  if (!menu) return;
+  if (!menu || typeof menu.set !== "function") return;
 
   if (panel.__gdAreasMenuRef !== menu) {
     panel.__gdAreasMenuRef = menu;
@@ -82,7 +82,10 @@ export function setupMenuBadges(panel) {
     applyMenuBadges(menu, cache);
   }
 
-  if (!panel.__gdAreasViewWrapped && panel.view?.set) {
+  if (
+    !panel.__gdAreasViewWrapped &&
+    typeof panel.view?.set === "function"
+  ) {
     panel.__gdAreasViewWrapped = true;
     const originalViewSet = panel.view.set.bind(panel.view);
     panel.view.set = (payload) => {

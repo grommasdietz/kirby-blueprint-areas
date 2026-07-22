@@ -31,35 +31,17 @@ Packaging rules for release archives live in `.gitattributes`.
 
 ## Psalm configuration
 
-Psalm errors if directories referenced in `issueHandlers` do not exist. When you add plugin folders, update `psalm.xml.dist` accordingly:
+Psalm analyzes the committed runtime PHP listed in `psalm.xml.dist`: `lib/` and
+`index.php`. The playground, tests, generated assets and development helpers are
+validated by their dedicated checks instead.
 
-| Folder added        | Psalm update                                                       |
-| ------------------- | ------------------------------------------------------------------ |
-| `snippets`          | Add `<directory name="snippets" />` under `<UndefinedMagicMethod>` |
-| `models`            | Add to `<projectFiles>` if outside `lib`                           |
-| `blueprints`        | No change needed (YAML only)                                       |
-| `assets`            | No change needed (static files)                                    |
-| `translations`      | No change needed (PHP arrays, covered globally)                    |
-| `config` / `routes` | Add `<directory name="..." />` under `<InvalidScope>`              |
+When adding a new runtime PHP directory outside `lib/`, add it to
+`<projectFiles>`. Add a narrowly scoped issue-handler suppression only when a
+real Kirby framework pattern cannot be expressed accurately in Psalm; do not
+add placeholder directories or broad suppressions pre-emptively.
 
-Example (adding `snippets`):
-
-```xml
-<UndefinedMagicMethod>
-    <errorLevel type="suppress">
-        <directory name="playground/site/templates" />
-        <directory name="snippets" />
-    </errorLevel>
-</UndefinedMagicMethod>
-```
-
-Only add directories that actually exist.
-
----
-
-## Environment and secrets
-
-Keep secrets in `playground/.env`. If `vlucas/phpdotenv` is installed, tests will load it automatically.
+YAML blueprints, static assets and JavaScript source do not belong in Psalm’s
+PHP project file list.
 
 ---
 

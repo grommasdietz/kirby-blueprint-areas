@@ -67,6 +67,13 @@ title:
   de: Einstellungen
 ```
 
+## Content languages
+
+Area fields read and write the current content language of the resolved model.
+The playground `translations` area demonstrates this with one text field that
+contains different seeded values in English and German. Use the language switch
+in the Panel header to compare them.
+
 ## Query
 
 Add a `query` to bind an area to another model:
@@ -121,7 +128,36 @@ permissions:
 > The `areas` bucket is registered by this plugin for discovered area blueprints for backward compatibility. Prefer `access` for new projects because it is Kirby's native Panel area permission.
 
 > [!IMPORTANT]
-> Kirby Blueprint Areas still enforces the underlying model permissions (for example, pages must be updatable for writes).
+> Area access never overrides the resolved model permissions. Site-backed areas require `site.access`; page-backed areas require both `pages.access` and `pages.read`. Saving, publishing, discarding and mutating field/section API routes additionally require the model's `update` permission. A role can therefore be read-only by allowing access/read while denying update; the Panel then hides save controls and disables field inputs.
+
+## API payloads
+
+Save and draft endpoints use an explicit values envelope:
+
+```json
+{
+  "values": {
+    "settings_headline": "Example"
+  }
+}
+```
+
+Legacy direct field maps remain enabled by default so existing integrations keep working. Set `api.legacyPayload` to `false` only after all callers use the envelope.
+
+Field and section API proxies require read permission for `GET`/`HEAD` and update permission for mutating methods. A custom non-mutating `POST` route can opt into read authorization explicitly:
+
+```php
+[
+  'pattern' => 'search',
+  'method' => 'POST',
+  'blueprintAreasAccess' => 'read',
+  'action' => function () {
+    // Return read-only data.
+  },
+]
+```
+
+Use this override only for routes that cannot change model or external state.
 
 ## Buttons
 
@@ -175,10 +211,24 @@ return [
 
       // Show a numeric badge instead of a dot on menu items
       'badgeCount' => false,
+
+      // Optional Panel area ID/URL prefix; empty preserves existing URLs
+      'areaPrefix' => '',
     ],
 
     // Override the blueprint directory
     'blueprints.root' => kirby()->root('blueprints') . '/areas',
+
+    'api' => [
+      // Accept direct field maps as well as the canonical values envelope
+      'legacyPayload' => true,
+
+      // Reject excessively nested value payloads
+      'maxPayloadDepth' => 32,
+
+      // Optional encoded payload limit in bytes
+      'maxPayloadBytes' => null,
+    ],
   ]
 ];
 ```

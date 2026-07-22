@@ -1,132 +1,82 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import { URLS } from "./utils/constants";
-
-const PANEL_EMAIL =
-  process.env.KIRBY_USER_EMAIL ?? "admin@kirby-blueprint-areas.test";
-const PANEL_PASSWORD = process.env.KIRBY_USER_PASSWORD ?? "playwright";
-
-// Editor user credentials (created in global-setup)
-const EDITOR_EMAIL = "editor@kirby-blueprint-areas.test";
-const EDITOR_PASSWORD = "playwright";
-
-/**
- * Helper to log into the Panel and wait for dashboard
- */
-async function loginToPanel(
-  page: Page,
-  email = PANEL_EMAIL,
-  password = PANEL_PASSWORD,
-) {
-  await page.goto(URLS.PANEL_LOGIN);
-  await page.getByLabel("Email").fill(email);
-  await page.getByLabel("Password").fill(password);
-
-  // Click and wait for navigation
-  await Promise.all([
-    page.waitForURL(/\/panel(?:\/(?!login).*)?$/, { timeout: 30000 }),
-    page.getByRole("button", { name: "Log in" }).click(),
-  ]);
-
-  // Wait for the dashboard to fully load
-  await page.waitForLoadState("networkidle");
-}
+import { areaFieldInput, loginToPanel, PANEL_USERS } from "./utils/panel";
 
 test.describe("Blueprint Areas", () => {
-  test("Admin can log in and see dashboard", async ({ page }) => {
+  test("admin sees and opens the Fields area", async ({ page }) => {
     await loginToPanel(page);
 
-    // Should be on the Panel, not login page
-    await expect(page).not.toHaveURL(/\/login/);
+    const menu = page.getByRole("navigation", { name: "Menu" });
+    await expect(menu).toBeVisible({ timeout: 10_000 });
 
-    // Header should be visible
-    await expect(page.locator("h1").first()).toBeVisible({ timeout: 10000 });
-  });
-
-  test("Fields area is visible in menu", async ({ page }) => {
-    await loginToPanel(page);
-
-    // Kirby 5 uses a navigation element with role/aria-label "Menu"
-    const menuNav = page.getByRole("navigation", { name: "Menu" });
-    await expect(menuNav).toBeVisible({ timeout: 10000 });
-
-    // Find the Fields link within the menu
-    const fieldsLink = menuNav.getByRole("link", { name: "Fields" });
+    const fieldsLink = menu.getByRole("link", { name: "Fields" });
     await expect(fieldsLink).toBeVisible();
+    await fieldsLink.click();
+
+    await expect(page).toHaveURL(/\/panel\/fields(?:\?.*)?$/);
+    await expect(page.locator(".k-areas-view")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Fields" })).toBeVisible();
   });
 
-  test("Area navigation works via URL", async ({ page }) => {
+  test("translation area exposes content-language values", async ({ page }) => {
+    const pageErrors: string[] = [];
+    page.on("pageerror", (error) => pageErrors.push(error.message));
+
     await loginToPanel(page);
 
-    // Use the Panel's SPA navigation by clicking a link that goes to /panel/fields
-    // First, click on the dropdown/menu that contains area links
-    const menuButton = page
-      .locator(".k-topbar-menu-button, .k-topbar-menu > button")
-      .first();
-    if (await menuButton.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await menuButton.click();
-      await page.waitForTimeout(500);
-    }
+    await page.goto(`${URLS.PANEL}/translations?language=en`);
+    await expect(page.locator(".k-areas-view")).toBeVisible({
+      timeout: 15_000,
+    });
+    await expect(
+      page.getByText("Switch the content language in the header.", {
+        exact: false,
+      }),
+    ).toBeVisible();
+    await expect(areaFieldInput(page, "translatedcontent")).toHaveValue(
+      "This value is stored in English.",
+    );
 
-    // Now try to find and click the Fields link
-    const fieldsLink = page
-      .locator('a[href*="fields"], a')
-      .filter({ hasText: "Fields" })
-      .first();
-    if (await fieldsLink.isVisible({ timeout: 5000 }).catch(() => false)) {
-      await fieldsLink.click();
-      await page.waitForLoadState("networkidle");
+    await page.goto(`${URLS.PANEL}/translations?language=de`);
+    await expect(page.locator(".k-areas-view")).toBeVisible({
+      timeout: 15_000,
+    });
+    await expect(areaFieldInput(page, "translatedcontent")).toHaveValue(
+      "Dieser Wert ist auf Deutsch gespeichert.",
+    );
 
-      // Verify navigation occurred
-      await expect(page).toHaveURL(/\/panel\/fields/, { timeout: 10000 });
-    } else {
-      // If menu navigation doesn't work, that's a test setup issue to investigate
-      test.skip();
-    }
+    expect(pageErrors).toEqual([]);
   });
 });
 
-test.describe("Role-based Access", () => {
-  test("Editor cannot see admin-only areas in menu", async ({ page }) => {
-    // Login as editor
-    await loginToPanel(page, EDITOR_EMAIL, EDITOR_PASSWORD);
+test.describe("Role-based access", () => {
+  test("editor sees only permitted Blueprint Areas", async ({ page }) => {
+    await loginToPanel(page, PANEL_USERS.editor);
 
-    // Navigate to menu
-    const menuNav = page.getByRole("navigation", { name: "Menu" });
-    await expect(menuNav).toBeVisible({ timeout: 10000 });
-
-    // Editor should see Fields area (allowed by editor.yml)
-    const fieldsLink = menuNav.getByRole("link", { name: "Fields" });
-    await expect(fieldsLink).toBeVisible();
-
-    // Editor should NOT see Buttons area (blocked by access rules)
-    const buttonsLink = menuNav.getByRole("link", { name: "Buttons" });
-    await expect(buttonsLink).not.toBeVisible();
+    const menu = page.getByRole("navigation", { name: "Menu" });
+    await expect(menu.getByRole("link", { name: "Fields" })).toBeVisible();
+    await expect(menu.getByRole("link", { name: "Buttons" })).toHaveCount(0);
+    await expect(menu.getByRole("link", { name: "Home" })).toHaveCount(0);
   });
 
-  test("Editor is denied access to restricted area via direct URL", async ({
-    page,
-  }) => {
-    // Login as editor
-    await loginToPanel(page, EDITOR_EMAIL, EDITOR_PASSWORD);
+  test("editor is denied a restricted area via direct URL", async ({ page }) => {
+    await loginToPanel(page, PANEL_USERS.editor);
 
-    // Try to navigate directly to the restricted Buttons area
-    await page.goto(`${URLS.PANEL}/buttons`);
+    const response = await page.goto(`${URLS.PANEL}/buttons`);
     await page.waitForLoadState("networkidle");
 
-    // Check if access was blocked (redirect or error message)
-    const currentUrl = page.url();
-    const wasRedirected = !currentUrl.includes("/buttons");
+    const redirected = !page.url().includes("/buttons");
+    const deniedResponse =
+      response !== null && [401, 403, 404].includes(response.status());
+    const deniedMessage = page
+      .locator("body")
+      .getByText(/not allowed|access denied|forbidden/i)
+      .first();
 
-    // Either the user was redirected away, or an error is shown
-    // Access control may only affect menu visibility in some configurations
-    const pageContent = await page.textContent("body");
-    const hasAccessDenied =
-      pageContent?.toLowerCase().includes("not allowed") ||
-      pageContent?.toLowerCase().includes("access denied") ||
-      pageContent?.toLowerCase().includes("forbidden");
-
-    // Test passes if either redirected or showing access denied
-    // If neither, access control is menu-only which is still valid
-    expect(wasRedirected || hasAccessDenied || true).toBe(true);
+    expect(
+      redirected ||
+        deniedResponse ||
+        (await deniedMessage.isVisible().catch(() => false)),
+    ).toBe(true);
   });
 });

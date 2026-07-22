@@ -5,10 +5,12 @@ icon: translate
 
 fields:
   note:
-    label:
-      en: Note
-      de: Notiz
+    label: How to test
     type: info
-    text:
-      en: Translations for Blueprints
-      de: Übersetzungen für Blueprints
+    text: >-
+      Switch the content language in the header. The field below is seeded
+      with a different value in English and German.
+
+  translatedcontent:
+    label: Language-specific content
+    type: text

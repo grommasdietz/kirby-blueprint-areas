@@ -1,7 +1,9 @@
 <?php
 
+use Kirby\Cms\Api as KirbyApi;
 use Kirby\Cms\App;
 use Kirby\Cms\Permissions;
+use Kirby\Exception\Exception as KirbyException;
 use Kirby\Exception\NotFoundException;
 use Kirby\Filesystem\F;
 use GrommasDietz\Areas\BlueprintAreas;
@@ -11,21 +13,43 @@ F::loadClasses([
     'GrommasDietz\\Areas\\BlueprintAreas' => 'lib/BlueprintAreas.php',
 ], __DIR__);
 
+$methodNotAllowed = function (): never {
+    throw new KirbyException(
+        message: 'Method not allowed',
+        httpCode: 405
+    );
+};
+
+$saveArea = function (string $name): array {
+    /**
+     * Kirby binds API route actions to the API instance.
+     *
+     * @var KirbyApi $this
+     * @psalm-suppress InvalidScope
+     */
+    return BlueprintAreas::save(
+        $name,
+        BlueprintAreas::requestValues($this->requestBody())
+    );
+};
+
+$draftArea = function (string $name): array {
+    /**
+     * Kirby binds API route actions to the API instance.
+     *
+     * @var KirbyApi $this
+     * @psalm-suppress InvalidScope
+     */
+    return BlueprintAreas::draft(
+        $name,
+        BlueprintAreas::requestValues($this->requestBody())
+    );
+};
+
 App::plugin('grommasdietz/blueprint-areas', [
-    'options' => [
-        'panel' => [
-            // Set to false to hide all auto-registered menu entries.
-            'enabled' => true,
-            // Show a numeric badge instead of a dot on menu items
-            'badgeCount' => false,
-        ],
+    'options' => BlueprintAreas::defaultOptions(),
 
-        // Blueprints storage
-        // Default: site/blueprints/areas
-        'blueprints.root' => null,
-    ],
-
-    // Dedicated API routes for saving
+    // Authenticated API routes with operation-aware model authorization
     'api' => [
         'routes' => [
             [
@@ -42,19 +66,19 @@ App::plugin('grommasdietz/blueprint-areas', [
                 'pattern' => 'grommasdietz/blueprint-areas/blueprints/(:any)',
                 'method'  => 'POST',
                 'auth'    => true,
-                'action'  => fn (string $name) => BlueprintAreas::save($name, BlueprintAreas::requestValues()),
+                'action'  => $saveArea,
             ],
             [
                 'pattern' => 'grommasdietz/blueprint-areas/blueprints/(:any)/save',
                 'method'  => 'POST',
                 'auth'    => true,
-                'action'  => fn (string $name) => BlueprintAreas::draft($name, BlueprintAreas::requestValues()),
+                'action'  => $draftArea,
             ],
             [
                 'pattern' => 'grommasdietz/blueprint-areas/blueprints/(:any)/publish',
                 'method'  => 'POST',
                 'auth'    => true,
-                'action'  => fn (string $name) => BlueprintAreas::save($name, BlueprintAreas::requestValues()),
+                'action'  => $saveArea,
             ],
             [
                 'pattern' => 'grommasdietz/blueprint-areas/blueprints/(:any)/discard',
@@ -63,27 +87,47 @@ App::plugin('grommasdietz/blueprint-areas', [
                 'action'  => fn (string $name) => BlueprintAreas::discard($name),
             ],
             [
-                'pattern' => 'grommasdietz/blueprint-areas/blueprints/(:any)/changes/save',
-                'method'  => 'POST',
-                'auth'    => true,
-                'action'  => fn (string $name) => BlueprintAreas::draft($name, BlueprintAreas::requestValues()),
-            ],
-            [
-                'pattern' => 'grommasdietz/blueprint-areas/blueprints/(:any)/changes/discard',
-                'method'  => 'POST',
-                'auth'    => true,
-                'action'  => fn (string $name) => BlueprintAreas::discard($name),
-            ],
-            [
-                'pattern' => 'grommasdietz/blueprint-areas/blueprints/(:any)/changes/publish',
-                'method'  => 'POST',
-                'auth'    => true,
-                'action'  => fn (string $name) => BlueprintAreas::save($name, BlueprintAreas::requestValues()),
-            ],
-            [
                 'pattern' => 'grommasdietz/blueprint-areas/changes',
                 'auth'    => true,
                 'action'  => fn () => BlueprintAreas::changesSummary(),
+            ],
+            // Explicit fallbacks distinguish known resources from unknown routes.
+            // Kirby's router otherwise reports a method mismatch as a generic 404.
+            [
+                'pattern' => 'grommasdietz/blueprint-areas/blueprints',
+                'method'  => 'ALL',
+                'auth'    => true,
+                'action'  => $methodNotAllowed,
+            ],
+            [
+                'pattern' => 'grommasdietz/blueprint-areas/blueprints/(:any)',
+                'method'  => 'ALL',
+                'auth'    => true,
+                'action'  => $methodNotAllowed,
+            ],
+            [
+                'pattern' => 'grommasdietz/blueprint-areas/blueprints/(:any)/save',
+                'method'  => 'ALL',
+                'auth'    => true,
+                'action'  => $methodNotAllowed,
+            ],
+            [
+                'pattern' => 'grommasdietz/blueprint-areas/blueprints/(:any)/publish',
+                'method'  => 'ALL',
+                'auth'    => true,
+                'action'  => $methodNotAllowed,
+            ],
+            [
+                'pattern' => 'grommasdietz/blueprint-areas/blueprints/(:any)/discard',
+                'method'  => 'ALL',
+                'auth'    => true,
+                'action'  => $methodNotAllowed,
+            ],
+            [
+                'pattern' => 'grommasdietz/blueprint-areas/changes',
+                'method'  => 'ALL',
+                'auth'    => true,
+                'action'  => $methodNotAllowed,
             ],
             [
                 'pattern' => 'grommasdietz/blueprint-areas/blueprints/(:any)/sections/(:any)',
@@ -95,7 +139,12 @@ App::plugin('grommasdietz/blueprint-areas', [
                 'pattern' => 'grommasdietz/blueprint-areas/blueprints/(:any)/sections/(:any)/(:all?)',
                 'method'  => 'ALL',
                 'auth'    => true,
-                'action'  => function (string $name, string $section, string|null $path = null) {
+                'action'  => function (string $name, string $section, string|null $path = null): mixed {
+                    /**
+                     * Kirby binds API route actions to the API instance.
+                     *
+                     * @psalm-suppress InvalidScope
+                     */
                     return BlueprintAreas::sectionApi($name, $section, $path, $this);
                 },
             ],
@@ -103,7 +152,12 @@ App::plugin('grommasdietz/blueprint-areas', [
                 'pattern' => 'grommasdietz/blueprint-areas/blueprints/(:any)/fields/(:any)/(:all?)',
                 'method'  => 'ALL',
                 'auth'    => true,
-                'action'  => function (string $name, string $field, string|null $path = null) {
+                'action'  => function (string $name, string $field, string|null $path = null): mixed {
+                    /**
+                     * Kirby binds API route actions to the API instance.
+                     *
+                     * @psalm-suppress InvalidScope
+                     */
                     return BlueprintAreas::fieldApi($name, $field, $path, $this);
                 },
             ],
@@ -117,16 +171,23 @@ App::plugin('grommasdietz/blueprint-areas', [
         $panel = $opts['panel'] ?? [];
 
         $menuEnabled = ($panel['enabled'] ?? true) === true;
+        BlueprintAreas::beginAreaRegistration();
         $registered = BlueprintAreas::listForRegistration();
 
+        $legacyPermissions = [];
         if (class_exists(Permissions::class)) {
-            $legacyPermissions = [];
             foreach ($registered as $item) {
                 $legacyPermissions[BlueprintAreas::menuId($item['id'])] = true;
+                $legacyPermissions[$item['id']] = true;
+            }
+
+            $existingPermissions = Permissions::$extendedActions['areas'] ?? [];
+            if (!is_array($existingPermissions)) {
+                $existingPermissions = [];
             }
 
             Permissions::$extendedActions['areas'] = [
-                ...(Permissions::$extendedActions['areas'] ?? []),
+                ...$existingPermissions,
                 ...$legacyPermissions,
             ];
         }
@@ -137,11 +198,11 @@ App::plugin('grommasdietz/blueprint-areas', [
             $icon = $item['icon'] ?? 'cog';
             $areaId = BlueprintAreas::menuId($slug);
 
-            $areas[$areaId] = function () use ($areaId, $slug, $icon, $menuEnabled) {
+            $areas[$areaId] = function () use ($areaId, $slug, $icon, $menuEnabled): array {
                 return [
                     'label' => BlueprintAreas::title($slug),
                     'icon'  => $icon,
-                    'menu'  => function () use ($menuEnabled, $slug) {
+                    'menu'  => function () use ($menuEnabled, $slug): bool {
                         if ($menuEnabled !== true) {
                             return false;
                         }
@@ -152,7 +213,7 @@ App::plugin('grommasdietz/blueprint-areas', [
                     'views' => [
                         [
                             'pattern' => $areaId,
-                            'action'  => function () use ($slug, $areaId) {
+                            'action'  => function () use ($slug, $areaId): array {
                                 $view = BlueprintAreas::view($slug);
                                 if (empty($view)) {
                                     throw new NotFoundException('Blueprint not found');
@@ -177,6 +238,8 @@ App::plugin('grommasdietz/blueprint-areas', [
                 ];
             };
         }
+
+        BlueprintAreas::completeAreaRegistration(array_keys($areas), array_keys($legacyPermissions));
 
         return $areas;
     })(),
