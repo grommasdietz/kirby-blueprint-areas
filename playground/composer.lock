@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a8a5651f96e8ed85de3f59da82da27dd",
+    "content-hash": "356f906ae55ceb5ee997ad8b634479ce",
     "packages": [
         {
             "name": "christian-riesen/base32",
@@ -534,18 +534,22 @@
         },
         {
             "name": "grommasdietz/kirby-blueprint-areas",
-            "version": "1.1.0",
+            "version": "2.0.0",
             "dist": {
                 "type": "path",
                 "url": "..",
-                "reference": "3f0770074f73547142ee7fb4715b41570f2ec556"
+                "reference": "e768c06c96cbbb5716bf8b21db9e4b93d03caba8"
             },
             "require": {
                 "getkirby/composer-installer": "^1.2",
                 "php": "^8.2"
             },
+            "conflict": {
+                "getkirby/cms": "<5.5.2"
+            },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^3.93",
+                "getkirby/cms": "^5.5.2",
                 "phpunit/phpunit": "^12.5",
                 "vimeo/psalm": "^6.15"
             },
@@ -556,42 +560,55 @@
                 }
             },
             "scripts": {
+                "setup": [
+                    "composer install -d playground",
+                    "composer install"
+                ],
                 "test": [
                     "@test:unit",
-                    "@test:integration"
+                    "@test:integration",
+                    "@test:smoke"
                 ],
                 "test:unit": [
-                    "phpunit --testsuite Unit"
+                    "./vendor/bin/phpunit --testsuite Unit"
                 ],
                 "test:integration": [
-                    "phpunit --testsuite Integration"
+                    "./vendor/bin/phpunit --testsuite Integration"
+                ],
+                "test:integration:debug": [
+                    "./vendor/bin/phpunit --testsuite Integration --stop-on-error --stop-on-failure --stop-on-warning --display-all-issues --testdox"
+                ],
+                "test:smoke": [
+                    "php tests/run.php"
                 ],
                 "test:coverage": [
-                    "phpunit --coverage-text"
+                    "./vendor/bin/phpunit --coverage-text"
                 ],
                 "psalm": [
                     "./vendor/bin/psalm --no-cache --show-info=true"
                 ],
                 "lint": [
-                    "php-cs-fixer fix --dry-run"
+                    "./vendor/bin/php-cs-fixer fix --dry-run --diff"
                 ],
                 "lint:fix": [
-                    "php-cs-fixer fix"
+                    "./vendor/bin/php-cs-fixer fix"
                 ],
                 "format": [
                     "@lint:fix"
                 ],
-                "setup": [
-                    "composer install",
-                    "composer install -d playground"
+                "playground:reset": [
+                    "php tools/reset-playground.php --plugins"
+                ],
+                "playground:seed": [
+                    "php tools/seed-playground.php"
+                ],
+                "release:check": [
+                    "php tools/release-readiness.php"
                 ],
                 "verify": [
                     "@lint",
                     "@psalm",
                     "@test"
-                ],
-                "package:clean": [
-                    "rm -rf dist && mkdir -p dist && git archive --format=zip --worktree-attributes HEAD -o dist/kirby-blueprint-areas.zip"
                 ],
                 "notices:generate": [
                     "php tools/generate-third-party-notices.php"
@@ -617,12 +634,14 @@
                 "kirby",
                 "kirby-cms",
                 "kirby-plugin",
+                "kirby5",
                 "panel",
                 "settings"
             ],
             "support": {
                 "issues": "https://github.com/grommasdietz/kirby-blueprint-areas/issues",
-                "source": "https://github.com/grommasdietz/kirby-blueprint-areas"
+                "source": "https://github.com/grommasdietz/kirby-blueprint-areas",
+                "docs": "https://github.com/grommasdietz/kirby-blueprint-areas/blob/main/README.md"
             },
             "transport-options": {
                 "relative": true

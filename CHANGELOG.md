@@ -1,3 +1,23 @@
+# [2.0.0](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v1.1.0...v2.0.0) (2026-07-22)
+
+
+* feat!: require Kirby 5.5.2 or later ([369398a](https://github.com/grommasdietz/kirby-blueprint-areas/commit/369398a6330ec006f0a6d11f8cb3e92dc30e6c41))
+
+
+### Bug Fixes
+
+* **release:** synchronize playground path package version ([e768c06](https://github.com/grommasdietz/kirby-blueprint-areas/commit/e768c06c96cbbb5716bf8b21db9e4b93d03caba8))
+
+
+### Features
+
+* harden scoped persistence, access control and playground coverage ([4b2195a](https://github.com/grommasdietz/kirby-blueprint-areas/commit/4b2195ad1ea8e4c0306df09fc17a526cf968e6e2))
+
+
+### BREAKING CHANGES
+
+* Kirby versions before 5.5.2 are no longer supported.
+
 # [1.1.0](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v1.0.9...v1.1.0) (2026-07-06)
 
 
