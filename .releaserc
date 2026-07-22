@@ -12,7 +12,7 @@
     [
       "@semantic-release/exec",
       {
-        "prepareCmd": "node tools/set-version.mjs ${nextRelease.version} && composer update --lock --no-install --no-scripts --no-interaction && composer update -d playground --lock --no-install --no-scripts --no-interaction && composer release:check"
+        "prepareCmd": "node tools/set-version.mjs ${nextRelease.version} && composer update --lock --no-install --no-scripts --no-interaction && composer update -d playground grommasdietz/kirby-blueprint-areas --with-dependencies --no-install --no-scripts --no-interaction && node tools/check-playground-version.mjs && composer release:check"
       }
     ],
     [

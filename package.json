@@ -20,7 +20,7 @@
     "docs:verify": "pnpm run docs:lint && pnpm run docs:links",
     "test:bundle": "node tools/verify-panel-bundle.mjs",
     "test:archive": "node tools/verify-release-archive.mjs",
-    "test:hygiene": "node tools/check-repository-hygiene.mjs",
+    "test:hygiene": "node tools/check-repository-hygiene.mjs && node tools/check-playground-version.mjs",
     "test:browser": "pnpm exec playwright test",
     "test:browser:api-slug": "node tools/run-api-slug-browser.mjs",
     "test:browser:debug": "PLAYWRIGHT_SERVER_LOGS=1 pnpm exec playwright test --reporter=list",
