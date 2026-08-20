@@ -3,7 +3,7 @@
   "version": "2.0.0",
   "description": "Add custom Panel areas via blueprints on Kirby CMS",
   "license": "MIT",
-  "packageManager": "pnpm@11.11.0",
+  "packageManager": "pnpm@11.22.0",
   "scripts": {
     "setup": "pnpm install --frozen-lockfile && pnpm exec playwright install chromium",
     "playground:seed": "composer run playground:seed",
