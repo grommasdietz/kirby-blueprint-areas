@@ -1,18 +1,86 @@
 name: CI/CD Pipeline
-
-on:
-  push:
-    branches: [main]
-  pull_request:
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-
 permissions:
   contents: read
-
 jobs:
+  verify:
+    name: PHP 8.3
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - uses: actions/checkout@v6
+    - uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+        extensions: curl, dom, gd, json, mbstring, simplexml
+        coverage: none
+        tools: composer:v2
+    - name: Synchronize playground lock metadata
+      run: composer update -d playground --lock --no-install --no-scripts --no-progress --no-interaction
+    - name: Install playground dependencies
+      run: composer install -d playground --prefer-dist --no-progress --no-interaction
+    - name: Verify minimum runtime
+      run: composer test:smoke
+    - name: Synchronize root lock metadata
+      run: composer update --lock --no-install --no-scripts --no-progress --no-interaction
+    - name: Install root development dependencies
+      run: composer install --prefer-dist --no-progress --no-interaction
+    - name: Validate Composer metadata
+      run: composer validate --strict --no-check-version
+    - name: Check platform requirements
+      run: composer check-platform-reqs
+    - name: Lint PHP
+      run: composer lint
+    - name: Static analysis
+      run: composer psalm -- --show-info=false --output-format=github --no-cache
+    - uses: pnpm/action-setup@v6
+    - uses: actions/setup-node@v7
+      with:
+        node-version-file: .node-version
+        cache: pnpm
+    - name: Install Node dependencies
+      run: pnpm install --frozen-lockfile
+    - name: Verify third-party notices
+      run: |
+        composer notices:generate
+        git diff --exit-code -- THIRD_PARTY_NOTICES.md
+    - name: Check release readiness
+      run: composer release:check
+    - name: Run PHPUnit suites
+      run: composer test:unit && composer test:integration
+    - name: Lint JavaScript
+      run: pnpm lint
+    - name: Verify generated assets
+      run: pnpm build:check
+    - name: Verify Panel bundle
+      run: pnpm test:bundle
+    - name: Verify source archive
+      run: pnpm test:archive
+    - name: Verify documentation
+      run: pnpm docs:verify
+    - name: Check repository hygiene
+      run: pnpm test:hygiene
+    - name: Synchronize playground lock metadata
+      run: composer update -d playground --lock --no-install --no-scripts --no-progress --no-interaction
+    - name: Synchronize root lock metadata
+      run: composer update --lock --no-install --no-scripts --no-progress --no-interaction
+    - run: pnpm exec playwright install --with-deps chromium
+    - name: Run browser tests
+      run: pnpm test:browser
+    - name: Run custom API slug browser test
+      run: pnpm test:browser:api-slug
+    - name: Upload Playwright artifacts
+      if: failure()
+      uses: actions/upload-artifact@v7
+      with:
+        name: kirby-blueprint-areas-playwright-artifacts
+        path: |
+          playwright-report/
+          test-results/
+        if-no-files-found: ignore
+        retention-days: 3
   php:
     name: PHP ${{ matrix.php-version }}
     runs-on: ubuntu-latest
@@ -20,58 +88,36 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - php-version: "8.2"
-            full-suite: false
-          - php-version: "8.3"
-            full-suite: true
-          - php-version: "8.4"
-            full-suite: true
-          - php-version: "8.5"
-            full-suite: true
+        - php-version: '8.2'
+          full-suite: false
+        - php-version: '8.4'
+          full-suite: true
+        - php-version: '8.5'
+          full-suite: true
     steps:
-      - uses: actions/checkout@v6
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php-version }}
-          extensions: curl, dom, gd, json, mbstring, simplexml
-          coverage: none
-          tools: composer:v2
-      - name: Synchronize playground lock metadata
-        run: composer update -d playground --lock --no-install --no-scripts --no-progress --no-interaction
-      - name: Install playground dependencies
-        run: composer install -d playground --prefer-dist --no-progress --no-interaction
-      - name: Verify minimum runtime
-        run: composer test:smoke
-      - name: Synchronize root lock metadata
-        if: matrix.full-suite
-        run: composer update --lock --no-install --no-scripts --no-progress --no-interaction
-      - name: Install root development dependencies
-        if: matrix.full-suite
-        run: composer install --prefer-dist --no-progress --no-interaction
-      - name: Validate Composer metadata
-        if: matrix.php-version == '8.3'
-        run: composer validate --strict --no-check-version
-      - name: Check platform requirements
-        if: matrix.php-version == '8.3'
-        run: composer check-platform-reqs
-      - name: Lint PHP
-        if: matrix.php-version == '8.3'
-        run: composer lint
-      - name: Static analysis
-        if: matrix.php-version == '8.3'
-        run: composer psalm -- --show-info=false --output-format=github --no-cache
-      - name: Verify third-party notices
-        if: matrix.php-version == '8.3'
-        run: |
-          composer notices:generate
-          git diff --exit-code -- THIRD_PARTY_NOTICES.md
-      - name: Check release readiness
-        if: matrix.php-version == '8.3'
-        run: composer release:check
-      - name: Run PHPUnit suites
-        if: matrix.full-suite
-        run: composer test:unit && composer test:integration
-
+    - uses: actions/checkout@v6
+    - uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-version }}
+        extensions: curl, dom, gd, json, mbstring, simplexml
+        coverage: none
+        tools: composer:v2
+    - name: Synchronize playground lock metadata
+      run: composer update -d playground --lock --no-install --no-scripts --no-progress --no-interaction
+    - name: Install playground dependencies
+      run: composer install -d playground --prefer-dist --no-progress --no-interaction
+    - name: Verify minimum runtime
+      run: composer test:smoke
+    - name: Synchronize root lock metadata
+      if: matrix.full-suite
+      run: composer update --lock --no-install --no-scripts --no-progress --no-interaction
+    - name: Install root development dependencies
+      if: matrix.full-suite
+      run: composer install --prefer-dist --no-progress --no-interaction
+    - name: Run PHPUnit suites
+      if: matrix.full-suite
+      run: composer test:unit && composer test:integration
+    timeout-minutes: 15
   kirby:
     name: Kirby ${{ matrix.kirby-version }} compatibility
     runs-on: ubuntu-latest
@@ -79,205 +125,145 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - kirby-version: "5.5.2"
-            label: minimum-supported
-          - kirby-version: "^5.5.2"
-            label: latest-compatible
-
+        - kirby-version: 5.5.2
+          label: minimum-supported
+        - kirby-version: ^5.5.2
+          label: latest-compatible
     steps:
-      - uses: actions/checkout@v6
+    - uses: actions/checkout@v6
+    - uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+        extensions: curl, dom, gd, json, mbstring, simplexml
+        coverage: none
+        tools: composer:2.10.2, phpunit:12.5.30
+    - name: Create isolated compatibility manifest
+      env:
+        KIRBY_VERSION: ${{ matrix.kirby-version }}
+      run: |
+        php <<'PHP'
+        <?php
 
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.3"
-          extensions: curl, dom, gd, json, mbstring, simplexml
-          coverage: none
-          tools: composer:2.10.2, phpunit:12.5.30
+        declare(strict_types=1);
 
-      - name: Create isolated compatibility manifest
-        env:
-          KIRBY_VERSION: ${{ matrix.kirby-version }}
-        run: |
-          php <<'PHP'
-          <?php
+        $version = getenv('KIRBY_VERSION');
 
-          declare(strict_types=1);
+        if (is_string($version) === false || $version === '') {
+            throw new RuntimeException('Missing Kirby version');
+        }
 
-          $version = getenv('KIRBY_VERSION');
+        $manifest = [
+            'name' => 'grommasdietz/kirby-blueprint-areas-compat',
+            'description' => 'Temporary Kirby compatibility test project',
+            'type' => 'project',
+            'require' => [
+                'php' => '^8.2',
+                'getkirby/cms' => $version,
+            ],
+            'autoload' => [
+                'psr-4' => [
+                    'GrommasDietz\\Areas\\' => 'lib/',
+                ],
+            ],
+            'config' => [
+                'allow-plugins' => [
+                    'getkirby/composer-installer' => true,
+                ],
+                'platform' => [
+                    'php' => '8.3.16',
+                ],
+                'sort-packages' => true,
+            ],
+        ];
 
-          if (is_string($version) === false || $version === '') {
-              throw new RuntimeException('Missing Kirby version');
-          }
+        file_put_contents(
+            'composer.compat.json',
+            json_encode(
+                $manifest,
+                JSON_PRETTY_PRINT |
+                JSON_UNESCAPED_SLASHES |
+                JSON_THROW_ON_ERROR
+            ) . PHP_EOL
+        );
+        PHP
+    - name: Install target Kirby version
+      shell: bash
+      env:
+        COMPOSER: composer.compat.json
+      run: |
+        composer update \
+          --with-all-dependencies \
+          --prefer-dist \
+          --no-progress \
+          --no-interaction \
+          --no-scripts
 
-          $manifest = [
-              'name' => 'grommasdietz/kirby-blueprint-areas-compat',
-              'description' => 'Temporary Kirby compatibility test project',
-              'type' => 'project',
-              'require' => [
-                  'php' => '^8.2',
-                  'getkirby/cms' => $version,
-              ],
-              'autoload' => [
-                  'psr-4' => [
-                      'GrommasDietz\\Areas\\' => 'lib/',
-                  ],
-              ],
-              'config' => [
-                  'allow-plugins' => [
-                      'getkirby/composer-installer' => true,
-                  ],
-                  'platform' => [
-                      'php' => '8.3.16',
-                  ],
-                  'sort-packages' => true,
-              ],
-          ];
+        composer show getkirby/cms
+    - name: Run Kirby compatibility suite
+      shell: bash
+      run: |
+        set -o pipefail
+        mkdir -p build/compatibility
 
-          file_put_contents(
-              'composer.compat.json',
-              json_encode(
-                  $manifest,
-                  JSON_PRETTY_PRINT |
-                  JSON_UNESCAPED_SLASHES |
-                  JSON_THROW_ON_ERROR
-              ) . PHP_EOL
-          );
-          PHP
-
-      - name: Install target Kirby version
-        shell: bash
-        env:
-          COMPOSER: composer.compat.json
-        run: |
-          composer update \
-            --with-all-dependencies \
-            --prefer-dist \
-            --no-progress \
-            --no-interaction \
-            --no-scripts
-
-          composer show getkirby/cms
-
-      - name: Run Kirby compatibility suite
-        shell: bash
-        run: |
-          set -o pipefail
-          mkdir -p build/compatibility
-
-          phpunit \
-            --configuration phpunit.compat.xml.dist \
-            --testsuite "Kirby compatibility" \
-            --display-all-issues \
-            --testdox \
-            --log-junit "build/compatibility/kirby-${{ matrix.label }}.xml" \
-            2>&1 | tee "build/compatibility/kirby-${{ matrix.label }}.log"
-
-      - name: Upload compatibility diagnostics
-        if: failure()
-        uses: actions/upload-artifact@v7
-        with:
-          name: kirby-${{ matrix.label }}-compatibility
-          path: build/compatibility/
-          if-no-files-found: error
-          retention-days: 7
-
-  node:
-    name: Node quality, assets and docs
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
-        with:
-          node-version-file: .node-version
-      - uses: pnpm/action-setup@v6
-      - run: pnpm install --frozen-lockfile
-      - name: Lint JavaScript
-        run: pnpm lint
-      - name: Verify generated assets
-        run: pnpm build:check
-      - name: Verify Panel bundle
-        run: pnpm test:bundle
-      - name: Verify source archive
-        run: pnpm test:archive
-      - name: Verify documentation
-        run: pnpm docs:verify
-      - name: Check repository hygiene
-        run: pnpm test:hygiene
-
-  browser:
-    name: Browser tests
-    runs-on: ubuntu-latest
-    needs: [php, node]
-    steps:
-      - uses: actions/checkout@v6
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.3"
-          extensions: curl, dom, gd, json, mbstring, simplexml
-          coverage: none
-          tools: composer:v2
-      - uses: actions/setup-node@v6
-        with:
-          node-version-file: .node-version
-      - uses: pnpm/action-setup@v6
-      - name: Synchronize playground lock metadata
-        run: composer update -d playground --lock --no-install --no-scripts --no-progress --no-interaction
-      - name: Install playground PHP dependencies
-        run: composer install -d playground --prefer-dist --no-progress --no-interaction
-      - name: Synchronize root lock metadata
-        run: composer update --lock --no-install --no-scripts --no-progress --no-interaction
-      - name: Install root PHP dependencies
-        run: composer install --prefer-dist --no-progress --no-interaction
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm build:check
-      - run: pnpm exec playwright install --with-deps chromium
-      - name: Run browser tests
-        run: pnpm test:browser
-      - name: Run custom API slug browser test
-        run: pnpm test:browser:api-slug
-      - name: Upload Playwright artifacts
-        if: failure()
-        uses: actions/upload-artifact@v7
-        with:
-          name: kirby-blueprint-areas-playwright-artifacts
-          path: |
-            playwright-report/
-            test-results/
-          if-no-files-found: ignore
-          retention-days: 3
-
+        phpunit \
+          --configuration phpunit.compat.xml.dist \
+          --testsuite "Kirby compatibility" \
+          --display-all-issues \
+          --testdox \
+          --log-junit "build/compatibility/kirby-${{ matrix.label }}.xml" \
+          2>&1 | tee "build/compatibility/kirby-${{ matrix.label }}.log"
+    - name: Upload compatibility diagnostics
+      if: failure()
+      uses: actions/upload-artifact@v7
+      with:
+        name: kirby-${{ matrix.label }}-compatibility
+        path: build/compatibility/
+        if-no-files-found: error
+        retention-days: 7
+    timeout-minutes: 15
   release:
     name: Semantic release
     runs-on: ubuntu-latest
-    needs: [php, kirby, node, browser]
+    needs:
+    - verify
+    - php
+    - kirby
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
-      - name: Create release app token
-        id: release-token
-        uses: actions/create-github-app-token@v3
-        with:
-          client-id: ${{ vars.GD_RELEASE_BOT_CLIENT_ID }}
-          private-key: ${{ secrets.GD_RELEASE_BOT_PRIVATE_KEY }}
-          permission-contents: write
-          permission-issues: write
-          permission-pull-requests: write
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-          token: ${{ steps.release-token.outputs.token }}
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.3"
-          coverage: none
-          tools: composer:v2
-      - uses: actions/setup-node@v6
-        with:
-          node-version-file: .node-version
-      - uses: pnpm/action-setup@v6
-      - run: pnpm install --frozen-lockfile
-      - name: Run Semantic Release
-        run: pnpm exec semantic-release
-        env:
-          GITHUB_TOKEN: ${{ steps.release-token.outputs.token }}
-          HUSKY: 0
+    - name: Create release app token
+      id: release-token
+      uses: actions/create-github-app-token@v3
+      with:
+        client-id: ${{ vars.GD_RELEASE_BOT_CLIENT_ID }}
+        private-key: ${{ secrets.GD_RELEASE_BOT_PRIVATE_KEY }}
+        permission-contents: write
+        permission-issues: write
+        permission-pull-requests: write
+    - uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+        persist-credentials: false
+        token: ${{ steps.release-token.outputs.token }}
+    - uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+        coverage: none
+        tools: composer:v2
+    - uses: pnpm/action-setup@v6
+    - uses: actions/setup-node@v6
+      with:
+        node-version-file: .node-version
+        cache: pnpm
+    - run: pnpm install --frozen-lockfile
+    - name: Run Semantic Release
+      run: pnpm exec semantic-release
+      env:
+        GITHUB_TOKEN: ${{ steps.release-token.outputs.token }}
+        HUSKY: 0
+    timeout-minutes: 15
+'on':
+  push:
+    branches:
+    - main
+  pull_request: null
+  workflow_dispatch: null
