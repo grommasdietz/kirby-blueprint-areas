@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
     - name: Validate Dependabot schedule types
       run: |
         ruby -ryaml -e '
@@ -111,7 +111,7 @@ jobs:
         - php-version: '8.5'
           full-suite: true
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
     - uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-version }}
@@ -141,12 +141,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-        - kirby-version: 5.5.2
+        - kirby-version: 5.6.0
           label: minimum-supported
-        - kirby-version: ^5.5.2
+        - kirby-version: ^5.6
           label: latest-compatible
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
     - uses: shivammathur/setup-php@v2
       with:
         php-version: '8.3'
@@ -255,7 +255,7 @@ jobs:
         permission-contents: write
         permission-issues: write
         permission-pull-requests: write
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
       with:
         fetch-depth: 0
         persist-credentials: false
@@ -266,7 +266,7 @@ jobs:
         coverage: none
         tools: composer:v2
     - uses: pnpm/action-setup@v6
-    - uses: actions/setup-node@v6
+    - uses: actions/setup-node@v7
       with:
         node-version-file: .node-version
         cache: pnpm

@@ -63,11 +63,11 @@ cases without changing the production plugin lifecycle.
 
 CI runs the focused compatibility contract against these Kirby constraints:
 
-- `5.5.2`, the minimum supported release;
+- `5.6.0`, the minimum supported release;
 - the repository's locked Kirby version;
-- the latest version allowed by `^5.5.2`.
+- the latest version allowed by `^5.6`.
 
-Kirby versions before 5.5.2 are unsupported. The complete PHPUnit suite still
+Kirby versions before 5.6 are unsupported. The complete PHPUnit suite still
 runs against the repository lock; the compatibility matrix targets the stable
 authorization, API, changes and proxy contracts across the supported range.
 
