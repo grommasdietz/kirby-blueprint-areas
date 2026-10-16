@@ -4,8 +4,6 @@ Add custom Panel areas via blueprints on Kirby CMS.
 
 ![Cover image showing an example of the plugin in use](/.github/assets/hero-image.png)
 
-The playground disables `panel.vue.compiler` to exercise the plugin with Kirby’s runtime-only Vue build.
-
 ## Requirements
 
 - Kirby 5.5.2+
@@ -45,34 +43,7 @@ tabs:
 
 Each blueprint will render as an own area. Each area saves content to site model by default. Optionally change resolved model (like a page) with [query](docs/usage/index.md#query) or restrict users [access](docs/usage/index.md#access-control).
 
-### Options
-
-Configure via `site/config/config.php`:
-
-```php
-return [
-  'grommasdietz.blueprint-areas' => [
-    'panel' => [
-      // Show/hide all auto-registered menu entries
-      'enabled'    => true,
-
-      // Show a numeric badge instead of a dot on menu items
-      'badgeCount' => false,
-
-      // Optional collision-safe Panel ID prefix; empty keeps existing URLs
-      'areaPrefix' => '',
-    ],
-
-    // Override the blueprint directory
-    'blueprints.root' => kirby()->root('blueprints') . '/areas',
-
-    'api' => [
-      // Keep accepting legacy direct-value API payloads
-      'legacyPayload' => true,
-    ],
-  ]
-];
-```
+See the [options reference](docs/usage/index.md#options) for menu settings, model access and API configuration.
 
 ### Documentation
 
@@ -99,3 +70,5 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidance and expectations.
 ---
 
 ## License
+
+[MIT](LICENSE.md) © 2026 Grommas Dietz

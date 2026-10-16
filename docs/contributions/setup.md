@@ -21,10 +21,6 @@ The root dependency graph contains PHPUnit, Psalm, PHP CS Fixer and Kirby for
 self-contained PHP quality checks. The separate playground graph provides the
 disposable application used by runtime and browser tests.
 
-PHP CS Fixer may print an informational warning when it runs on PHP 8.3 while
-the package declares PHP 8.2 as its minimum runtime. This is expected in the
-contributor setup; CI and Psalm continue to validate the PHP 8.2 target.
-
 ---
 
 ## Node

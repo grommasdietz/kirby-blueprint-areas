@@ -22,9 +22,6 @@ compact dot reporter. Open the full HTML report with
 `pnpm run test:browser:report`, or expose the verbose list reporter and PHP
 server logs with `pnpm run test:browser:debug`.
 
-Do not enable `set -e` in an interactive shell. The verification command exits
-only its child process and returns control to the terminal.
-
 ## PHP
 
 Run all PHP suites:
