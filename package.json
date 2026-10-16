@@ -1,7 +1,7 @@
 {
   "name": "kirby-blueprint-areas",
-  "version": "2.0.0",
-  "description": "Add custom Panel areas via blueprints on Kirby\u00a0CMS",
+  "version": "3.0.0",
+  "description": "Add custom Panel areas via blueprints on Kirby CMS",
   "license": "MIT",
   "packageManager": "pnpm@11.22.0",
   "scripts": {

@@ -1,3 +1,15 @@
+# [3.0.0](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v2.0.0...v3.0.0) (2026-10-16)
+
+
+* chore!: require Kirby 5.6 or newer ([ba29b36](https://github.com/grommasdietz/kirby-blueprint-areas/commit/ba29b36db9793602f3e030175dfa4ede5db726b9))
+
+
+### BREAKING CHANGES
+
+* Kirby versions before 5.6.0 are no longer supported. Composer
+constraints, playground metadata, documentation and the compatibility matrix now use the
+same minimum.
+
 # [2.0.0](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v1.1.0...v2.0.0) (2026-07-22)
 
 
