@@ -21,6 +21,9 @@ part of the public API, so check them when updating Kirby.
   - Core reference: `panel/src/panel/view.js` (implementation detail)
 - `panel.events` events are used to resync badges and shortcuts:
   `content.save`, `content.publish`, `content.discard`, `keydown.cmd.s`.
+- The root app watches the reactive `panel.user.id` so badge summaries load
+  after authentication, including an in-place login. Anonymous requests are
+  skipped. Core reference: `panel/src/panel/user.ts`.
 
 ## API routing assumptions
 

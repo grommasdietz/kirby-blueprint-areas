@@ -55,6 +55,8 @@ Areas share the same `changes` version and content lock as the resolved model. I
 
 Badges are rendered on each area’s menu entry when unpublished changes exist on any field used by the area. They remain visible across reloads and can reflect changes made from other views/areas that write to the same model.
 
+Badge summaries load after sign-in. The login page does not request protected changes data; signing in initializes the badges without requiring a page reload.
+
 ---
 
 Next: Continue with [Contributions](../contributions/index.md)

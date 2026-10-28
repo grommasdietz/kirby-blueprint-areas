@@ -102,6 +102,8 @@ export function setupMenuBadges(panel) {
 }
 
 export async function refreshBadges(panel) {
+  if (!panel?.user?.id) return;
+
   setupMenuBadges(panel);
   try {
     const data = await panel.api.get("grommasdietz/blueprint-areas/changes");

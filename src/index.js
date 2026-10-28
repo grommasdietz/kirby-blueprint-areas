@@ -86,7 +86,9 @@ function areasApiEndpoint(api, method) {
       panel.events.on("content.publish", onContentChange);
       panel.events.on("content.discard", onContentChange);
 
-      refreshBadges(panel);
+      // The Panel also starts on the login page. Refresh when its reactive
+      // user state becomes authenticated, including after an in-place login.
+      app.$watch(() => panel.user?.id, onContentChange, { immediate: true });
     },
   });
 })();
