@@ -1,3 +1,10 @@
+## [3.0.1](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v3.0.0...v3.0.1) (2026-10-28)
+
+
+### Bug Fixes
+
+* **panel:** defer area badge requests until sign-in ([236cd07](https://github.com/grommasdietz/kirby-blueprint-areas/commit/236cd0732738a0d4e9eb2b6f7e457fe3c7dd9c46))
+
 # [3.0.0](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v2.0.0...v3.0.0) (2026-10-16)
 
 
