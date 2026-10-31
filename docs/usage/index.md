@@ -36,6 +36,20 @@ tabs:
 > [!NOTE]
 > All native Kirby fields and core sections work in area blueprints. Custom sections work when they register a Panel component and expose API routes.
 
+### Plugin blueprints
+
+Plugins can ship area blueprints by registering YAML files under the `areas/` prefix:
+
+```php
+Kirby::plugin('my/theme', [
+  'blueprints' => [
+    'areas/design' => __DIR__ . '/blueprints/areas/design.yml',
+  ],
+]);
+```
+
+A blueprint with the same name in `site/blueprints/areas` takes precedence, so projects can override an area shipped by a plugin.
+
 ## Translating the area label
 
 The Panel label (menu entry) and the view title are taken from the area blueprint’s `title`.

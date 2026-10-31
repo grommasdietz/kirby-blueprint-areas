@@ -98,6 +98,49 @@ final class BlueprintAreasDiscoveryTest extends TestCase
         }
     }
 
+    public function testPrefixedCollisionRegisteredByLaterPluginIsExcluded(): void
+    {
+        putenv('BLUEPRINT_AREAS_TEST_COMPETING_ID=pref-fields');
+
+        try {
+            $this->bootKirby([
+                'testPluginsAfter' => ['competing-area'],
+                'options' => [
+                    'grommasdietz.blueprint-areas' => [
+                        'panel' => ['areaPrefix' => 'pref-'],
+                    ],
+                ],
+            ])->impersonate('kirby');
+
+            $this->assertNotContains('fields', array_column(BlueprintAreas::listAll(), 'id'));
+            $this->assertCount(1, $this->kirby->extensions('areas')['pref-fields'] ?? []);
+        } finally {
+            putenv('BLUEPRINT_AREAS_TEST_COMPETING_ID');
+        }
+    }
+
+    public function testPluginRegisteredBlueprintsAreDiscovered(): void
+    {
+        $this->bootKirby(['testPluginsAfter' => ['plugin-blueprints']])->impersonate('kirby');
+
+        $ids = array_column(BlueprintAreas::listAll(), 'id');
+        $this->assertContains('plugin-area', $ids);
+        $this->assertNotContains('nested/area', $ids);
+        $this->assertArrayHasKey('plugin-area', $this->kirby->extensions('areas'));
+
+        $payload = BlueprintAreas::view('plugin-area');
+        $this->assertSame('Plugin area', $payload['title'] ?? null);
+        $this->assertSame('/areas/plugin-area.yml', $payload['meta']['blueprintPath'] ?? null);
+    }
+
+    public function testSiteBlueprintTakesPrecedenceOverPluginBlueprint(): void
+    {
+        $this->bootKirby(['testPluginsAfter' => ['plugin-blueprints']])->impersonate('kirby');
+
+        $this->assertSame('Fields', BlueprintAreas::view('fields')['title'] ?? null);
+        $this->assertCount(1, $this->kirby->extensions('areas')['fields'] ?? []);
+    }
+
     public function testRepeatedBootRemovesStalePermissionRegistrations(): void
     {
         $path = $this->kirbyBlueprintRoot() . '/temporary-registration.yml';

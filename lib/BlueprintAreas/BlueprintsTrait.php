@@ -271,6 +271,17 @@ trait BlueprintsTrait
             }
         }
 
+        // Plugin-registered `areas/<name>` blueprints; site/blueprints/areas wins.
+        foreach (App::instance()->extensions('blueprints') as $id => $path) {
+            if (!is_string($id) || !str_starts_with($id, 'areas/') || !is_string($path) || !is_file($path)) {
+                continue;
+            }
+            $name = substr($id, 6);
+            if (static::isValidAreaName($name) && !isset($files[$name])) {
+                $files[$name] = $path;
+            }
+        }
+
         ksort($files);
 
         return $files;
