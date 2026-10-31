@@ -16,7 +16,7 @@ composer require grommasdietz/kirby-blueprint-areas
 ```
 
 > [!TIP]
-> For a manual install, download the **Source code (zip)** archive of an immutable GitHub release tag and copy it to `site/plugins/kirby-blueprint-areas`.
+> For a manual install, download the **Source code (zip)** archive of an immutable GitHub release tag and copy it to `site/plugins/blueprint-areas`.
 
 ## Quickstart
 
