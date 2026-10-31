@@ -53,6 +53,9 @@
       "getkirby/composer-installer": true
     }
   },
+  "extra": {
+    "installer-name": "blueprint-areas"
+  },
   "scripts": {
     "setup": [
       "composer install -d playground",

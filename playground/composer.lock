@@ -538,7 +538,7 @@
             "dist": {
                 "type": "path",
                 "url": "..",
-                "reference": "f1490ce82e6971659f334d43e20d9be89850ec95"
+                "reference": "e80f380cf14a56c0cffc758f50715a9de24526c1"
             },
             "require": {
                 "getkirby/composer-installer": "^1.2",
@@ -554,6 +554,9 @@
                 "vimeo/psalm": "^6.19.1"
             },
             "type": "kirby-plugin",
+            "extra": {
+                "installer-name": "blueprint-areas"
+            },
             "autoload": {
                 "psr-4": {
                     "GrommasDietz\\Areas\\": "lib/"
