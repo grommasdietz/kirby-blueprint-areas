@@ -12,6 +12,8 @@ Install Composer dependencies for the repo and the playground:
 composer run setup
 ```
 
+Setup provisions `KIRBY_CONTENT_SALT` and `KIRBY_COOKIE_KEY` in the ignored repository-root `.env`, outside the playground document root. The playground also provisions missing or empty values on first boot. Values are independent, survive playground resets and are never rotated automatically. Existing comments and unrelated settings are preserved. The two keys accept literal quoted or unquoted values of at least 32 characters; process environment values take precedence. Invalid or duplicate assignments raise an error. The repository root must be writable for initial generation.
+
 The plugin runtime supports PHP 8.2 and newer. The root contributor toolchain is
 resolved against PHP 8.3 (`config.platform`) because PHPUnit 12 and the complete
 quality suite require PHP 8.3 or newer. CI still runs the runtime smoke test on
