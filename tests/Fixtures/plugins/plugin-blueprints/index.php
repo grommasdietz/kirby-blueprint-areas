@@ -12,5 +12,6 @@ App::plugin('tests/blueprint-areas-plugin-blueprints', [
         'areas/plugin-area' => __DIR__ . '/blueprints/areas/plugin-area.yml',
         'areas/fields'      => __DIR__ . '/blueprints/areas/fields.yml',
         'areas/nested/area' => __DIR__ . '/blueprints/areas/plugin-area.yml',
+        'users/pluginreader' => __DIR__ . '/blueprints/users/pluginreader.yml',
     ],
 ]);

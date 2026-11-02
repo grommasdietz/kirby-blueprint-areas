@@ -249,12 +249,9 @@ trait BlueprintsTrait
     private static function blueprintFiles(): array
     {
         $root = static::blueprintsRoot();
-        if (!is_dir($root)) {
-            return [];
-        }
-
         $files = [];
-        foreach (Dir::files($root) as $filename) {
+        $filenames = is_dir($root) ? Dir::files($root) : [];
+        foreach ($filenames as $filename) {
             $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
             if (!in_array($extension, ['yml', 'yaml'], true)) {
                 continue;
@@ -276,6 +273,12 @@ trait BlueprintsTrait
             if (!is_string($id) || !str_starts_with($id, 'areas/') || !is_string($path) || !is_file($path)) {
                 continue;
             }
+
+            $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+            if (!in_array($extension, ['yml', 'yaml'], true)) {
+                continue;
+            }
+
             $name = substr($id, 6);
             if (static::isValidAreaName($name) && !isset($files[$name])) {
                 $files[$name] = $path;
@@ -477,12 +480,13 @@ trait BlueprintsTrait
     }
 
     /**
-     * Clears area IDs from an earlier App instance before plugin registration.
+     * Clears earlier registration state while preserving current plugin areas.
      */
     public static function beginAreaRegistration(): void
     {
+        $currentAreas = App::instance()->extensions('areas');
         foreach (static::$registeredAreaIds as $areaId) {
-            if (property_exists(Permissions::class, 'extendedAreas')) {
+            if (!isset($currentAreas[$areaId]) && property_exists(Permissions::class, 'extendedAreas')) {
                 unset(Permissions::$extendedAreas[$areaId]);
             }
         }

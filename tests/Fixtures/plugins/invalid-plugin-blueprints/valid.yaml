@@ -1,0 +1,5 @@
+title: YAML plugin
+
+fields:
+  note:
+    type: text

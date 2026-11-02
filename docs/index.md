@@ -5,6 +5,7 @@ This documentation is organized by purpose: using, contributing, and maintaining
 ## Users
 
 - [Usage](./usage/index.md): Create areas and store values
+- [Plugin blueprints](./usage/plugin-blueprints.md): Supply areas from plugins and override them in a project
 - [Architecture](./usage/architecture.md): Core concept
 
 ## Contributors
