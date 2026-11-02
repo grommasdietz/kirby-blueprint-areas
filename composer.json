@@ -1,7 +1,7 @@
 {
   "name": "grommasdietz/kirby-blueprint-areas",
   "description": "Add custom Panel areas via blueprints on Kirby CMS",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "type": "kirby-plugin",
   "license": "MIT",
   "authors": [
@@ -55,6 +55,7 @@
   },
   "scripts": {
     "setup": [
+      "@php tools/playground-secrets.php",
       "composer install -d playground",
       "composer install"
     ],

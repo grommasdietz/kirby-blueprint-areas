@@ -1,3 +1,10 @@
+## [3.0.2](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v3.0.1...v3.0.2) (2026-11-02)
+
+
+### Bug Fixes
+
+* **ci:** retain queued dependency merge jobs ([cf21a52](https://github.com/grommasdietz/kirby-blueprint-areas/commit/cf21a52231d32191a419cbb944545ef1b90c5f97))
+
 ## [3.0.1](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v3.0.0...v3.0.1) (2026-10-28)
 
 
