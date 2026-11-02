@@ -46,6 +46,86 @@ $draftArea = function (string $name): array {
     );
 };
 
+// One panel area per area blueprint, from site/blueprints/areas/*.yml and
+// plugin-registered `areas/<name>` blueprints.
+$registerAreas = function (): array {
+    $opts = BlueprintAreas::options();
+    $panel = $opts['panel'] ?? [];
+
+    $menuEnabled = ($panel['enabled'] ?? true) === true;
+    BlueprintAreas::beginAreaRegistration();
+    $registered = BlueprintAreas::listForRegistration();
+
+    $legacyPermissions = [];
+    if (class_exists(Permissions::class)) {
+        foreach ($registered as $item) {
+            $legacyPermissions[BlueprintAreas::menuId($item['id'])] = true;
+            $legacyPermissions[$item['id']] = true;
+        }
+
+        $existingPermissions = Permissions::$extendedActions['areas'] ?? [];
+        if (!is_array($existingPermissions)) {
+            $existingPermissions = [];
+        }
+
+        Permissions::$extendedActions['areas'] = [
+            ...$existingPermissions,
+            ...$legacyPermissions,
+        ];
+    }
+
+    $areas = [];
+    foreach ($registered as $item) {
+        $slug = $item['id'];
+        $icon = $item['icon'] ?? 'cog';
+        $areaId = BlueprintAreas::menuId($slug);
+
+        $areas[$areaId] = function () use ($areaId, $slug, $icon, $menuEnabled): array {
+            return [
+                'label' => BlueprintAreas::title($slug),
+                'icon'  => $icon,
+                'menu'  => function () use ($menuEnabled, $slug): bool {
+                    if ($menuEnabled !== true) {
+                        return false;
+                    }
+
+                    return BlueprintAreas::canAccess($slug);
+                },
+                'link'  => $areaId,
+                'views' => [
+                    [
+                        'pattern' => $areaId,
+                        'action'  => function () use ($slug, $areaId): array {
+                            $view = BlueprintAreas::view($slug);
+                            if (empty($view)) {
+                                throw new NotFoundException('Blueprint not found');
+                            }
+
+                            return [
+                                'title' => BlueprintAreas::title($slug),
+                                'component' => 'k-areas-view',
+                                'props' => [
+                                    'area' => $view,
+                                    'api' => 'grommasdietz/blueprint-areas/blueprints/' . $slug,
+                                    'lock' => BlueprintAreas::changesLockForArea($slug),
+                                    'versions' => [
+                                        'latest' => $view['baseline'] ?? [],
+                                        'changes' => $view['values'] ?? [],
+                                    ],
+                                ],
+                            ];
+                        }
+                    ],
+                ],
+            ];
+        };
+    }
+
+    BlueprintAreas::completeAreaRegistration(array_keys($areas), array_keys($legacyPermissions));
+
+    return $areas;
+};
+
 App::plugin('grommasdietz/blueprint-areas', [
     'options' => BlueprintAreas::defaultOptions(),
 
@@ -164,83 +244,17 @@ App::plugin('grommasdietz/blueprint-areas', [
         ],
     ],
 
-    // One panel area per area blueprint file
-    // Generated dynamically from site/blueprints/areas/*.yml
-    'areas' => (function () {
-        $opts = BlueprintAreas::options();
-        $panel = $opts['panel'] ?? [];
-
-        $menuEnabled = ($panel['enabled'] ?? true) === true;
-        BlueprintAreas::beginAreaRegistration();
-        $registered = BlueprintAreas::listForRegistration();
-
-        $legacyPermissions = [];
-        if (class_exists(Permissions::class)) {
-            foreach ($registered as $item) {
-                $legacyPermissions[BlueprintAreas::menuId($item['id'])] = true;
-                $legacyPermissions[$item['id']] = true;
-            }
-
-            $existingPermissions = Permissions::$extendedActions['areas'] ?? [];
-            if (!is_array($existingPermissions)) {
-                $existingPermissions = [];
-            }
-
-            Permissions::$extendedActions['areas'] = [
-                ...$existingPermissions,
-                ...$legacyPermissions,
-            ];
-        }
-
-        $areas = [];
-        foreach ($registered as $item) {
-            $slug = $item['id'];
-            $icon = $item['icon'] ?? 'cog';
-            $areaId = BlueprintAreas::menuId($slug);
-
-            $areas[$areaId] = function () use ($areaId, $slug, $icon, $menuEnabled): array {
-                return [
-                    'label' => BlueprintAreas::title($slug),
-                    'icon'  => $icon,
-                    'menu'  => function () use ($menuEnabled, $slug): bool {
-                        if ($menuEnabled !== true) {
-                            return false;
-                        }
-
-                        return BlueprintAreas::canAccess($slug);
-                    },
-                    'link'  => $areaId,
-                    'views' => [
-                        [
-                            'pattern' => $areaId,
-                            'action'  => function () use ($slug, $areaId): array {
-                                $view = BlueprintAreas::view($slug);
-                                if (empty($view)) {
-                                    throw new NotFoundException('Blueprint not found');
-                                }
-
-                                return [
-                                    'title' => BlueprintAreas::title($slug),
-                                    'component' => 'k-areas-view',
-                                    'props' => [
-                                        'area' => $view,
-                                        'api' => 'grommasdietz/blueprint-areas/blueprints/' . $slug,
-                                        'lock' => BlueprintAreas::changesLockForArea($slug),
-                                        'versions' => [
-                                            'latest' => $view['baseline'] ?? [],
-                                            'changes' => $view['values'] ?? [],
-                                        ],
-                                    ],
-                                ];
-                            }
-                        ],
-                    ],
-                ];
-            };
-        }
-
-        BlueprintAreas::completeAreaRegistration(array_keys($areas), array_keys($legacyPermissions));
-
-        return $areas;
-    })(),
+    // Register areas once all plugins are loaded, so plugin-registered
+    // `areas/<name>` blueprints are discovered too.
+    'hooks' => [
+        'system.loadPlugins:after' => function () use ($registerAreas): void {
+            /**
+             * Kirby binds hook callbacks to the App instance.
+             *
+             * @var App $this
+             * @psalm-suppress InvalidScope
+             */
+            $this->extend(['areas' => $registerAreas()], $this->plugin('grommasdietz/blueprint-areas'));
+        },
+    ],
 ]);

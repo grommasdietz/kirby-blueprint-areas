@@ -50,9 +50,16 @@ Test-only plugin fixtures live in `tests/Fixtures/plugins`. Pass their directory
 names through `testPluginsBefore` or `testPluginsAfter` when booting the test
 environment. The harness creates uniquely named, ordered wrapper plugins and
 lets one Kirby constructor discover them through the normal plugin loader. A
-fixture that must affect Blueprint Areas while its dynamic areas are registered
-must apply that test state immediately when its `testPluginsBefore` entry loads;
-see the competing-area fixture for the collision-test pattern.
+fixture can register normal `blueprints` or `areas` extensions; discovery runs
+after Kirby has applied these declarations. Use `native-competing-area` to test
+ordinary area collisions. The `competing-area` fixture separately covers an
+extension applied immediately while a plugin file loads.
+
+`BlueprintAreasPluginBlueprintsTest` covers missing directories, custom-root
+precedence, supported file types and permission ownership across repeated boots.
+The `plugin-blueprints.spec.ts` browser tests temporarily install the fixture
+plugin through a wrapper, then remove it. They check menu navigation, publishing,
+read-only fields and API denials without adding a permanent playground area.
 
 Proxy integration tests that register synthetic field and section component types
 run in separate PHP processes. Kirby stores these component registries statically,
@@ -68,8 +75,9 @@ CI runs the focused compatibility contract against these Kirby constraints:
 - the latest version allowed by `^5.6`.
 
 Kirby versions before 5.6 are unsupported. The complete PHPUnit suite still
-runs against the repository lock; the compatibility matrix targets the stable
-authorization, API, changes and proxy contracts across the supported range.
+runs against the repository lock; the compatibility matrix targets blueprint
+discovery, registration, authorization, API, changes and proxy contracts across
+the supported range.
 
 ## Panel and browser checks
 

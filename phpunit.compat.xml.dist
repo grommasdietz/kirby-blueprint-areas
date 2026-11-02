@@ -20,6 +20,8 @@
 
     <testsuites>
         <testsuite name="Kirby compatibility">
+            <file>./tests/Integration/BlueprintAreasDiscoveryTest.php</file>
+            <file>./tests/Integration/BlueprintAreasPluginBlueprintsTest.php</file>
             <file>./tests/Integration/BlueprintAreasAuthorizationMatrixTest.php</file>
             <file>./tests/Integration/BlueprintAreasApiTest.php</file>
             <file>./tests/Integration/BlueprintAreasChangesTest.php</file>

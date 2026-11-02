@@ -36,6 +36,8 @@ tabs:
 > [!NOTE]
 > All native Kirby fields and core sections work in area blueprints. Custom sections work when they register a Panel component and expose API routes.
 
+Plugins and themes can also supply areas. See [Plugin blueprints](./plugin-blueprints.md) for registration, project overrides and integration limits.
+
 ## Translating the area label
 
 The Panel label (menu entry) and the view title are taken from the area blueprint’s `title`.

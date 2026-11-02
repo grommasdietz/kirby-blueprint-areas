@@ -18,7 +18,7 @@ Draft and publish operations only merge the submitted, editable fields from the 
 
 By default, the blueprint filename becomes the logical area ID and Panel URL segment. Existing filenames, role permissions, URLs and bookmarks therefore remain unchanged.
 
-The plugin skips IDs that collide with Kirby core areas or another registered Panel area. Because plugin registration is load-order dependent, installations with many custom areas can opt into a stable prefix:
+The plugin registers its areas during `system.loadPlugins:after`, once Kirby has applied the plugins' declared extensions. It skips IDs that collide with Kirby core areas or another registered Panel area. See [Plugin blueprints](./plugin-blueprints.md) for supported sources and project overrides. Installations with many custom areas can opt into a stable prefix to avoid such collisions:
 
 ```php
 'grommasdietz.blueprint-areas' => [

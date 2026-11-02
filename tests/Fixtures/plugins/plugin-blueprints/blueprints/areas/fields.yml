@@ -1,0 +1,5 @@
+title: Plugin fields
+
+fields:
+  plugin_note:
+    type: text

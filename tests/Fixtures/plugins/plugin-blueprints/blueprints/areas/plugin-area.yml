@@ -1,0 +1,6 @@
+title: Plugin area
+icon: box
+
+fields:
+  plugin_note:
+    type: text
