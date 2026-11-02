@@ -1,3 +1,15 @@
+# [3.1.0](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v3.0.2...v3.1.0) (2026-11-02)
+
+
+### Bug Fixes
+
+* **blueprints:** cover plugin discovery edge cases ([0c3aaa4](https://github.com/grommasdietz/kirby-blueprint-areas/commit/0c3aaa4c125d4d41178a631063124e8d9594c2a0))
+
+
+### Features
+
+* **blueprints:** discover area blueprints registered by plugins ([e6a26eb](https://github.com/grommasdietz/kirby-blueprint-areas/commit/e6a26ebb3f50681e255e5eb11b254563370ae019))
+
 ## [3.0.2](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v3.0.1...v3.0.2) (2026-11-02)
 
 
