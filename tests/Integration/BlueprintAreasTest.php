@@ -254,10 +254,10 @@ YAML);
                 $english['values']['translatedcontent'] ?? null
             );
             $noteText = $english['fieldProps']['note']['text'] ?? null;
-            $this->assertIsString($noteText);
+            $this->assertInstanceOf(\Kirby\Toolkit\HtmlString::class, $noteText);
             $this->assertStringContainsString(
                 'Switch the content language in the header.',
-                $noteText
+                (string) $noteText
             );
 
             $this->kirby->setCurrentLanguage('de');
@@ -455,9 +455,8 @@ YAML);
     {
         $response = BlueprintAreas::section('fields', 'pages');
 
-        $this->assertSame('ok', $response['status'] ?? null);
         $this->assertSame('pages', $response['name'] ?? null);
-        $this->assertSame('pages', $response['type'] ?? null);
+        $this->assertSame('pagepicker', $response['type'] ?? null);
     }
 
     public function testRejectsInvalidQuery(): void
@@ -697,8 +696,8 @@ YAML);
             $this->assertSame('fields', $view['id']);
             $this->assertFalse($view['meta']['canUpdate'] ?? true);
 
-            $section = BlueprintAreas::section('fields', 'textfields');
-            $this->assertTrue($section['fields']['text']['disabled'] ?? false);
+            $section = BlueprintAreas::section('fields', 'text');
+            $this->assertTrue($section['disabled'] ?? false);
 
             $readApi = $this->kirby->api()->clone([
                 'requestMethod' => 'GET',

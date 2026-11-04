@@ -6,7 +6,7 @@ namespace GrommasDietz\Areas\Tests\Integration;
 
 use GrommasDietz\Areas\BlueprintAreas;
 use GrommasDietz\Areas\Tests\TestCase;
-use Kirby\Cms\Api;
+use Kirby\Api\Api;
 use Kirby\Cms\User;
 use Kirby\Exception\Exception as KirbyException;
 use Kirby\Exception\NotFoundException;
@@ -29,12 +29,9 @@ final class BlueprintAreasProxyTest extends TestCase
                 'areas/proxy-fixture.yml' => <<<'YAML'
 title: Proxy fixture
 
-sections:
-  form:
-    type: fields
-    fields:
-      proxy:
-        type: proxytest
+fields:
+  proxy:
+    type: proxytest
   proxysection:
     type: proxytest
 YAML,

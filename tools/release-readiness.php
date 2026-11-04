@@ -43,10 +43,12 @@ function minimumCaretVersion(mixed $constraint): ?array
     return [(int) $matches[1], (int) $matches[2]];
 }
 
-function latestSemverTag(string $root): ?string
+function latestSemverTag(string $root, string $version): ?string
 {
+    $pattern = 'v' . explode('.', $version)[0] . '.*';
+    $nullDevice = PHP_OS_FAMILY === 'Windows' ? 'NUL' : '/dev/null';
     exec(
-        'git -C ' . escapeshellarg($root) . ' tag --list ' . escapeshellarg('v[0-9]*') . ' --sort=-v:refname 2>/dev/null',
+        'git -C ' . escapeshellarg($root) . ' tag --list ' . escapeshellarg($pattern) . ' --merged HEAD --sort=-v:refname 2>' . $nullDevice,
         $tags,
         $exitCode,
     );
@@ -129,13 +131,13 @@ if ($package !== null) {
     if (($package['engines']['pnpm'] ?? null) !== '>=11.28.10 <12') {
         $errors[] = 'engines.pnpm must select the shared pnpm 11 tooling major (>=11.28.10 <12).';
     }
-    if (($package['engines']['node'] ?? null) !== '>=22.22.2 <23') {
-        $errors[] = 'package.json must select Node 22.22.2 or newer within the shared Node 22 tooling major.';
+    if (($package['engines']['node'] ?? null) !== '>=24 <25') {
+        $errors[] = 'package.json must select Node 24.';
     }
 }
 
-if (trim((string) @file_get_contents($root . '/.node-version')) !== '22') {
-    $errors[] = '.node-version must select Node 22.';
+if (trim((string) @file_get_contents($root . '/.node-version')) !== '24') {
+    $errors[] = '.node-version must select Node 24.';
 }
 
 if ($composer !== null && $playground !== null) {
@@ -146,11 +148,11 @@ if ($composer !== null && $playground !== null) {
     }
 
     if ($rootMinimum !== null) {
-        $expectedPlatform = sprintf('%d.%d.0', $rootMinimum[0], $rootMinimum[1]);
+        $expectedPlatform = '8.3.16';
         $playgroundPlatform = $playground['config']['platform']['php'] ?? null;
 
         if ($playgroundPlatform !== $expectedPlatform) {
-            $errors[] = "playground/config.platform.php must pin {$expectedPlatform} so the runtime lock is resolved against the declared minimum.";
+            $errors[] = "playground/config.platform.php must pin {$expectedPlatform} for the preview development toolchain.";
         }
     }
 }
@@ -196,7 +198,7 @@ if (is_array($initConfig) && array_key_exists('version', $initConfig)) {
 $isTemplate = is_array($initConfig) && ($initConfig['initialized'] ?? null) === false;
 
 if (!$isTemplate && is_string($composerVersion)) {
-    $latestTag = latestSemverTag($root);
+    $latestTag = latestSemverTag($root, $composerVersion);
     if ($latestTag !== null && version_compare($composerVersion, $latestTag, '<')) {
         $errors[] = "Manifest version {$composerVersion} is older than latest Git tag v{$latestTag}.";
     }
