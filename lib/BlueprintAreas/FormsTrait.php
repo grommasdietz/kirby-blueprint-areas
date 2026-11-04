@@ -11,7 +11,7 @@ trait FormsTrait
     private static function formForBlueprint(array $layout, array $values, ModelWithContent $model): Form
     {
         $fields = static::collectFields($layout);
-        $form = new Form([], $fields, $model, static::languageCode());
+        $form = new Form(fields: $fields, model: $model, language: static::languageCode());
         $form->fill($values);
 
         return $form;
@@ -53,20 +53,11 @@ trait FormsTrait
 
         foreach ($tabs as $tab) {
             foreach (($tab['columns'] ?? []) as $col) {
-                foreach (($col['sections'] ?? []) as $section) {
-                    if (($section['type'] ?? null) !== 'fields') {
-                        continue;
-                    }
-                    $sectionFields = $section['rawFields'] ?? $section['fields'] ?? [];
-                    if (!is_array($sectionFields)) {
-                        $sectionFields = [];
-                    }
-                    foreach ($sectionFields as $fieldName => $field) {
-                        if (is_array($field)) {
-                            $normalizedName = Str::lower((string)$fieldName);
-                            $field['name'] = $normalizedName;
-                            $fields[$normalizedName] = $field;
-                        }
+                foreach (($col['fields'] ?? []) as $fieldName => $field) {
+                    if (is_array($field)) {
+                        $normalizedName = Str::lower((string) $fieldName);
+                        $field['name'] = $normalizedName;
+                        $fields[$normalizedName] = $field;
                     }
                 }
             }

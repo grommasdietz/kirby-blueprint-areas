@@ -1,6 +1,6 @@
 <?php
 
-use Kirby\Cms\Api as KirbyApi;
+use Kirby\Api\Api as KirbyApi;
 use Kirby\Cms\App;
 use Kirby\Cms\Permissions;
 use Kirby\Exception\Exception as KirbyException;

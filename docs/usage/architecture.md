@@ -3,7 +3,15 @@
 Kirby Blueprint Areas uses the same blueprint shape as core views. This page explains how values are stored and how drafts, locks, and badges behave.
 
 > [!IMPORTANT]
-> Custom sections may work only when they register a Panel component and expose API routes.
+> Kirby 6 uses fields throughout its form layouts. Custom sections must be ported to native display fields and register their Panel components and field API routes.
+
+## Kirby 6 layouts
+
+Kirby's blueprint converter accepts native Kirby 5 `sections` layouts and unwraps `type: fields` containers. New layouts can declare `fields` directly. Custom section types need their own Kirby 6 display-field port.
+
+Display fields and stored fields share one namespace in each blueprint. Give a pages list a distinct key such as `sitePages` when a relationship field already uses `pages`. Changing a display-field key does not rename stored content.
+
+The area renders native model forms and proxies field API requests within its declared model and field scope. Legacy `/sections/{name}` endpoints remain aliases for the corresponding native field; wrapper section names no longer identify fields. Read-only lists keep their entries and links while hiding creation, selection, sorting and item action controls. Mutating requests remain protected on the server.
 
 ## Storage
 

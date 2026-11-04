@@ -2,7 +2,7 @@
 
 namespace GrommasDietz\Areas\BlueprintAreas;
 
-use Kirby\Cms\Api as KirbyApi;
+use Kirby\Api\Api as KirbyApi;
 use Kirby\Cms\App;
 use Kirby\Exception\Exception;
 use Kirby\Exception\InvalidArgumentException;

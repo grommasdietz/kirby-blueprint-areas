@@ -5,7 +5,7 @@ import {
   discardPendingChanges,
   loginToPanel,
   openArea,
-  waitForAreaSection,
+  waitForAreaView,
 } from "./utils/panel";
 
 function areaRequest(request: Request, suffix: string) {
@@ -45,7 +45,7 @@ test.describe("Blueprint Areas content lifecycle", () => {
     page,
   }) => {
     await loginToPanel(page);
-    const fieldsResponse = waitForAreaSection(page, "fields", "textfields");
+    const fieldsResponse = waitForAreaView(page, "fields");
     await openArea(page, "fields");
     expect((await fieldsResponse).status()).toBe(200);
     await discardPendingChanges(page);
@@ -94,7 +94,7 @@ test.describe("Blueprint Areas content lifecycle", () => {
     // race the component's own view refresh and could abort the mutation.
     await expect(controls).toHaveCount(0, { timeout: 15_000 });
 
-    const reloadedSection = waitForAreaSection(page, "fields", "textfields");
+    const reloadedSection = waitForAreaView(page, "fields");
     await page.reload({ waitUntil: "domcontentloaded" });
     expect((await reloadedSection).status()).toBe(200);
     await expect(areaFieldInput(page, "text")).toHaveValue(published);

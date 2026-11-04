@@ -2,19 +2,19 @@
 
 namespace GrommasDietz\Areas\BlueprintAreas;
 
-use Kirby\Cms\Api as KirbyApi;
-use Kirby\Cms\Blueprint;
+use Kirby\Api\Api as KirbyApi;
+use Kirby\Blueprint\Blueprint;
 use Kirby\Cms\ModelWithContent;
 use Kirby\Cms\Page;
 use Kirby\Cms\Site;
 use Kirby\Exception\NotFoundException;
-use Kirby\Panel\Ui\Buttons\LanguagesDropdown;
-use Kirby\Panel\Ui\Buttons\OpenButton;
-use Kirby\Panel\Ui\Buttons\PageStatusButton;
-use Kirby\Panel\Ui\Buttons\PreviewButton;
-use Kirby\Panel\Ui\Buttons\SettingsButton;
-use Kirby\Panel\Ui\Buttons\VersionsButton;
-use Kirby\Panel\Ui\Buttons\ViewButton;
+use Kirby\Panel\Ui\Button\LanguagesButton;
+use Kirby\Panel\Ui\Button\OpenButton;
+use Kirby\Panel\Ui\Button\PageStatusButton;
+use Kirby\Panel\Ui\Button\PreviewButton;
+use Kirby\Panel\Ui\Button\SettingsButton;
+use Kirby\Panel\Ui\Button\VersionsButton;
+use Kirby\Panel\Ui\Button\ViewButton;
 use Kirby\Toolkit\Str;
 
 trait ViewTrait
@@ -36,6 +36,22 @@ trait ViewTrait
         $fieldProps = $form->toProps();
         $baselineValues = $form->toFormValues();
         $fieldSync = static::syncMapFromFields($fields);
+        foreach ($layout['tabs'] as &$tab) {
+            foreach ($tab['columns'] as &$column) {
+                $column['fields'] = array_intersect_key($fieldProps, array_change_key_case($column['fields'] ?? [], CASE_LOWER));
+                if (static::canUpdateModel($model) === false) {
+                    foreach ($column['fields'] as &$field) {
+                        $field['disabled'] = true;
+                        if (in_array($field['type'] ?? null, ['pagelist', 'filelist'], true)) {
+                            $field['type'] = 'gd-readonly-' . $field['type'];
+                        }
+                    }
+                    unset($field);
+                }
+            }
+            unset($column);
+        }
+        unset($tab);
 
         $currentValues = $baselineValues;
         $hasChanges = false;
@@ -190,7 +206,7 @@ trait ViewTrait
             );
         }
 
-        return static::callProxyApi(
+        $result = static::callProxyApi(
             $context,
             $field->api(),
             $path,
@@ -198,88 +214,37 @@ trait ViewTrait
             'field',
             $field
         );
+        if (
+            $field instanceof \Kirby\Form\Field\ModelListField &&
+            static::canUpdateModel($context['model']) === false &&
+            trim($path ?? '', '/') === '' &&
+            is_array($result)
+        ) {
+            foreach (['add', 'upload', 'sortable'] as $capability) {
+                if (array_key_exists($capability, $result)) {
+                    $result[$capability] = false;
+                }
+            }
+            foreach ($result['models'] ?? [] as $index => $item) {
+                $result['models'][$index]['permissions'] = array_fill_keys(array_keys($item['permissions'] ?? []), false);
+            }
+        }
+        return $result;
     }
 
     public static function section(string $name, string $sectionName): array
     {
         $context = static::resolveAreaContext($name, self::AREA_OPERATION_READ);
-        $section = $context['blueprint']->section($sectionName);
-        if ($section === null) {
-            throw new NotFoundException('Section not found');
+        try {
+            $field = static::formForAreaContext($context)->field(Str::lower($sectionName));
+        } catch (NotFoundException $exception) {
+            throw new NotFoundException(message: 'Section not found', previous: $exception);
         }
-
-        $response = $section->toResponse();
-
+        $props = $field->props();
         if (static::canUpdateModel($context['model']) === false) {
-            return static::readonlySectionResponse($response);
+            $props['disabled'] = true;
         }
-
-        return $response;
-    }
-
-    /**
-     * Removes mutation controls from a section response for read-only areas.
-     * The API proxy still enforces update permission independently.
-     */
-    private static function readonlySectionResponse(array $response): array
-    {
-        if (is_array($response['fields'] ?? null)) {
-            foreach ($response['fields'] as &$field) {
-                if (is_array($field)) {
-                    $field['disabled'] = true;
-                }
-            }
-            unset($field);
-        }
-
-        if (is_array($response['options'] ?? null)) {
-            foreach ([
-                'add',
-                'batch',
-                'create',
-                'delete',
-                'drag',
-                'duplicate',
-                'move',
-                'replace',
-                'sortable',
-                'upload',
-            ] as $option) {
-                if (array_key_exists($option, $response['options'])) {
-                    $response['options'][$option] = false;
-                }
-            }
-        }
-
-        if (is_array($response['data'] ?? null)) {
-            foreach ($response['data'] as &$item) {
-                if (!is_array($item) || !is_array($item['permissions'] ?? null)) {
-                    continue;
-                }
-
-                foreach ([
-                    'changeName',
-                    'changeStatus',
-                    'changeTemplate',
-                    'changeTitle',
-                    'create',
-                    'delete',
-                    'duplicate',
-                    'move',
-                    'replace',
-                    'sort',
-                    'update',
-                    'upload',
-                ] as $permission) {
-                    if (array_key_exists($permission, $item['permissions'])) {
-                        $item['permissions'][$permission] = false;
-                    }
-                }
-            }
-            unset($item);
-        }
-
-        return $response;
+        return $props;
     }
 
     public static function sectionApi(
@@ -288,20 +253,7 @@ trait ViewTrait
         ?string $path,
         KirbyApi $api
     ): mixed {
-        $context = static::resolveAreaContext($name, self::AREA_OPERATION_READ);
-        $section = $context['blueprint']->section($sectionName);
-        if ($section === null) {
-            throw new NotFoundException('Section not found');
-        }
-
-        return static::callProxyApi(
-            $context,
-            $section->api() ?? [],
-            $path,
-            $api,
-            'section',
-            $section
-        );
+        return static::fieldApi($name, $sectionName, $path, $api);
     }
 
     private static function viewMeta(ModelWithContent $model): array
@@ -382,11 +334,11 @@ trait ViewTrait
 
     private static function languageButton(ModelWithContent $model): array|null
     {
-        if (!class_exists(LanguagesDropdown::class)) {
+        if (!class_exists(LanguagesButton::class)) {
             return null;
         }
 
-        $button = (new LanguagesDropdown($model))->render();
+        $button = (new LanguagesButton($model))->render();
         return is_array($button) ? $button : null;
     }
 

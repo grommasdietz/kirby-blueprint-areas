@@ -254,28 +254,21 @@ YAML);
         $user = $this->createUser($role);
         $this->kirby->impersonate($user->id());
 
-        $fields = BlueprintAreas::section('fields', 'textfields');
-        foreach ($fields['fields'] ?? [] as $field) {
-            $this->assertTrue($field['disabled'] ?? false);
-        }
-
-        $pages = BlueprintAreas::section('fields', 'pages');
-        foreach (['add', 'batch', 'create', 'delete', 'drag', 'duplicate', 'move', 'sortable'] as $option) {
-            if (array_key_exists($option, $pages['options'] ?? [])) {
-                $this->assertFalse($pages['options'][$option], 'Option ' . $option . ' must be disabled.');
-            }
-        }
-
-        foreach ($pages['data'] ?? [] as $item) {
-            foreach (['changeStatus', 'delete', 'duplicate', 'move', 'sort', 'update'] as $permission) {
-                if (array_key_exists($permission, $item['permissions'] ?? [])) {
-                    $this->assertFalse(
-                        $item['permissions'][$permission],
-                        'Permission ' . $permission . ' must be disabled.'
-                    );
+        $view = BlueprintAreas::view('fields');
+        $this->assertFalse($view['meta']['canUpdate']);
+        $count = 0;
+        foreach ($view['layout']['tabs'] as $tab) {
+            foreach ($tab['columns'] as $column) {
+                foreach ($column['fields'] as $field) {
+                    $this->assertTrue($field['disabled'] ?? false);
+                    $count++;
                 }
             }
         }
+        $this->assertGreaterThan(0, $count, 'The read-only form must contain actual fields.');
+        $this->assertTrue(BlueprintAreas::section('fields', 'text')['disabled']);
+        $this->assertTrue(BlueprintAreas::section('fields', 'pages')['disabled']);
+
     }
 
     public function testPrefixedAndLegacyPermissionIdsMustBothRemainAllowed(): void

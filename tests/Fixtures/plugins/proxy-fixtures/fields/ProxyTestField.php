@@ -1,9 +1,13 @@
 <?php
 
-declare(strict_types=1);
+namespace Tests\BlueprintAreas;
 
-return [
-    'api' => function (): array {
+final class ProxyTestField extends \Kirby\Form\Field\InputField
+{
+    protected mixed $value = null;
+
+    public function api(): array
+    {
         return [
             [
                 'pattern' => 'read-post',
@@ -49,6 +53,18 @@ return [
                     ];
                 },
             ],
+            [
+                'pattern' => 'echo/(:any)',
+                'method' => 'POST',
+                'action' => function (string $value): array {
+                    return [
+                        'route' => 'echo',
+                        'value' => $value,
+                        'method' => $this->requestMethod(),
+                        'data' => $this->requestData(),
+                    ];
+                },
+            ],
         ];
-    },
-];
+    }
+}

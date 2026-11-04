@@ -2,7 +2,7 @@
 
 namespace GrommasDietz\Areas\BlueprintAreas;
 
-use Kirby\Cms\Blueprint;
+use Kirby\Blueprint\Blueprint;
 use Kirby\Cms\ModelWithContent;
 use Kirby\Exception\NotFoundException;
 

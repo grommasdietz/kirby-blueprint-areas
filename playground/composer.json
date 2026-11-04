@@ -7,13 +7,14 @@
     }
   ],
   "require": {
-    "php": "^8.2",
+    "php": "^8.3",
     "grommasdietz/kirby-blueprint-areas": "*@dev",
-    "getkirby/cms": "^5.6"
+    "getkirby/cms": "^6.0@beta",
+    "symfony/yaml": "7.4.23 as 7.4.21"
   },
   "config": {
     "platform": {
-      "php": "8.2.0"
+      "php": "8.3.16"
     },
     "allow-plugins": {
       "getkirby/composer-installer": true,
