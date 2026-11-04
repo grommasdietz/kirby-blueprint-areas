@@ -14,7 +14,7 @@ Add custom Panel areas via blueprints on Kirby CMS.
 ## Installation
 
 ```bash
-composer require grommasdietz/kirby-blueprint-areas
+composer require grommasdietz/kirby-blueprint-areas:dev-compat/kirby-6
 ```
 
 > [!TIP]
