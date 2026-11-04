@@ -196,9 +196,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - kirby-version: 5.6.0
+          - kirby-version: 6.0.0-beta.2
             label: minimum-supported
-          - kirby-version: ^5.6
+          - kirby-version: ^6.0@beta
             label: latest-compatible
     steps:
       - name: Use verified documentation result
@@ -233,8 +233,9 @@ jobs:
               'description' => 'Temporary Kirby compatibility test project',
               'type' => 'project',
               'require' => [
-                  'php' => '^8.2',
+                  'php' => '^8.3',
                   'getkirby/cms' => $version,
+                  'symfony/yaml' => '7.4.23 as 7.4.21',
               ],
               'autoload' => [
                   'psr-4' => [
