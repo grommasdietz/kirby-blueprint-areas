@@ -41,6 +41,14 @@ async function expectSuccessfulMutation(response: Promise<Response>) {
 }
 
 test.describe("Blueprint Areas content lifecycle", () => {
+  test("preserves trusted native field help through layout copies", async ({ page }) => {
+    await loginToPanel(page);
+    await openArea(page, "fields");
+    const help = page.locator(".k-field-name-text .k-field-help");
+    await expect(help.locator("p")).toHaveText("Optional help");
+    await expect(help).not.toContainText("<p>");
+  });
+
   test("uses canonical payloads for draft, publish and discard", async ({
     page,
   }) => {

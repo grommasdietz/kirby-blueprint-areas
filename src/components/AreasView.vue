@@ -49,7 +49,7 @@
       />
     </template>
     <div v-else>
-      <k-box align="start" theme="info" :text="emptyMessage" :html="true" />
+      <k-box align="start" theme="info" :text="emptyMessage" />
     </div>
   </k-panel-inside>
 </template>
@@ -77,8 +77,17 @@ function normalizeTabForBadges(tab) {
   return cloned;
 }
 
+// JSON cloning strips Kirby 6 HtmlString markers from native field props.
+function cloneLayout(value) {
+  if (Array.isArray(value)) return value.map(cloneLayout);
+  if (value && Object.getPrototypeOf(value) === Object.prototype) {
+    return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, cloneLayout(item)]));
+  }
+  return value;
+}
+
 function applyModelPath(layout, _modelPath, canUpdate = true) {
-  const cloned = JSON.parse(JSON.stringify(layout || { tabs: [] }));
+  const cloned = cloneLayout(layout || { tabs: [] });
   if (canUpdate === false) {
     for (const tab of normalizeList(cloned.tabs)) {
       for (const column of normalizeList(tab.columns)) {
