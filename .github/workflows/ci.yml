@@ -196,7 +196,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - kirby-version: 6.0.0-beta.2
+          - kirby-version: 6.0.0-beta.3
             label: minimum-supported
           - kirby-version: ^6.0@beta
             label: latest-compatible
@@ -235,7 +235,7 @@ jobs:
               'require' => [
                   'php' => '^8.3',
                   'getkirby/cms' => $version,
-                  'symfony/yaml' => '7.4.23 as 7.4.21',
+                  'symfony/yaml' => '7.4.23',
               ],
               'autoload' => [
                   'psr-4' => [
