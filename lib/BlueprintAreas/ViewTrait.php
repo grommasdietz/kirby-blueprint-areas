@@ -422,7 +422,7 @@ trait ViewTrait
         }
 
         $panel = $model->panel();
-        $link = $panel->url(true) . '/preview/changes';
+        $link = $panel->url(true) . '/preview/form';
         return static::ensureComponent(
             (new PreviewButton($link))->render(),
             'k-preview-view-button'

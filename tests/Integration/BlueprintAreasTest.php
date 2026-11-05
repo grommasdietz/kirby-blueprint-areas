@@ -295,6 +295,7 @@ YAML);
             ['k-preview-view-button', 'k-open-view-button'],
             $components
         );
+        $this->assertStringEndsWith('/preview/form', $view['buttons'][0]['props']['link']);
     }
 
     public function testSavesValuesToSite(): void
