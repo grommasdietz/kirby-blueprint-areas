@@ -252,6 +252,15 @@ jobs:
               ],
           ];
 
+          // Exercise the historical minimum without weakening normal dependency policy.
+          // Keep its known YAML advisory visible to audits; this fixture runs no web server.
+          if ($version === '5.6.0') {
+              $manifest['config']['audit']['ignore']['PKSA-nktx-f1n1-b4yd'] = [
+                  'apply' => 'block',
+                  'reason' => 'Isolated Kirby 5.6.0 compatibility fixture only; current locks use patched YAML.',
+              ];
+          }
+
           file_put_contents(
               'composer.compat.json',
               json_encode(
@@ -268,12 +277,15 @@ jobs:
         env:
           COMPOSER: composer.compat.json
         run: |
+          mkdir -p build/compatibility
+          set -o pipefail
           composer update \
             --with-all-dependencies \
             --prefer-dist \
             --no-progress \
             --no-interaction \
-            --no-scripts
+            --no-scripts \
+            2>&1 | tee "build/compatibility/install-${{ matrix.label }}.log"
 
           composer show getkirby/cms
         if: needs.verify.outputs.full == 'true'

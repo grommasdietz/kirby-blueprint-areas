@@ -74,6 +74,11 @@ CI runs the focused compatibility contract against these Kirby constraints:
 - the repository's locked Kirby version;
 - the latest version allowed by `^5.6`.
 
+The isolated `5.6.0` fixture permits advisory `PKSA-nktx-f1n1-b4yd` during
+resolution because that historical release pins an affected Symfony YAML.
+The advisory remains visible to Composer audits. Root, playground and latest
+compatibility dependencies keep normal advisory blocking and patched YAML.
+
 Kirby versions before 5.6 are unsupported. The complete PHPUnit suite still
 runs against the repository lock; the compatibility matrix targets blueprint
 discovery, registration, authorization, API, changes and proxy contracts across
