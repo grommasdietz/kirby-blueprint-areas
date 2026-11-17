@@ -1,45 +1,29 @@
-# AGENTS.md
+# Agent guide
 
-Agent guide for the Kirby Blueprint Areas plugin (grommasdietz/blueprint-areas). Use this as the quick, canonical workflow overview; detailed rules live in the referenced docs.
+Repository guide for the Kirby Blueprint Areas plugin (`grommasdietz/blueprint-areas`).
 
----
+## Blueprint Areas rules
 
-## Project overview
+- **Keep it ready-to-install.** Composer and GitHub tag-archive installs must work without running `composer` or `npm`.
+- Plugin entry: `index.php` registers `App::plugin('grommasdietz/blueprint-areas', ...)`; PHP code lives under `lib` (namespace `GrommasDietz\\Areas\\`).
+- Panel source lives under `src` (including `src/components/**`) and builds with `kirbyup` into `index.js`/`index.css`.
+- `playground` is the self-contained Kirby site for integration and browser tests.
+- Focused commands: `pnpm lint`, `pnpm run test:browser`, `composer test` and `composer psalm`.
+- Release process: [docs/maintenance/workflow.md](docs/maintenance/workflow.md). Contributor workflow: [CONTRIBUTING.md](CONTRIBUTING.md). Security policy: [SECURITY.md](SECURITY.md).
 
-- Plugin entry: `index.php` registers `App::plugin('grommasdietz/blueprint-areas', ...)`.
-- PHP code lives under `lib` (namespace `GrommasDietz\\Areas\\`).
-- Panel source lives under `src` (including `src/components/**`) and is built with `kirbyup` into `index.js`/`index.css`.
-- Playground: `playground` is the self-contained Kirby site for integration and browser tests.
+<!-- shared:kirby-plugin-workflow — identical in every Grommas Dietz Kirby plugin repository. Change it in kirby-plugin first, then copy it unchanged. -->
 
----
+## Shared workflow
 
-## Build and test commands
+- Do not commit local state: credentials, environment files, accounts, sessions, caches, databases, test reports, local plugin links or installed dependencies.
+- Committed Panel assets such as `index.js` and `index.css` are build output. Edit `src/`, rebuild with `pnpm run build` and commit the result.
+- Use Conventional Commits and focused diffs. Keep source, tests, translations, documentation and generated assets aligned.
+- Keep public classes, options, routes, commands, stored data and blueprint handles stable unless a change intentionally breaks them.
+- Add regression coverage for fixes. Keep fixtures deterministic and fictional, and never contact real services in default tests.
+- Panel copy uses sentences or commas. Avoid semicolons and centered dots as separators.
+- Prefer Kirby's built-in Panel icons. Add namespaced Remix Icon glyphs only when Kirby has no suitable icon.
+- Install with `composer run setup` and `pnpm run setup`. Before handing over changes, run `composer run verify` and `pnpm run verify`, or `pnpm run verify:all` where the repository defines it. Use the focused lint, Psalm, test and build commands while iterating.
+- Keep the README a short user-facing quickstart. Follow [STYLE_GUIDE.md](STYLE_GUIDE.md) and the [documentation guidance](docs/contributions/documentation.md).
+- This file is canonical. Assistants such as Copilot read it directly, so do not add per-assistant instruction files.
 
-- Install PHP deps and tools: `composer run setup`
-- Install JS deps and Playwright: `pnpm run setup`
-- Rebuild Panel assets after UI changes: `pnpm build` (commit `index.js` and `index.css`).
-- Lint Panel code: `pnpm lint`
-- Playwright browser tests (Panel behavior changes): `pnpm run test:browser`
-- PHP tests: `composer test`
-- PHP static analysis (when touching PHP logic): `composer psalm`
-- Full PHP sweep: `composer run verify`
-- Full Node, Panel, docs and browser sweep: `pnpm run verify`
-- Complete repository acceptance gate: `pnpm run verify:all`
-
----
-
-## Shipping rules
-
-- Keep it ready-to-install. Composer and GitHub tag-archive installs must work without running `composer` or `npm`.
-- Keep committed build outputs (`index.js`, `index.css`); do not edit compiled assets by hand.
-- Don't commit local artifacts. No `.DS_Store`, no local symlinks, no runtime data from `playground/site/*`, no caches.
-
----
-
-## References
-
-- Contributor workflow: `CONTRIBUTING.md`
-- Documentation rules: `docs/contributions/documentation.md`
-- Style guide: `STYLE_GUIDE.md`
-- Security policy: `SECURITY.md`
-- Release process: `docs/maintenance/workflow.md`
+<!-- /shared:kirby-plugin-workflow -->
