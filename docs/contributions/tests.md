@@ -97,7 +97,7 @@ pnpm run lint
 pnpm run test:bundle
 pnpm run test:archive
 pnpm run docs:verify
-pnpm run test:hygiene
+pnpm run test:archive
 pnpm run test:browser
 pnpm run test:browser:api-slug
 ```
