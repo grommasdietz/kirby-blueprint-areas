@@ -65,3 +65,6 @@ tests/.plugins/
 tests/.blueprints/
 psalm-baseline.xml
 /index.dev.js
+
+# Kirby compatibility runs
+/build/

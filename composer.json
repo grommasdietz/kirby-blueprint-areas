@@ -1,12 +1,12 @@
 {
   "name": "grommasdietz/kirby-blueprint-areas",
-  "description": "Add custom Panel areas via blueprints on Kirby\u00a0CMS",
+  "description": "Add custom Panel areas via blueprints on Kirby CMS",
   "version": "3.1.0",
   "type": "kirby-plugin",
   "license": "MIT",
   "authors": [
     {
-      "name": "Grommas\u00a0Dietz",
+      "name": "Grommas Dietz",
       "email": "info@grommas-dietz.com",
       "homepage": "https://grommas-dietz.com",
       "role": "Developer"
@@ -77,14 +77,29 @@
     "playground:seed": "php tools/seed-playground.php",
     "release:check": "php tools/release-readiness.php",
     "verify": [
+      "@verify:composer",
       "@lint",
       "@psalm",
-      "@test"
+      "@test",
+      "@notices:check",
+      "@release:check"
     ],
     "notices:generate": "php tools/generate-third-party-notices.php",
     "post-update-cmd": "@notices:generate",
     "update:dev": "@composer update phpunit/phpunit vimeo/psalm friendsofphp/php-cs-fixer getkirby/cms --with-all-dependencies",
-    "playground:update": "@composer --working-dir=playground update --with-all-dependencies"
+    "playground:update": "@composer --working-dir=playground update --with-all-dependencies",
+    "test:kirby": [
+      "sh tools/kirby-compat.sh 6.0.0-rc.1",
+      "sh tools/kirby-compat.sh ^6.0@RC"
+    ],
+    "notices:check": [
+      "@notices:generate",
+      "git diff --exit-code -- THIRD_PARTY_NOTICES.md"
+    ],
+    "verify:composer": [
+      "@composer validate --strict --no-check-version",
+      "@composer check-platform-reqs"
+    ]
   },
   "extra": {
     "kirby": {
