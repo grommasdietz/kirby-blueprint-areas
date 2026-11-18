@@ -63,3 +63,6 @@ tests/.plugins/
 
 # Project-specific
 tests/.blueprints/
+
+# Kirby compatibility runs
+/build/

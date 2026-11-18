@@ -13,7 +13,8 @@ After installing both dependency graphs, run the complete repository gate:
 ```bash
 composer run setup
 pnpm run setup
-pnpm run verify:all
+composer run verify
+pnpm run verify
 ```
 
 The command prints one concise status per check, stops at the first failure,
@@ -68,7 +69,7 @@ cases without changing the production plugin lifecycle.
 
 ### Kirby compatibility matrix
 
-CI runs the focused compatibility contract against these Kirby constraints:
+CI runs the focused compatibility contract against these Kirby constraints. Run one locally with `sh tools/kirby-compat.sh 5.6.0`, or both with `composer test:kirby`; each installs its Kirby version in an isolated copy under `build/compatibility/` and leaves `vendor/` untouched:
 
 - `5.6.0`, the minimum supported release;
 - the repository's locked Kirby version;

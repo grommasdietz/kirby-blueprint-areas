@@ -16,11 +16,12 @@ Before pushing a release-triggering commit, run:
 ```bash
 composer run setup
 pnpm run setup
-pnpm run verify:all
+composer run verify
+pnpm run verify
 git status --short
 ```
 
-`verify:all` already runs PHP coding style, Psalm, all PHPUnit suites,
+`composer run verify` and `pnpm run verify` together run PHP coding style, Psalm, all PHPUnit suites,
 release readiness, generated assets, documentation, repository checks and both
 browser configurations. Use the individual Composer or pnpm scripts only for a
 targeted rerun after the compact verifier reports the first failure.
