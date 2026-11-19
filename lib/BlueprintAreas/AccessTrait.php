@@ -4,7 +4,6 @@ namespace GrommasDietz\Areas\BlueprintAreas;
 
 use Kirby\Cms\App;
 use Kirby\Cms\ModelWithContent;
-use Kirby\Cms\Site;
 use Kirby\Cms\User;
 use Kirby\Exception\PermissionException;
 
@@ -159,13 +158,6 @@ trait AccessTrait
             return $model->isAccessible() === true;
         }
 
-        // Site::isAccessible() was introduced in Kirby 5.4. Preserve the
-        // earlier Panel access.site contract on Kirby 5.2/5.3.
-        if ($model instanceof Site) {
-            $permissions = static::currentUser()?->role()?->permissions();
-            return $permissions?->for('access', 'site', true) !== false;
-        }
-
         if (method_exists($model, 'isReadable') && $model->isReadable() !== true) {
             return false;
         }
@@ -173,13 +165,13 @@ trait AccessTrait
         // Unknown/older model types may not define an access action. In that
         // case keep historical access instead of turning the missing action
         // into an implicit denial.
-        return $model->permissions()->can('access', true) === true;
+        return $model->guards()->isAvailable('access', true) === true;
     }
 
     private static function canUpdateModel(ModelWithContent $model): bool
     {
         return static::canReadModel($model)
-            && $model->permissions()->can('update') === true;
+            && $model->guards()->isAvailable('update') === true;
     }
 
     private static function canAccessArea(ModelWithContent $model, array $bp, string $operation): bool

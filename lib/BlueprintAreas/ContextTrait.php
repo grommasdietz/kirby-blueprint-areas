@@ -8,8 +8,8 @@ use Kirby\Exception\NotFoundException;
 
 trait ContextTrait
 {
-    private const AREA_OPERATION_READ = 'read';
-    private const AREA_OPERATION_UPDATE = 'update';
+    private const string AREA_OPERATION_READ = 'read';
+    private const string AREA_OPERATION_UPDATE = 'update';
 
     /**
      * @return array{

@@ -20,7 +20,7 @@ trait BlueprintsTrait
     private static array $registeredAreaIds = [];
     /** @var list<string> */
     private static array $registeredPermissionIds = [];
-    private const PLUGIN_NAME = 'grommasdietz/blueprint-areas';
+    private const string PLUGIN_NAME = 'grommasdietz/blueprint-areas';
 
     /**
      * @return array{

@@ -145,6 +145,7 @@ YAML);
         $this->kirby->impersonate($user->id());
 
         $this->assertSame($expected, BlueprintAreas::canAccess($area));
+        $this->assertSame($expected, BlueprintAreas::canAccess($area, true));
     }
 
     /**
