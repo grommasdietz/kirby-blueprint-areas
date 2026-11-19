@@ -11,7 +11,7 @@ Kirby's blueprint converter accepts native Kirby 5 `sections` layouts and unwrap
 
 Display fields and stored fields share one namespace in each blueprint. Give a pages list a distinct key such as `sitePages` when a relationship field already uses `pages`. Changing a display-field key does not rename stored content.
 
-The area renders native model forms and proxies field API requests within its declared model and field scope. Legacy `/sections/{name}` endpoints remain aliases for the corresponding native field; wrapper section names no longer identify fields. Read-only lists keep their entries and links while hiding creation, selection, sorting and item action controls. Mutating requests remain protected on the server.
+The area renders native model forms and proxies field API requests within its declared model and field scope. Legacy `/sections/{name}` endpoints remain aliases for the corresponding native field. Wrapper section names no longer identify fields. Read-only lists keep their entries and links while hiding creation, selection, sorting and item action controls. Mutating requests remain protected on the server.
 
 ## Storage
 
@@ -44,12 +44,12 @@ Area names are resolved from the discovered YAML-file allowlist. Request paramet
 
 All plugin API routes require Kirby authentication. Each view and read endpoint additionally requires:
 
-- the registered Panel area permission;
-- the area blueprint's `options.access` rule;
-- the resolved model's `access` permission;
+- the registered Panel area permission
+- the area blueprint's `options.access` rule
+- the resolved model's `access` permission
 - the resolved page's `read` permission for page-backed areas.
 
-Writes and mutating field/section proxy routes additionally require the model's `update` permission. Areas without update permission render without save controls and with disabled field inputs. Proxy routes are matched before dispatch; unsupported paths and methods are rejected rather than forwarded blindly.
+Writes and mutating field/section proxy routes additionally require the model's `update` permission. Areas without update permission render without save controls and with disabled field inputs. Proxy routes are matched before dispatch. Unsupported paths and methods are rejected rather than forwarded blindly.
 
 ## Request data
 
@@ -63,7 +63,7 @@ Areas share the same `changes` version and content lock as the resolved model. I
 
 Badges are rendered on each area’s menu entry when unpublished changes exist on any field used by the area. They remain visible across reloads and can reflect changes made from other views/areas that write to the same model.
 
-Badge summaries load after sign-in. The login page does not request protected changes data; signing in initializes the badges without requiring a page reload.
+Badge summaries load after sign-in. The login page does not request protected changes data. Signing in initializes the badges without requiring a page reload.
 
 ---
 

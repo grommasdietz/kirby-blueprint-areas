@@ -51,7 +51,7 @@ Test-only plugin fixtures live in `tests/Fixtures/plugins`. Pass their directory
 names through `testPluginsBefore` or `testPluginsAfter` when booting the test
 environment. The harness creates uniquely named, ordered wrapper plugins and
 lets one Kirby constructor discover them through the normal plugin loader. A
-fixture can register normal `blueprints` or `areas` extensions; discovery runs
+fixture can register normal `blueprints` or `areas` extensions. Discovery runs
 after Kirby has applied these declarations. Use `native-competing-area` to test
 ordinary area collisions. The `competing-area` fixture separately covers an
 extension applied immediately while a plugin file loads.
@@ -69,20 +69,20 @@ cases without changing the production plugin lifecycle.
 
 ### Kirby compatibility matrix
 
-CI runs the focused compatibility contract against these Kirby constraints. Run one locally with `sh tools/kirby-compat.sh 6.0.0-rc.1`, or both with `composer test:kirby`; each installs its Kirby version in an isolated copy under `build/compatibility/` and leaves `vendor/` untouched:
+CI runs the focused compatibility contract against these Kirby constraints. Run one locally with `sh tools/kirby-compat.sh 6.0.0-rc.1`, or both with `composer test:kirby`. Each installs its Kirby version in an isolated copy under `build/compatibility/` and leaves `vendor/` untouched:
 
-- `6.0.0-rc.1`, the current release candidate;
-- the repository's locked Kirby version;
+- `6.0.0-rc.1`, the current release candidate
+- the repository's locked Kirby version
 - the latest version allowed by `^6.0@RC`.
 
-The complete PHPUnit suite still runs against the repository lock; the
+The complete PHPUnit suite still runs against the repository lock. The
 compatibility matrix targets blueprint discovery, registration, authorization,
 API, changes and proxy contracts across the supported range.
 
 ## Panel and browser checks
 
 The Playwright global setup seeds the playground automatically. For a targeted
-manual seed, use the canonical Composer command `composer run playground:seed`;
+manual seed, use the canonical Composer command `composer run playground:seed`.
 `pnpm run playground:seed` is a delegating convenience alias.
 
 ```bash
@@ -112,8 +112,8 @@ path.
 
 Global setup creates these temporary users:
 
-- `admin@kirby-blueprint-areas.test` / `playwright`;
-- `editor@kirby-blueprint-areas.test` / `playwright`;
+- `admin@kirby-blueprint-areas.test` / `playwright`
+- `editor@kirby-blueprint-areas.test` / `playwright`
 - `readonly@kirby-blueprint-areas.test` / `playwright`.
 
 The editor and read-only roles are defined in
@@ -126,15 +126,15 @@ write rejection. Override the admin credentials with `KIRBY_USER_EMAIL` and
 
 Browser tests should verify behavior that direct PHP calls cannot prove:
 
-- canonical `{ values: ... }` draft and publish requests;
-- publish and discard lifecycle behavior;
-- read-only fields, sections and keyboard shortcuts;
-- authenticated API status codes and CSRF rejection;
-- isolation of the global Panel content adapter from normal Kirby pages;
+- canonical `{ values: ... }` draft and publish requests
+- publish and discard lifecycle behavior
+- read-only fields, sections and keyboard shortcuts
+- authenticated API status codes and CSRF rejection
+- isolation of the global Panel content adapter from normal Kirby pages
 - custom API-slug compatibility.
 
 Keep network assertions scoped to exact endpoint suffixes. Do not silently skip
-missing controls or menu links; a missing expected element is a test failure.
+missing controls or menu links. A missing expected element is a test failure.
 
 ### Playground state
 
@@ -145,14 +145,14 @@ cache and media are removed without deleting Composer-installed plugin links.
 The playground permanently contains exactly five area blueprints, each with a
 separate purpose:
 
-- `buttons` — custom Panel header buttons and blueprint-level access rules;
-- `empty` — the intentional empty-area state;
-- `fields` — site-backed native fields and core sections;
-- `home` — a page-backed area resolved with `query` and an extended tab;
+- `buttons` — custom Panel header buttons and blueprint-level access rules
+- `empty` — the intentional empty-area state
+- `fields` — site-backed native fields and core sections
+- `home` — a page-backed area resolved with `query` and an extended tab
 - `translations` — a translated area title plus visibly different seeded content values for English and German.
 
 PHP-only collision, payload and proxy fixtures belong in `tests/.blueprints` or
-`tests/Fixtures/plugins`; they must never be written into the permanent
+`tests/Fixtures/plugins`. They must never be written into the permanent
 playground. Keep any additional files under `playground/site/**` and
 `playground/content/**` minimal and focused on browser-visible behavior.
 

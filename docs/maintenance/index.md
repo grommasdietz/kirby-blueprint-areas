@@ -2,9 +2,8 @@
 
 The following sections are mainly relevant for maintaining:
 
-- [License](./license.md): License files and notices
 - [Workflow](./workflow.md): Release workflow
 
 ---
 
-Next: Continue with [License](./license.md)
+Next: Continue with [the release workflow](workflow.md)

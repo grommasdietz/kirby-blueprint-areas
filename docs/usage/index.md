@@ -130,7 +130,7 @@ permissions:
 > The `areas` bucket is registered by this plugin for discovered area blueprints for backward compatibility. Prefer `access` for new projects because it is Kirby's native Panel area permission.
 
 > [!IMPORTANT]
-> Area access never overrides the resolved model permissions. Site-backed areas require `site.access`; page-backed areas require both `pages.access` and `pages.read`. Saving, publishing, discarding and mutating field/section API routes additionally require the model's `update` permission. A role can therefore be read-only by allowing access/read while denying update; the Panel then hides save controls and disables field inputs.
+> Area access never overrides the resolved model permissions. Site-backed areas require `site.access`. Page-backed areas require both `pages.access` and `pages.read`. Saving, publishing, discarding and mutating field/section API routes additionally require the model's `update` permission. A role can therefore be read-only by allowing access/read while denying update. The Panel then hides save controls and disables field inputs.
 
 ## API payloads
 

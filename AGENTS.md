@@ -5,7 +5,7 @@ Repository guide for the Kirby Blueprint Areas plugin (`grommasdietz/blueprint-a
 ## Blueprint Areas rules
 
 - **Keep it ready-to-install.** Composer and GitHub tag-archive installs must work without running `composer` or `npm`.
-- Plugin entry: `index.php` registers `App::plugin('grommasdietz/blueprint-areas', ...)`; PHP code lives under `lib` (namespace `GrommasDietz\\Areas\\`).
+- Plugin entry: `index.php` registers `App::plugin('grommasdietz/blueprint-areas', ...)`. PHP code lives under `lib` (namespace `GrommasDietz\\Areas\\`).
 - Panel source lives under `src` (including `src/components/**`) and builds with `kirbyup` into `index.js`/`index.css`.
 - `playground` is the self-contained Kirby site for integration and browser tests.
 - Focused commands: `pnpm lint`, `pnpm run test:browser`, `composer test` and `composer psalm`.
