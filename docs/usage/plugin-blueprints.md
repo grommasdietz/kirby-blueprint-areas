@@ -22,7 +22,7 @@ project blueprint. Its logical ID is `design`, and its Panel URL is
 Discovery accepts existing `.yml` and `.yaml` files with one area name after
 `areas/`. Nested keys such as `areas/theme/design`, missing files, PHP files,
 arrays and callbacks are ignored. Kirby supports some of these forms for other
-blueprints; this plugin's area discovery requires YAML file paths.
+blueprints. This plugin's area discovery requires YAML file paths.
 
 Declare the paths in the plugin registration. Panel areas are registered during
 `system.loadPlugins:after`, after Kirby has applied the plugins' declared
@@ -45,12 +45,12 @@ does not exist.
 
 Choose distinctive area IDs and field keys. A plugin's name does not namespace
 either one. Registering the same blueprint key in several plugins follows
-Kirby's extension order; avoid relying on that order to select a blueprint.
+Kirby's extension order. Avoid relying on that order to select a blueprint.
 
 An ID already owned by a core or another plugin's Panel area is skipped. Use
 [`panel.areaPrefix`](./architecture.md#routes-and-area-ids) when Panel area IDs
 need a prefix. The prefix changes the Panel URL and native access permission
-key; the logical API ID and legacy `permissions.areas` key stay unchanged.
+key. The logical API ID and legacy `permissions.areas` key stay unchanged.
 
 Plugin-supplied areas follow the same [access rules](./index.md#access-control)
 as project areas. Their origin does not grant extra permissions or bypass a

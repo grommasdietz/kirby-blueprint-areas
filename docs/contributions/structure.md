@@ -37,7 +37,7 @@ validated by their dedicated checks instead.
 
 When adding a new runtime PHP directory outside `lib/`, add it to
 `<projectFiles>`. Add a narrowly scoped issue-handler suppression only when a
-real Kirby framework pattern cannot be expressed accurately in Psalm; do not
+real Kirby framework pattern cannot be expressed accurately in Psalm. Do not
 add placeholder directories or broad suppressions pre-emptively.
 
 YAML blueprints, static assets and JavaScript source do not belong in Psalm’s

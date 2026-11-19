@@ -1,6 +1,6 @@
 # Documentation
 
-This documentation is organized by purpose: using, contributing, and maintaining:
+[Create your first area](usage/index.md) or [add an area from a plugin](usage/plugin-blueprints.md).
 
 ## Users
 
@@ -21,7 +21,6 @@ This documentation is organized by purpose: using, contributing, and maintaining
 ## Maintainers
 
 - [Maintenance](./maintenance/index.md): Maintainer overview
-- [Licensing](./maintenance/license.md): License and notices
 - [Releasing](./maintenance/workflow.md): Release workflow
 
 ---
