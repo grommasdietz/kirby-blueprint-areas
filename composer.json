@@ -88,7 +88,7 @@
     "update:dev": "@composer update phpunit/phpunit vimeo/psalm friendsofphp/php-cs-fixer getkirby/cms --with-all-dependencies",
     "playground:update": "@composer --working-dir=playground update --with-all-dependencies",
     "test:kirby": [
-      "sh tools/kirby-compat.sh 6.0.0-rc.1",
+      "sh tools/kirby-compat.sh 6.0.0-rc.3",
       "sh tools/kirby-compat.sh ^6.0@RC"
     ],
     "notices:check": [
