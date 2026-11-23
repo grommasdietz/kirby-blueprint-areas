@@ -2,11 +2,10 @@ title: Plugin reader
 
 permissions:
   access:
+    "*": false
+    account: true
     panel: true
     site: true
-    plugin-area: true
-  areas:
-    "*": false
     plugin-area: true
   site:
     access: true
