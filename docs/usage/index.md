@@ -117,17 +117,8 @@ permissions:
 > [!NOTE]
 > Each area blueprint is registered as a Panel area, so Kirby automatically accepts `permissions.access.<area-id>` for it. No additional permission registration is required.
 
-Existing sites can still use the legacy `areas` permission bucket:
-
-```yml
-permissions:
-  areas:
-    "*": false
-    home: true
-```
-
-> [!NOTE]
-> The `areas` bucket is registered by this plugin for discovered area blueprints for backward compatibility. Prefer `access` for new projects because it is Kirby's native Panel area permission.
+> [!WARNING]
+> The `areas` permission category is deprecated in favor of `access`. Version 3 still evaluates it. Version 4 for Kirby 6 only matches the Panel area ID, reports a deprecation when an `areas` rule denies, and version 5 removes it. Move each rule to `access`, such as `areas: { home: false }` to `access: { home: false }`. A wildcard in `access` also covers Kirby's own areas, so list those a role keeps, such as `panel`, `site` and `account`.
 
 > [!IMPORTANT]
 > Area access never overrides the resolved model permissions. Site-backed areas require `site.access`. Page-backed areas require both `pages.access` and `pages.read`. Saving, publishing, discarding and mutating field/section API routes additionally require the model's `update` permission. A role can therefore be read-only by allowing access/read while denying update. The Panel then hides save controls and disables field inputs.
