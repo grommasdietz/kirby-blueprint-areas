@@ -2,11 +2,10 @@ title: Read only
 
 permissions:
   access:
+    "*": false
+    account: true
     panel: true
     site: true
-    fields: true
-  areas:
-    "*": false
     fields: true
   site:
     access: true

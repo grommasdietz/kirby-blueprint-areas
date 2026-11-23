@@ -159,24 +159,19 @@ YAML);
         yield 'both denied' => [false, false, false];
     }
 
-    public function testSiteReadGateMatchesTheSupportedKirbyPermissionContract(): void
+    public function testSiteBackedAreaRequiresSiteAccess(): void
     {
         $area = 'matrix-site-read-gate';
         $role = 'matrixsitereadgate';
         $this->writeArea($area);
-
-        $hasNativeSiteAccess = method_exists($this->bootKirby()->site(), 'isAccessible');
-        $legacyAccess = $hasNativeSiteAccess;
-        $nativeAccess = !$hasNativeSiteAccess;
-
         $this->writeRole($role, <<<YAML
 title: Matrix Site read gate
 permissions:
   access:
     {$area}: true
-    site: {$this->yamlBool($legacyAccess)}
+    site: true
   site:
-    access: {$this->yamlBool($nativeAccess)}
+    access: false
     update: true
 YAML);
 
@@ -272,18 +267,19 @@ YAML);
 
     }
 
-    public function testPrefixedAndLegacyPermissionIdsMustBothRemainAllowed(): void
+    #[DataProvider('prefixedAccessProvider')]
+    public function testPrefixedAreasUseTheirPanelIdForAccess(bool $allowed): void
     {
-        $area = 'matrix-prefix';
-        $role = 'matrixprefix';
+        $area = 'matrix-prefix-' . ($allowed ? 'allow' : 'deny');
+        $role = str_replace('-', '', $area);
         $this->writeArea($area);
         $this->writeRole($role, <<<YAML
 title: Matrix prefix
 permissions:
   access:
-    pref-{$area}: true
-  areas:
-    {$area}: false
+    "*": false
+    panel: true
+    pref-{$area}: {$this->yamlBool($allowed)}
   site:
     access: true
     update: true
@@ -299,9 +295,55 @@ YAML);
         $user = $this->createUser($role);
         $this->kirby->impersonate($user->id());
 
-        $this->assertFalse(BlueprintAreas::canAccess($area));
-        $this->expectException(PermissionException::class);
-        BlueprintAreas::view($area);
+        $this->assertSame($allowed, BlueprintAreas::canAccess($area));
+    }
+
+    /**
+     * @return iterable<string, array{0: bool}>
+     */
+    public static function prefixedAccessProvider(): iterable
+    {
+        yield 'allowed' => [true];
+        yield 'denied' => [false];
+    }
+
+    public function testDeprecatedAreasCategoryStillDenies(): void
+    {
+        $area = 'matrix-areas-category';
+        $role = 'matrixareascategory';
+        $this->writeArea($area);
+        $this->writeRole($role, <<<YAML
+title: Matrix areas category
+permissions:
+  access:
+    {$area}: true
+  areas:
+    {$area}: false
+  site:
+    access: true
+    update: true
+YAML);
+
+        // Kirby reports deprecations in debug mode.
+        $this->bootKirby(['options' => ['debug' => true]])->impersonate('kirby');
+        $user = $this->createUser($role);
+        $this->kirby->impersonate($user->id());
+
+        $deprecations = [];
+        set_error_handler(static function (int $level, string $message) use (&$deprecations): bool {
+            $deprecations[] = $message;
+            return true;
+        }, E_USER_DEPRECATED);
+
+        try {
+            $this->assertFalse(BlueprintAreas::canAccess($area));
+        } finally {
+            restore_error_handler();
+        }
+
+        $this->assertSame([
+            'The "areas" permission category of Blueprint Areas is deprecated and will be removed in version 5. Deny the area with "access.' . $area . '" instead.',
+        ], $deprecations);
     }
 
     private function writeArea(string $area, string $extra = ''): void

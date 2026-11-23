@@ -36,7 +36,7 @@ The plugin registers its areas during `system.loadPlugins:after`, once Kirby has
 ],
 ```
 
-A blueprint named `settings.yml` then keeps the logical API ID `settings`, while its Panel area ID and URL become `blueprint-areas-settings`. Legacy `permissions.areas.settings` role rules are still evaluated.
+A blueprint named `settings.yml` then keeps the logical API ID `settings`, while its Panel area ID and URL become `blueprint-areas-settings`. Role rules use the Panel area ID, such as `permissions.access.blueprint-areas-settings`.
 
 Area names are resolved from the discovered YAML-file allowlist. Request parameters cannot be converted directly into arbitrary filesystem paths.
 

@@ -49,8 +49,8 @@ Kirby's extension order. Avoid relying on that order to select a blueprint.
 
 An ID already owned by a core or another plugin's Panel area is skipped. Use
 [`panel.areaPrefix`](./architecture.md#routes-and-area-ids) when Panel area IDs
-need a prefix. The prefix changes the Panel URL and native access permission
-key. The logical API ID and legacy `permissions.areas` key stay unchanged.
+need a prefix. The prefix changes the Panel URL and the native access permission
+key. The logical API ID stays unchanged.
 
 Plugin-supplied areas follow the same [access rules](./index.md#access-control)
 as project areas. Their origin does not grant extra permissions or bypass a
