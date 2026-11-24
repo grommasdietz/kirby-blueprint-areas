@@ -1,3 +1,29 @@
+# [4.0.0](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v3.1.0...v4.0.0) (2026-11-24)
+
+
+* feat!: migrate Blueprint Areas to Kirby 6 ([be61ca4](https://github.com/grommasdietz/kirby-blueprint-areas/commit/be61ca4a2392f357122307228fd3ddc376e92fd9))
+* feat!: prepare Kirby 6 compatibility ([#73](https://github.com/grommasdietz/kirby-blueprint-areas/issues/73)) ([4c95bda](https://github.com/grommasdietz/kirby-blueprint-areas/commit/4c95bda55580e0fa101a296a8e543d24bb2ac823))
+* feat(permissions)!: decide area access by the native access permission ([93f0ff4](https://github.com/grommasdietz/kirby-blueprint-areas/commit/93f0ff44c909cbee101959bf5efba0ee2654c0a0))
+
+
+### Bug Fixes
+
+* open the native Kirby 6 live editor from areas ([7583314](https://github.com/grommasdietz/kirby-blueprint-areas/commit/75833144b4a23a2a55b7d3719c811b82d50fe97a))
+* **panel:** preserve trusted field help in area layouts ([6c23244](https://github.com/grommasdietz/kirby-blueprint-areas/commit/6c23244f8d66dd837850e8d22bb41f349502063d))
+* **permissions:** use Kirby 6 model guards ([797f4fd](https://github.com/grommasdietz/kirby-blueprint-areas/commit/797f4fd3fe34b0e08799c8d26d4831eebcd522db))
+
+
+### BREAKING CHANGES
+
+* role rules no longer match an area's unprefixed ID when
+panel.areaPrefix is set. The areas permission category is deprecated in
+favor of access.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+* This preview requires Kirby 6 and PHP 8.3. Kirby 5 remains on main.
+* Requires Kirby 6 and PHP 8.3.
+Custom sections must migrate to native fields with unique names in each blueprint.
+
 # [3.1.0](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v3.0.2...v3.1.0) (2026-11-02)
 
 
