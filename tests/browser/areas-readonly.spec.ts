@@ -1,26 +1,19 @@
 import { expect, test } from "@playwright/test";
+import { rawPanelApi } from "./utils/api";
 import {
   areaFieldInput,
   loginToPanel,
   PANEL_USERS,
-  waitForAreaSection,
+  waitForAreaView,
 } from "./utils/panel";
 
 test.describe("Blueprint Areas read-only UI", () => {
-  test("renders fields and sections without any mutation controls", async ({
+  test("renders native fields without any mutation controls", async ({
     page,
   }) => {
     await loginToPanel(page, PANEL_USERS.readonly);
 
-    const pagesSectionResponse = page.waitForResponse((response) => {
-      const url = new URL(response.url());
-      return (
-        response.request().method() === "GET" &&
-        url.pathname.endsWith(
-          "/grommasdietz/blueprint-areas/blueprints/fields/sections/pages",
-        )
-      );
-    });
+    const pagesSectionResponse = waitForAreaView(page, "fields");
     await page.goto("/panel/fields?tab=sections");
     const sectionResponse = await pagesSectionResponse;
     expect(sectionResponse.status()).toBe(200);
@@ -29,13 +22,27 @@ test.describe("Blueprint Areas read-only UI", () => {
     await expect(view).toBeVisible();
     await expect(page.locator(".k-form-controls")).toHaveCount(0);
 
-    const pagesSection = page.locator(".k-pages-section").first();
+    const pagesSection = page.locator(".k-field-name-sitepages").first();
     await expect(pagesSection).toBeVisible();
+    const nativeState = await rawPanelApi(
+      page,
+      "grommasdietz/blueprint-areas/blueprints/fields/fields/sitepages",
+    );
+    expect(nativeState.status).toBe(200);
+    expect(nativeState.json).toMatchObject({
+      add: false,
+      sortable: false,
+      models: expect.arrayContaining([
+        expect.objectContaining({ id: "home", permissions: expect.objectContaining({ changeTitle: false }) }),
+      ]),
+      pagination: expect.objectContaining({ total: expect.any(Number) }),
+    });
+    await expect(pagesSection.getByRole("link", { name: "Home", exact: true })).toBeVisible();
     await expect(pagesSection.getByRole("button", { name: /Add/i })).toHaveCount(
       0,
     );
 
-    const fieldsResponse = waitForAreaSection(page, "fields", "textfields");
+    const fieldsResponse = waitForAreaView(page, "fields");
     await page.goto("/panel/fields?tab=basics");
     expect((await fieldsResponse).status()).toBe(200);
     const text = areaFieldInput(page, "text");

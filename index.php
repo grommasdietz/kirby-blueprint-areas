@@ -1,6 +1,6 @@
 <?php
 
-use Kirby\Cms\Api as KirbyApi;
+use Kirby\Api\Api as KirbyApi;
 use Kirby\Cms\App;
 use Kirby\Cms\Permissions;
 use Kirby\Exception\Exception as KirbyException;
@@ -56,23 +56,23 @@ $registerAreas = function (): array {
     BlueprintAreas::beginAreaRegistration();
     $registered = BlueprintAreas::listForRegistration();
 
-    $legacyPermissions = [];
-    if (class_exists(Permissions::class)) {
-        foreach ($registered as $item) {
-            $legacyPermissions[BlueprintAreas::menuId($item['id'])] = true;
-            $legacyPermissions[$item['id']] = true;
-        }
-
-        $existingPermissions = Permissions::$extendedActions['areas'] ?? [];
-        if (!is_array($existingPermissions)) {
-            $existingPermissions = [];
-        }
-
-        Permissions::$extendedActions['areas'] = [
-            ...$existingPermissions,
-            ...$legacyPermissions,
-        ];
+    // Kirby registers each area's native `access` permission. The deprecated
+    // `areas` category stays registered until version 5, because Kirby only
+    // logs an unregistered category and `areas: "*": false` would then allow.
+    $areaPermissions = [];
+    foreach ($registered as $item) {
+        $areaPermissions[BlueprintAreas::menuId($item['id'])] = true;
     }
+
+    $existingPermissions = Permissions::$extendedActions['areas'] ?? [];
+    if (!is_array($existingPermissions)) {
+        $existingPermissions = [];
+    }
+
+    Permissions::$extendedActions['areas'] = [
+        ...$existingPermissions,
+        ...$areaPermissions,
+    ];
 
     $areas = [];
     foreach ($registered as $item) {
@@ -121,7 +121,7 @@ $registerAreas = function (): array {
         };
     }
 
-    BlueprintAreas::completeAreaRegistration(array_keys($areas), array_keys($legacyPermissions));
+    BlueprintAreas::completeAreaRegistration(array_keys($areas), array_keys($areaPermissions));
 
     return $areas;
 };

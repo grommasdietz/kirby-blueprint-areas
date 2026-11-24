@@ -143,23 +143,22 @@ YAML);
         }
     }
 
-    public function testLegacyAreaPermissionsAreRegisteredForDiscoveredBlueprints(): void
+    public function testDeprecatedAreasCategoryStaysRegisteredUntilVersion5(): void
     {
         $this->assertSame(true, Permissions::$extendedActions['areas']['home'] ?? null);
         $this->assertSame(true, Permissions::$extendedActions['areas']['fields'] ?? null);
 
-        $role = $this->kirby->roles()->find('editor');
-        $this->assertNotNull($role);
-        $this->assertSame(true, $role->permissions()->for('areas', 'fields', false));
-        $this->assertSame(false, $role->permissions()->for('areas', 'empty', true));
+        // Kirby ignores an unregistered category, so a wildcard denial would allow.
+        $permissions = new Permissions(['areas' => ['*' => false, 'fields' => true]]);
+        $this->assertTrue($permissions->for('areas', 'fields', false));
+        $this->assertFalse($permissions->for('areas', 'empty', true));
     }
 
     public function testAreaAccessCannotOverrideRoleDenial(): void
     {
-        $blueprintsRoot = $this->kirby->root('blueprints') . '/areas';
-        $blueprintPath = $blueprintsRoot . '/access-override.yml';
-
-        file_put_contents($blueprintPath, <<<'YAML'
+        $this->bootKirby([
+            'testBlueprints' => [
+                'areas/access-override.yml' => <<<'YAML'
 title: Access Override
 
 options:
@@ -171,7 +170,9 @@ fields:
   note:
     label: Note
     type: text
-YAML);
+YAML,
+            ],
+        ])->impersonate('kirby');
 
         $editor = $this->kirby->users()->create([
             'email' => 'editor-override-' . uniqid() . '@kirby-blueprint-areas.test',
@@ -193,7 +194,6 @@ YAML);
         } finally {
             $this->kirby->impersonate('kirby');
             $editor->delete();
-            @unlink($blueprintPath);
         }
     }
 
@@ -254,10 +254,10 @@ YAML);
                 $english['values']['translatedcontent'] ?? null
             );
             $noteText = $english['fieldProps']['note']['text'] ?? null;
-            $this->assertIsString($noteText);
+            $this->assertInstanceOf(\Kirby\Toolkit\HtmlString::class, $noteText);
             $this->assertStringContainsString(
                 'Switch the content language in the header.',
-                $noteText
+                (string) $noteText
             );
 
             $this->kirby->setCurrentLanguage('de');
@@ -295,6 +295,7 @@ YAML);
             ['k-preview-view-button', 'k-open-view-button'],
             $components
         );
+        $this->assertStringEndsWith('/preview/form', $view['buttons'][0]['props']['link']);
     }
 
     public function testSavesValuesToSite(): void
@@ -455,9 +456,8 @@ YAML);
     {
         $response = BlueprintAreas::section('fields', 'pages');
 
-        $this->assertSame('ok', $response['status'] ?? null);
         $this->assertSame('pages', $response['name'] ?? null);
-        $this->assertSame('pages', $response['type'] ?? null);
+        $this->assertSame('pagepicker', $response['type'] ?? null);
     }
 
     public function testRejectsInvalidQuery(): void
@@ -697,8 +697,8 @@ YAML);
             $this->assertSame('fields', $view['id']);
             $this->assertFalse($view['meta']['canUpdate'] ?? true);
 
-            $section = BlueprintAreas::section('fields', 'textfields');
-            $this->assertTrue($section['fields']['text']['disabled'] ?? false);
+            $section = BlueprintAreas::section('fields', 'text');
+            $this->assertTrue($section['disabled'] ?? false);
 
             $readApi = $this->kirby->api()->clone([
                 'requestMethod' => 'GET',

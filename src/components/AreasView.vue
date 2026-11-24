@@ -34,23 +34,23 @@
     />
 
     <template v-if="tabs.length && !isBlueprintEmpty">
-      <k-sections
+      <k-model-form
         v-for="tabItem in tabs"
         :key="tabName(tabItem)"
         v-show="tabName(tabItem) === tab"
-        :tab="tabItem"
-        :parent="sectionsParent"
+        :columns="tabItem.columns"
+        :api="sectionsParent"
         :content="content"
+        :diff="badgeDiff"
         :lock="contentLock"
-        :blueprint="currentAreaId"
         :empty="emptyMessage"
         @input="onInput"
         @submit="onSubmit"
       />
     </template>
-    <k-section v-else>
-      <k-box align="start" theme="info" :text="emptyMessage" :html="true" />
-    </k-section>
+    <div v-else>
+      <k-box align="start" theme="info" :text="emptyMessage" />
+    </div>
   </k-panel-inside>
 </template>
 
@@ -73,52 +73,28 @@ function normalizeList(value) {
 
 function normalizeTabForBadges(tab) {
   const cloned = JSON.parse(JSON.stringify(tab || {}));
-
-  const tabsColumns = normalizeList(cloned?.columns);
-  for (const column of tabsColumns) {
-    const sections = normalizeList(column?.sections);
-    for (const section of sections) {
-      if (!section || typeof section !== "object") continue;
-      if (section.type === "gd-fields") {
-        section.type = "fields";
-      } else if (section.type === "gd-pages") {
-        section.type = "pages";
-      }
-    }
-  }
-
+  cloned.fields = normalizeList(cloned.columns).flatMap(column => Object.keys(column.fields || {}));
   return cloned;
 }
 
-function applyModelPath(layout, modelPath, canUpdate = true) {
-  const cloned = JSON.parse(JSON.stringify(layout || { tabs: [] }));
-  if (!modelPath && canUpdate !== false) return cloned;
+// JSON cloning strips Kirby 6 HtmlString markers from native field props.
+function cloneLayout(value) {
+  if (Array.isArray(value)) return value.map(cloneLayout);
+  if (value && Object.getPrototypeOf(value) === Object.prototype) {
+    return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, cloneLayout(item)]));
+  }
+  return value;
+}
 
-  const applySections = (sections) => {
-    const list = normalizeList(sections);
-    for (const section of list) {
-      if (section && typeof section === "object") {
-        section.gdModelPath = modelPath;
-        section.gdReadOnly = canUpdate === false;
-        if (section.type === "fields") {
-          section.type = "gd-fields";
-        } else if (section.type === "pages") {
-          section.type = "gd-pages";
-        }
+function applyModelPath(layout, _modelPath, canUpdate = true) {
+  const cloned = cloneLayout(layout || { tabs: [] });
+  if (canUpdate === false) {
+    for (const tab of normalizeList(cloned.tabs)) {
+      for (const column of normalizeList(tab.columns)) {
+        for (const field of Object.values(column.fields || {})) field.disabled = true;
       }
     }
-  };
-
-  const tabs = normalizeList(cloned?.tabs);
-  for (const tab of tabs) {
-    const columns = normalizeList(tab?.columns);
-    for (const column of columns) {
-      applySections(column?.sections);
-    }
-
-    applySections(tab?.sections);
   }
-
   return cloned;
 }
 
@@ -352,7 +328,7 @@ export default {
     this.$panel.events.on("content.discard", this.onContentSave);
     this.syncMenuBadges();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.onSaveShortcut) {
       this.$panel.events.off("keydown.cmd.s", this.onSaveShortcut);
     }

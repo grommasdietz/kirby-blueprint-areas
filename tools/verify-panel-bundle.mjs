@@ -5,7 +5,7 @@ const runtimeMarkers = [
   "grommasdietz/blueprint-areas",
   "grommasdietz/blueprint-areas/blueprints",
   "k-areas-view",
-  "gdReadOnly",
+  "k-model-form",
   "canUpdate",
 ];
 const errors = [];

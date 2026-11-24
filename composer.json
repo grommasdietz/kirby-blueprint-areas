@@ -32,17 +32,17 @@
     }
   },
   "require": {
-    "php": "^8.2",
+    "php": "^8.3",
     "getkirby/composer-installer": "^1.2"
   },
   "conflict": {
-    "getkirby/cms": "<5.6.0"
+    "getkirby/cms": "<6.0 || >=7.0"
   },
   "require-dev": {
     "phpunit/phpunit": "^12.5",
     "vimeo/psalm": "^7.5.0",
     "friendsofphp/php-cs-fixer": "^3.93",
-    "getkirby/cms": "^5.6"
+    "getkirby/cms": "^6.0"
   },
   "config": {
     "optimize-autoloader": true,
@@ -88,16 +88,21 @@
     "update:dev": "@composer update phpunit/phpunit vimeo/psalm friendsofphp/php-cs-fixer getkirby/cms --with-all-dependencies",
     "playground:update": "@composer --working-dir=playground update --with-all-dependencies",
     "test:kirby": [
-      "sh tools/kirby-compat.sh 5.6.0",
-      "sh tools/kirby-compat.sh ^5.6"
-    ],
-    "verify:composer": [
-      "@composer validate --strict --no-check-version",
-      "@composer check-platform-reqs"
+      "sh tools/kirby-compat.sh 6.0.0",
+      "sh tools/kirby-compat.sh ^6.0"
     ],
     "notices:check": [
       "@notices:generate",
       "git diff --exit-code -- THIRD_PARTY_NOTICES.md"
+    ],
+    "verify:composer": [
+      "@composer validate --strict --no-check-version",
+      "@composer check-platform-reqs"
     ]
+  },
+  "extra": {
+    "kirby": {
+      "compatible": "^6.0"
+    }
   }
 }

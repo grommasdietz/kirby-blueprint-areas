@@ -5,7 +5,7 @@ import {
   discardPendingChanges,
   loginToPanel,
   openArea,
-  waitForAreaSection,
+  waitForAreaView,
 } from "./utils/panel";
 
 function areaRequest(request: Request, suffix: string) {
@@ -41,11 +41,19 @@ async function expectSuccessfulMutation(response: Promise<Response>) {
 }
 
 test.describe("Blueprint Areas content lifecycle", () => {
+  test("preserves trusted native field help through layout copies", async ({ page }) => {
+    await loginToPanel(page);
+    await openArea(page, "fields");
+    const help = page.locator(".k-field-name-text .k-field-help");
+    await expect(help.locator("p")).toHaveText("Optional help");
+    await expect(help).not.toContainText("<p>");
+  });
+
   test("uses canonical payloads for draft, publish and discard", async ({
     page,
   }) => {
     await loginToPanel(page);
-    const fieldsResponse = waitForAreaSection(page, "fields", "textfields");
+    const fieldsResponse = waitForAreaView(page, "fields");
     await openArea(page, "fields");
     expect((await fieldsResponse).status()).toBe(200);
     await discardPendingChanges(page);
@@ -94,7 +102,7 @@ test.describe("Blueprint Areas content lifecycle", () => {
     // race the component's own view refresh and could abort the mutation.
     await expect(controls).toHaveCount(0, { timeout: 15_000 });
 
-    const reloadedSection = waitForAreaSection(page, "fields", "textfields");
+    const reloadedSection = waitForAreaView(page, "fields");
     await page.reload({ waitUntil: "domcontentloaded" });
     expect((await reloadedSection).status()).toBe(200);
     await expect(areaFieldInput(page, "text")).toHaveValue(published);

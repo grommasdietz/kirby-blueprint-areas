@@ -54,7 +54,7 @@ final class TestEnvironmentTest extends TestCase
         ]);
 
         $this->assertArrayHasKey('proxytest', $kirby->extensions('fields'));
-        $this->assertArrayHasKey('proxytest', $kirby->extensions('sections'));
+        $this->assertSame(\Tests\BlueprintAreas\ProxyTestField::class, $kirby->extension('fields', 'proxytest'));
     }
 
     public function testRejectsUnsafeFixturePluginNames(): void

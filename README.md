@@ -6,8 +6,10 @@ Add custom Panel areas via blueprints on Kirby CMS.
 
 ## Requirements
 
-- Kirby 5.6+
-- PHP 8.2+
+- Kirby 6
+- PHP 8.3+
+
+For Kirby 5, use version 3.x.
 
 ## Installation
 

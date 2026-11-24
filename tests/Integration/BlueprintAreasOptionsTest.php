@@ -117,7 +117,7 @@ YAML);
         }
     }
 
-    public function testAreaPrefixIsOptInAndKeepsLegacyRolePermissions(): void
+    public function testAreaPrefixIsOptInAndNamesThePermission(): void
     {
         $kirby = $this->bootKirby([
             'options' => [
@@ -136,25 +136,11 @@ YAML);
             'blueprint-areas-fields',
             BlueprintAreas::view('fields')['meta']['menuId'] ?? null
         );
-        $this->assertTrue(Permissions::$extendedActions['areas']['fields'] ?? false);
+        // Roles address the area by its Panel ID only. The logical ID is no alias.
+        $this->assertArrayNotHasKey('fields', Permissions::$extendedActions['areas'] ?? []);
         $this->assertTrue(
             Permissions::$extendedActions['areas']['blueprint-areas-fields'] ?? false
         );
-
-        $editor = $kirby->users()->create([
-            'email' => 'prefixed-editor-' . uniqid() . '@kirby-blueprint-areas.test',
-            'name' => 'Prefixed editor',
-            'role' => 'editor',
-            'password' => 'test-password',
-        ]);
-
-        try {
-            $kirby->impersonate($editor->id());
-            $this->assertContains('fields', array_column(BlueprintAreas::list(), 'id'));
-        } finally {
-            $kirby->impersonate('kirby');
-            $editor->delete();
-        }
     }
 
     public function testCompetingAreaIdIsExcludedAfterRegistration(): void

@@ -1,7 +1,10 @@
 title: Editor
 
 permissions:
-  areas:
+  access:
     "*": false
+    account: true
+    panel: true
+    site: true
     home: true
     fields: true

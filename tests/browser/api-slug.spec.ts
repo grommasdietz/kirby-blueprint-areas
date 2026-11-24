@@ -4,7 +4,7 @@ import {
   discardPendingChanges,
   loginToPanel,
   openArea,
-  waitForAreaSection,
+  waitForAreaView,
 } from "./utils/panel";
 
 test("Blueprint Areas follows a custom Kirby API slug", async ({ page }) => {
@@ -17,7 +17,7 @@ test("Blueprint Areas follows a custom Kirby API slug", async ({ page }) => {
   });
   expect(endpoint).toMatch(/\/control\/?$/);
 
-  const fieldsResponse = waitForAreaSection(page, "fields", "textfields");
+  const fieldsResponse = waitForAreaView(page, "fields");
   await openArea(page, "fields");
   expect((await fieldsResponse).status()).toBe(200);
   await discardPendingChanges(page);

@@ -21,5 +21,5 @@ jobs:
     with:
       php: '8.3'
       browsers: chromium
-      compatibility: '[{"php": "8.2", "composer": "playground", "command": "composer test:smoke"}, {"php": "8.4"}, {"php": "8.5"}, {"php": "8.3", "composer": "none", "command": "sh tools/kirby-compat.sh 5.6.0", "name": "Kirby 5.6.0 compatibility"}, {"php": "8.3", "composer": "none", "command": "sh tools/kirby-compat.sh ^5.6", "name": "Kirby ^5.6 compatibility"}]'
+      compatibility: '[{"php": "8.4"}, {"php": "8.5"}, {"php": "8.3", "composer": "none", "command": "sh tools/kirby-compat.sh 6.0.0", "name": "Kirby 6.0.0 compatibility"}, {"php": "8.3", "composer": "none", "command": "sh tools/kirby-compat.sh ^6.0", "name": "Kirby ^6.0 compatibility"}]'
     secrets: inherit

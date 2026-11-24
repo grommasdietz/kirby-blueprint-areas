@@ -115,10 +115,22 @@ permissions:
 ```
 
 > [!NOTE]
-> Each area blueprint is registered as a Panel area, so Kirby automatically accepts `permissions.access.<area-id>` for it. No additional permission registration is required.
+> Each area blueprint is registered as a Panel area, so Kirby automatically accepts `permissions.access.<area-id>` for it. No additional permission registration is required. With [`panel.areaPrefix`](./architecture.md#routes-and-area-ids), the area ID includes the prefix.
+
+To allow only some areas, deny all and list the ones a role keeps. The wildcard also covers Kirby's own areas, so list those the role needs too:
+
+```yml
+permissions:
+  access:
+    "*": false
+    panel: true
+    site: true
+    account: true
+    home: true
+```
 
 > [!WARNING]
-> The `areas` permission category is deprecated in favor of `access`. Version 3 still evaluates it. Version 4 for Kirby 6 only matches the Panel area ID, reports a deprecation when an `areas` rule denies, and version 5 removes it. Move each rule to `access`, such as `areas: { home: false }` to `access: { home: false }`. A wildcard in `access` also covers Kirby's own areas, so list those a role keeps, such as `panel`, `site` and `account`.
+> The `areas` permission category of earlier versions is deprecated. It still denies an area and reports a deprecation in debug mode. Version 5 removes it. Move each rule to `access`, such as `areas: { home: false }` to `access: { home: false }`. Since version 4, role rules only match the Panel area ID, so with `areaPrefix` an unprefixed ID no longer applies.
 
 > [!IMPORTANT]
 > Area access never overrides the resolved model permissions. Site-backed areas require `site.access`. Page-backed areas require both `pages.access` and `pages.read`. Saving, publishing, discarding and mutating field/section API routes additionally require the model's `update` permission. A role can therefore be read-only by allowing access/read while denying update. The Panel then hides save controls and disables field inputs.

@@ -3,7 +3,7 @@
 namespace GrommasDietz\Areas\BlueprintAreas;
 
 use Kirby\Cms\App;
-use Kirby\Cms\Blueprint;
+use Kirby\Blueprint\Blueprint;
 use Kirby\Cms\ModelWithContent;
 use Kirby\Cms\Page;
 use Kirby\Cms\Permissions;
@@ -20,7 +20,7 @@ trait BlueprintsTrait
     private static array $registeredAreaIds = [];
     /** @var list<string> */
     private static array $registeredPermissionIds = [];
-    private const PLUGIN_NAME = 'grommasdietz/blueprint-areas';
+    private const string PLUGIN_NAME = 'grommasdietz/blueprint-areas';
 
     /**
      * @return array{
@@ -347,7 +347,7 @@ trait BlueprintsTrait
     private static function layoutForBlueprint(Blueprint $blueprint): array
     {
         return [
-            'tabs' => $blueprint->tabs(),
+            'tabs' => $blueprint->tabs()->toArray(),
         ];
     }
 

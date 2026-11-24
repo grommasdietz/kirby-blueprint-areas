@@ -383,13 +383,13 @@ tabs:
                 icon: image
       - width: 1/2
         sections:
-          pages:
+          sitePages:
             type: pages
             headline: Site Pages
             parent: site
             layout: list
             size: tiny
-          files:
+          siteFiles:
             type: files
             headline: Site Files
             parent: site

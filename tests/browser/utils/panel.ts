@@ -40,17 +40,16 @@ export async function openArea(page: Page, name: string) {
   await expect(page.locator(".k-areas-view")).toBeVisible({ timeout: 15_000 });
 }
 
-export function waitForAreaSection(
+export function waitForAreaView(
   page: Page,
   area: string,
-  section: string,
 ) {
   return page.waitForResponse((response) => {
     const url = new URL(response.url());
     return (
       response.request().method() === "GET" &&
       url.pathname.endsWith(
-        `/grommasdietz/blueprint-areas/blueprints/${area}/sections/${section}`,
+        `/panel/${area}`,
       )
     );
   });
