@@ -1,7 +1,5 @@
 # Kirby Blueprint Areas
 
-> Kirby 6 preview branch. The stable Kirby 5 release remains on `main`. Requires PHP 8.3+ and Node 24 for development.
-
 Add custom Panel areas via blueprints on Kirby CMS.
 
 ![Cover image showing an example of the plugin in use](/.github/assets/hero-image.png)
@@ -11,10 +9,12 @@ Add custom Panel areas via blueprints on Kirby CMS.
 - Kirby 6
 - PHP 8.3+
 
+For Kirby 5, use version 3.x.
+
 ## Installation
 
 ```bash
-composer require grommasdietz/kirby-blueprint-areas:dev-kirby-6
+composer require grommasdietz/kirby-blueprint-areas
 ```
 
 > [!TIP]

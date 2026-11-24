@@ -69,11 +69,11 @@ cases without changing the production plugin lifecycle.
 
 ### Kirby compatibility matrix
 
-CI runs the focused compatibility contract against these Kirby constraints. Run one locally with `sh tools/kirby-compat.sh 6.0.0-rc.3`, or both with `composer test:kirby`. Each installs its Kirby version in an isolated copy under `build/compatibility/` and leaves `vendor/` untouched:
+CI runs the focused compatibility contract against these Kirby constraints. Run one locally with `sh tools/kirby-compat.sh 6.0.0`, or both with `composer test:kirby`. Each installs its Kirby version in an isolated copy under `build/compatibility/` and leaves `vendor/` untouched:
 
-- `6.0.0-rc.3`, the current release candidate
+- `6.0.0`, the minimum supported release
 - the repository's locked Kirby version
-- the latest version allowed by `^6.0@RC`.
+- the latest version allowed by `^6.0`.
 
 The complete PHPUnit suite still runs against the repository lock. The
 compatibility matrix targets blueprint discovery, registration, authorization,

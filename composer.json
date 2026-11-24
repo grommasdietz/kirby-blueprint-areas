@@ -42,7 +42,7 @@
     "phpunit/phpunit": "^12.5",
     "vimeo/psalm": "^7.5.0",
     "friendsofphp/php-cs-fixer": "^3.93",
-    "getkirby/cms": "^6.0@beta"
+    "getkirby/cms": "^6.0"
   },
   "config": {
     "optimize-autoloader": true,
@@ -88,8 +88,8 @@
     "update:dev": "@composer update phpunit/phpunit vimeo/psalm friendsofphp/php-cs-fixer getkirby/cms --with-all-dependencies",
     "playground:update": "@composer --working-dir=playground update --with-all-dependencies",
     "test:kirby": [
-      "sh tools/kirby-compat.sh 6.0.0-rc.3",
-      "sh tools/kirby-compat.sh ^6.0@RC"
+      "sh tools/kirby-compat.sh 6.0.0",
+      "sh tools/kirby-compat.sh ^6.0"
     ],
     "notices:check": [
       "@notices:generate",
