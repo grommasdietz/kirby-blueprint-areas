@@ -1,3 +1,10 @@
+## [4.0.1](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v4.0.0...v4.0.1) (2026-11-26)
+
+
+### Bug Fixes
+
+* align the playground fields area ([40f65b7](https://github.com/grommasdietz/kirby-blueprint-areas/commit/40f65b70bdae2860485d789f2ba6bdebca0d778b))
+
 # [4.0.0](https://github.com/grommasdietz/kirby-blueprint-areas/compare/v3.1.0...v4.0.0) (2026-11-24)
 
 

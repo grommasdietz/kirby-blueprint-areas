@@ -540,11 +540,11 @@
         },
         {
             "name": "grommasdietz/kirby-blueprint-areas",
-            "version": "4.0.0",
+            "version": "4.0.1",
             "dist": {
                 "type": "path",
                 "url": "..",
-                "reference": "3a403dfdc0ce450052c3cb2058960c99eb0d204d"
+                "reference": "40f65b70bdae2860485d789f2ba6bdebca0d778b"
             },
             "require": {
                 "getkirby/composer-installer": "^1.2",
