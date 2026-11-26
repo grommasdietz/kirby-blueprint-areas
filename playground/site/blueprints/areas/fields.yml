@@ -82,7 +82,7 @@ tabs:
                 label: Date
                 type: date
                 display: DD.MM.YYYY
-                min: 2024-01-01
+                min: '2024-01-01'
               time:
                 label: Time
                 type: time
@@ -111,8 +111,8 @@ tabs:
                 type: toggle
                 help: Simple on/off field.
                 text:
-                  - Off
-                  - On
+                  - 'Off'
+                  - 'On'
               toggles:
                 label: Toggles
                 type: toggles
